@@ -1,0 +1,22 @@
+<resources>
+
+    <string name="app_name">Zebra</string>
+    <string name="no_children">Der er ingen børn</string>
+    <string name="changes_saved">Ændringerne blev gemt</string>
+    <string name="confirm_discarding_changes">Du er ved at </string>
+    <string name="discard_changes">Fortryd ændringer</string>
+    <string name="save_changes">Gem ændringer</string>
+    <string name="unnamed_sequence">Unavngivet sekvens</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nej</string>
+    <string name="confirm_go_back">Vil du gå tilbage uden at gemme?</string>
+    <string name="undo_changes">Fortryd ændringer</string>
+    <string name="cancel">Annuller</string>
+    <string name="exit">Afslut</string>
+    <string name="save">Gem</string>
+    <string name="dont_save">Gem ikke</string>
+    <string name="back_question">Du er ved at afslutte sekvensen. Vil du gemme dine ændringer?</string>
+    <string name="discard_question">Du er ved at fortryde dine ændringer. Er du sikker?</string>
+    <string name="delete_sequence">Slet sekvens</string>
+
+</resources>

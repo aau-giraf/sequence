@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- From: file:/D:/Windows%207/Dokumenter/SVN/P6%20-%20SW615F14/Temp%20Git/Zebra/res/values/dimens.xml -->
+    <eat-comment />
+
+    <color name="text_color">#5b3b22</color>
+    <color name="text_color_light">#46624319</color>
+    <color name="text_hint_color">#55624319</color>
+    <!-- From: file:/D:/Windows%207/Dokumenter/SVN/P6%20-%20SW615F14/Temp%20Git/Zebra/build/exploded-bundles/ZebraPictogramLibUnspecified.aar/res/values/values.xml -->
+    <eat-comment />
+
+    <declare-styleable name="Pictogram">
+        <attr name="width" format="integer" />
+        <!-- <attr name="height" format="integer"/> -->
+    </declare-styleable>
+    <!-- From: file:/D:/Windows%207/Dokumenter/SVN/P6%20-%20SW615F14/Temp%20Git/Zebra/res/values/attrs.xml -->
+    <eat-comment />
+
+    <declare-styleable name="RoundedImageView">
+        <attr name="cornerRadius" format="dimension" />
+    </declare-styleable>
+    <declare-styleable name="SequenceViewGroup">
+        <attr name="horizontalSpacing" format="dimension" />
+        <attr name="itemHeight" format="dimension" />
+        <attr name="itemWidth" format="dimension" />
+    </declare-styleable>
+    <!-- From: file:/D:/Windows%207/Dokumenter/SVN/P6%20-%20SW615F14/Temp%20Git/Zebra/res/values/dimens.xml -->
+    <eat-comment />
+
+    <dimen name="activity_horizontal_margin">0dp</dimen>
+    <dimen name="activity_main_picto_size">300dp</dimen>
+    <dimen name="activity_overview_picto_size">200dp</dimen>
+    <dimen name="activity_vertical_margin">0dp</dimen>
+    <!-- From: file:/D:/Windows%207/Dokumenter/SVN/P6%20-%20SW615F14/Temp%20Git/Zebra/res/values/strings.xml -->
+    <eat-comment />
+
+    <string name="app_name">Zebra</string>
+    <string name="back_question">Du er ved at afslutte sekvensen. Vil du gemme dine ændringer?</string>
+    <string name="cancel">Annuller</string>
+    <string name="changes_saved">Ændringerne blev gemt</string>
+    <string name="confirm_discarding_changes">Du er ved at </string>
+    <string name="confirm_go_back">Vil du gå tilbage uden at gemme?</string>
+    <string name="delete_sequence">Slet sekvens</string>
+    <string name="discard_changes">Fortryd ændringer</string>
+    <string name="discard_question">Du er ved at fortryde dine ændringer. Er du sikker?</string>
+    <string name="dont_save">Gem ikke</string>
+    <string name="exit">Afslut</string>
+    <!-- From: file:/D:/Windows%207/Dokumenter/SVN/P6%20-%20SW615F14/Temp%20Git/Zebra/build/exploded-bundles/ZebraOasisLibUnspecified.aar/res/values/values.xml -->
+    <eat-comment />
+
+    <string name="hello">Hello World!</string>
+    <!-- From: file:/D:/Windows%207/Dokumenter/SVN/P6%20-%20SW615F14/Temp%20Git/Zebra/res/values/strings.xml -->
+    <eat-comment />
+
+    <string name="no">Nej</string>
+    <string name="no_children">Der er ingen børn</string>
+    <string name="save">Gem</string>
+    <string name="save_changes">Gem ændringer</string>
+    <string name="undo_changes">Fortryd ændringer</string>
+    <string name="unnamed_sequence">Unavngivet sekvens</string>
+    <string name="yes">Ja</string>
+    <!-- From: file:/D:/Windows%207/Dokumenter/SVN/P6%20-%20SW615F14/Temp%20Git/Zebra/res/values/styles.xml -->
+    <eat-comment />
+
+    <style name="AppBaseTheme" parent="android:Theme.Light">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+        -->
+    </style>
+
+    <style name="AppTheme" parent="AppBaseTheme">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+
+</resources>

@@ -1,0 +1,6 @@
+include ':OasisLib'
+include ':pictogram-lib'
+include ':Ambilwarna'
+include ':CategoryLib'
+include ':PictoSearch'
+include ':Zebra'

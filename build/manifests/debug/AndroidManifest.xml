@@ -1,0 +1,28 @@
+<!-- From: file:/D:/Windows%207/Dokumenter/SVN/P6%20-%20SW615F14/Temp%20Git/Zebra/AndroidManifest.xml -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.0" package="dk.aau.cs.giraf.zebra">
+
+    <uses-sdk android:minSdkVersion="17" android:targetSdkVersion="19"/>
+
+    <application android:allowBackup="true" android:icon="@drawable/icon" android:label="@string/app_name" android:logo="@drawable/icon" android:theme="@style/AppTheme">
+        <activity android:label="@string/app_name" android:name="dk.aau.cs.giraf.zebra.MainActivity" android:screenOrientation="landscape">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity android:label="@string/app_name" android:name="dk.aau.cs.giraf.zebra.SequenceActivity" android:screenOrientation="landscape">
+        </activity>
+        <!-- From: file:/C:/Users/ALEXAN~1/AppData/Local/Temp/manifestMerge4269471468956202028.xml -->
+        <activity android:label="@string/app_name" android:name="dk.aau.cs.giraf.pictogram.ACTIVITY_ENTRY_NAME">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <!-- From: file:/D:/Windows%207/Dokumenter/SVN/P6%20-%20SW615F14/Temp%20Git/Zebra/AndroidManifest.xml -->
+        
+        
+    </application>
+
+</manifest>

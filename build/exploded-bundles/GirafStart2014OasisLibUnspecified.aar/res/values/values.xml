@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- From: file:/D:/Windows%207/Dokumenter/SVN/P6%20-%20SW615F14/Temp%20Workspace/GirafStart2014/OasisLib/res/values/strings.xml -->
+    <eat-comment />
+
+    <string name="app_name">OasisLib</string>
+    <string name="hello">Hello World!</string>
+
+</resources>

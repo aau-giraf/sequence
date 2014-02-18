@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Ambilwarna/Ambilwarna.iml" filepath="$PROJECT_DIR$/Ambilwarna/Ambilwarna.iml" />
+      <module fileurl="file://$PROJECT_DIR$/CategoryLib/CategoryLib.iml" filepath="$PROJECT_DIR$/CategoryLib/CategoryLib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/OasisLib/OasisLib.iml" filepath="$PROJECT_DIR$/OasisLib/OasisLib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/PictoSearch/PictoSearch.iml" filepath="$PROJECT_DIR$/PictoSearch/PictoSearch.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Zebra.iml" filepath="$PROJECT_DIR$/Zebra.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pictogram-lib/pictogram-lib.iml" filepath="$PROJECT_DIR$/pictogram-lib/pictogram-lib.iml" />
+    </modules>
+  </component>
+</project>
+

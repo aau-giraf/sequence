@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_pressed="true"
-          android:drawable="@drawable/btn_add_sequence_pressed" /> <!-- pressed -->
-    <item android:state_focused="true"
-          android:drawable="@drawable/btn_add_sequence_pressed" /> <!-- focused -->
-    <item android:drawable="@drawable/btn_add_sequence_normal" /> <!-- default -->
-</selector>
-<!-- From: file:/D:/Windows%207/Dokumenter/SVN/P6%20-%20SW615F14/Temp%20Git/Zebra/res/drawable/btn_add_sequence.xml -->

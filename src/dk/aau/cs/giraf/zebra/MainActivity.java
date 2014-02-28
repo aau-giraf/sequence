@@ -6,12 +6,15 @@ import java.util.Comparator;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -50,6 +53,8 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+        //Disble home button
+        //getActionBar().setDisplayHomeAsUpEnabled(false);
 
 		childAdapter = new ChildAdapter(this, children);
 		
@@ -233,9 +238,9 @@ public class MainActivity extends Activity {
 		
 		return adapter;
 	}
-	
+
 	private boolean deleteSequenceDialog(final int position) {
-		
+
 		final Dialog dialog = new Dialog(this);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		dialog.setContentView(R.layout.delete_dialog_box);
@@ -298,25 +303,43 @@ public class MainActivity extends Activity {
 		sequences.addAll(selectedChild.getSequences());
 		sequenceAdapter.notifyDataSetChanged();
 	}
-	
+
+
+    /* When the user presses the home button, then the application should close and be destroyed.
+    This is though a VERY BAD idea.
+
+     */
+
+
+    //Called when the user presses the home button. But this is VERY BAD, but needed by the user.
+    protected void onDestory(){
+        super.onDestroy();
+        finish();
+    }
+    @Override
+    protected void onStop(){
+        super.onStop();
+        finish();
+    }
+
 	@Override
 	protected void onResume() {
 
 		super.onResume();
-		
+
 		childAdapter.notifyDataSetChanged();
 		refreshSelectedChild();
-		
+
 		// Remove highlighting from all images
 		for (int i = 0; i < sequenceGrid.getChildCount(); i++) {
 			View view = sequenceGrid.getChildAt(i);
-			
+
 			if (view instanceof PictogramView) {
 				((PictogramView)view).placeDown();
 			}
 		}
-		
-	}	
+
+	}
 
 	private void enterSequence(Sequence sequence, boolean isNew) {
 		Intent intent = new Intent(getApplication(), SequenceActivity.class);

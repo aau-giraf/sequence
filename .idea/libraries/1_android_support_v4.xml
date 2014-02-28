@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="1_android-support-v4">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/PictoSearch/build/exploded-bundles/ZebraCategoryLibUnspecified.aar/libs/android-support-v4.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

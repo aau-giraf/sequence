@@ -55,7 +55,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 	
 	//Mode handling
 	private boolean isInEditMode = false;
-	private View addNewPictoGramView;
+    private View addNewPictoGramView;
 	
 	//Data and Event handling
 	private OnRearrangeListener rearrangeListener;
@@ -198,7 +198,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 		return new LayoutParams(p.width, p.height);
 	}
 	
-	private int getAnimationTranslatedX(Animation animation) {
+	private int getAnimationTranslatedX(Animation animation)    {
 		if (animation == null) throw new NullPointerException("No translation x for null animation");
 		Transformation transformation = new Transformation();
 		animation.getTransformation(AnimationUtils.currentAnimationTimeMillis(), transformation);
@@ -311,11 +311,12 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		/*
-		 * We ignore which measure mode we are in for now. This ViewGroup
-		 * requires all children to have same size, itemWidth and itemHeight.
-		 * 
-		 * TODO: What happens when we insist on larger space than parent will
-		 * permit? (Problem outside of scrollers?)
+		 * TODO: What happens when we insist on larger space than parent will permit? (Problem outside of scrollers?)
+		 *
+		 * Is this even possible? wait for database synchronization to test this!
+		 *
+		 * This method dictates what size all children of the given parent must have. The method is a general method, meaning we ignore measure mode.
+		 * The ViewGroup requires all children to have the same size, itemWidth and itemHeight as the parent.
 		 */
 
 		int minHeight = itemHeight + getPaddingTop() + getPaddingBottom();
@@ -328,7 +329,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 
 		offsetY = surplusHeight / 2;
 		if (offsetY < 0)
-			offsetY = 0;
+        offsetY = 0;
 
 		int adapterCount = 0;
 		if (adapter != null)
@@ -340,7 +341,9 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 		if (adapterCount > 1) {
 			width += (adapterCount - 1) * horizontalSpacing;
 		}
-		
+
+        // If we are in edit sequence, we add room for the add pictogram button
+
 		if (isInEditMode) {
 			width += itemWidth;
 			if (adapterCount > 0) {
@@ -361,10 +364,13 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 		if (getParent().getParent() instanceof ViewGroup) {
 
 			//TODO: The view group is laying within another framelayout.
+
+            //
+
 			ViewGroup parent = (ViewGroup)getParent().getParent();
 			MarginLayoutParams params = (MarginLayoutParams)getLayoutParams();
 			
-			int parentSizeNoPadding = parent.getWidth() - params.rightMargin - parent.getPaddingLeft() - parent.getPaddingRight() - params.rightMargin;
+			int parentSizeNoPadding = parent.getWidth() - parent.getPaddingLeft() - parent.getPaddingRight() - params.rightMargin - params.leftMargin;
 			if (parentSizeNoPadding > width)
 				width = parentSizeNoPadding;
 		}

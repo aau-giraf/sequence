@@ -8,12 +8,14 @@ import dk.aau.cs.giraf.zebra.models.Pictogram;
 import dk.aau.cs.giraf.zebra.models.Sequence;
 
 public class SequenceAdapter extends BaseAdapter {
-	
+
+    // Adapter for list of sequences in the context of the given child
+
 	private Sequence sequence;
 	private Context context;
 	
 	private OnAdapterGetViewListener onAdapterGetViewListener;
-	
+
 	public SequenceAdapter(Context context, Sequence sequence) {
 		this.context = context;
 		this.sequence = sequence;

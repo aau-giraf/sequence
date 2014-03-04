@@ -13,8 +13,22 @@
     </style>
 
     <!-- Application theme. -->
+
+    <style name="ActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:icon">@android:color/transparent</item>
+    </style>
+
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+        <item name="android:actionBarStyle">@style/ActionBar</item>
+    </style>
+
+    <style name="ActionBarWithoutTitle" parent="@style/ActionBar">
+        <item name="android:displayOptions">showHome</item>
+    </style>
+
+    <style name="AppThemeWithoutActionBarTitle" parent="AppTheme">
+        <item name="android:actionBarStyle">@style/ActionBarWithoutTitle</item>
     </style>
 
 </resources>

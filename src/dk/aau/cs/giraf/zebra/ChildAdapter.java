@@ -39,7 +39,12 @@ public class ChildAdapter extends BaseAdapter {
         Child c = items.get(position);
         
         nameTextView.setText(c.getName());
-        countTextView.setText(c.getSequenceCount() + " sekvenser");
+
+        if (c.getSequenceCount() == 1) {
+        countTextView.setText(c.getSequenceCount() + " sekvens");
+        } else {
+            countTextView.setText(c.getSequenceCount() + " sekvenser");
+        }
 
         if (c.getPicture() == null) {
         	childImage.setImageDrawable(activity.getResources().getDrawable(R.drawable.placeholder));

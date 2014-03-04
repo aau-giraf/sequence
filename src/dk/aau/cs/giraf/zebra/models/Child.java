@@ -59,9 +59,4 @@ public class Child {
 		
 		return null;
 	}
-
-	public void preloadSequenceImages() {
-		
-		// TODO: Logic goes here :]
-	}
 }

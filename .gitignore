@@ -1,13 +1,6 @@
 ﻿#Ignore the build directory
 /build
 /.gradle
+/.idea
 local.properties
 *.iml
-
-#The following files are ignored as per trial-and-error
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/vcs.xml
-/.idea/misc.xml
-/.idea/libraries/android_support_v4.xml
-/.idea/libraries/Gradle__android_support_v4.xml

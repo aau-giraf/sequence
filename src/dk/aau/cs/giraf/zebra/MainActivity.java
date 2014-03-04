@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -25,6 +26,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
+// import android.widget.Toast;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.zebra.PictogramView.OnDeleteClickListener;
@@ -32,6 +34,7 @@ import dk.aau.cs.giraf.zebra.SequenceListAdapter.OnAdapterGetViewListener;
 import dk.aau.cs.giraf.zebra.models.Child;
 import dk.aau.cs.giraf.zebra.models.Sequence;
 import dk.aau.cs.giraf.zebra.serialization.SequenceFileStore;
+
 
 public class MainActivity extends Activity {
 
@@ -75,11 +78,13 @@ public class MainActivity extends Activity {
 				
 				selectedChild = childAdapter.getItem(arg2);
 				refreshSelectedChild();
-				
-				final GridView sequenceGridView = ((GridView)findViewById(R.id.sequence_grid));
-				
-				//TODO: This is ridicilous
-				sequenceGridView.smoothScrollToPositionFromTop(0, 0, 0);
+
+                //TODO:These lines of code doesn't seem to have an effect on the program
+
+				// final GridView sequenceGridView = ((GridView)findViewById(R.id.sequence_grid));
+
+                //Auto scrolls to the top of the gridview every time
+				//sequenceGridView.smoothScrollToPositionFromTop(0, 0, 0);
 				
 			}
 		});
@@ -179,18 +184,18 @@ public class MainActivity extends Activity {
     		refreshSelectedChild();
         }
         else {
-        	//TODO: REMOVE COMMENT
+        	//TODO: UNCOMMENT WHEN LAUNCHER IS READY - Displays toast and closes App if not launched from launcher
 //        	Toast toast = Toast.makeText(this, "Zebra must be started from the GIRAF Launcher", Toast.LENGTH_LONG);
 //        	toast.show();
-//        	
+//
 //        	finish();
         	
-        	//TODO: REMOVE THE FOLLOWING
-    		Helper helper = new Helper(this);
-    		
-    		Profile guardian = helper.profilesHelper.getGuardians().get(0);
-    		guardianId = guardian.getId();
-    		
+        	//TODO: REMOVE THE FOLLOWING WHEN ADMIN IS READY - rewrite code to adjust to the admin program (this code finds the first guardian and uses it in order to have a guardian)
+       		Helper helper = new Helper(this);
+
+   	    	Profile guardian = helper.profilesHelper.getGuardians().get(0);
+   	    	guardianId = guardian.getId();
+
     		List<Profile> childProfiles = helper.profilesHelper.getChildrenByGuardian(guardian);
     		Collections.sort(childProfiles, new Comparator<Profile>() {
     	        @Override

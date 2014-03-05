@@ -310,6 +310,8 @@ public class MainActivity extends Activity {
 
     /* When the user presses the home button, the application should close and be destroyed.
     This overrides default Android behaviour, but is done by customer request */
+    /*This is commented because it will create a bug where it closes Zebra when returning from Pictosearch
+
     protected void onDestory(){
         super.onDestroy();
         finish();
@@ -319,6 +321,7 @@ public class MainActivity extends Activity {
         super.onStop();
         finish();
     }
+    */
 
 	@Override
 	protected void onResume() {

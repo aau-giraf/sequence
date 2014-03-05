@@ -278,6 +278,8 @@ public class SequenceActivity extends Activity {
 	}
 
     //This will occur when the user presses the home button.
+    /*This is commented because it will create a bug where it closes Zebra when returning from Pictosearch
+
     @Override
     public void onUserLeaveHint (){
         if (isInEditMode) {
@@ -290,6 +292,7 @@ public class SequenceActivity extends Activity {
         }
 
     }
+    */
 
 	private SequenceViewGroup setupSequenceViewGroup(
 			final SequenceAdapter adapter) {

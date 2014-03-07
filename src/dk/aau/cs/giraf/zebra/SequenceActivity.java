@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -275,7 +276,24 @@ public class SequenceActivity extends Activity {
 			super.onBackPressed();
 		}
 	}
-	
+
+    //This will occur when the user presses the home button.
+    /*This is commented because it will create a bug where it closes Zebra when returning from Pictosearch
+
+    @Override
+    public void onUserLeaveHint (){
+        if (isInEditMode) {
+            super.onUserLeaveHint();
+            finish(); //Kills the activities within this app
+
+        } else {
+            super.onUserLeaveHint();
+            finish();
+        }
+
+    }
+    */
+
 	private SequenceViewGroup setupSequenceViewGroup(
 			final SequenceAdapter adapter) {
 		final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup);

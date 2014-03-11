@@ -52,11 +52,33 @@
             android:background="@null"
             android:src="@drawable/btn_ok_sequence" />
 
+        <ImageButton
+            android:id="@+id/return_button"
+            android:contentDescription="@string/return_to_overview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/ok_button"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="87dp"
+            android:background="@null"
+            android:src="@drawable/btn_return_to_overview" />
+
+        <ImageButton
+            android:id="@+id/another_return_button"
+            android:contentDescription="@string/return_to_overview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp"
+            android:background="@null"
+            android:src="@drawable/btn_return_to_overview" />
+
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/ok_button"
+            android:layout_toLeftOf="@+id/return_button"
             android:layout_toRightOf="@+id/sequence_image"
             android:orientation="vertical" >
 

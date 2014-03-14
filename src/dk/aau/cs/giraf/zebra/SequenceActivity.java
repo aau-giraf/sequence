@@ -44,6 +44,7 @@ public class SequenceActivity extends Activity {
 	private ImageButton okButton;
 	private ImageButton cancelButton;
     private ImageButton returnButton;
+    private ImageButton editSequenceNameButton;
 
 	private SequenceViewGroup sequenceViewGroup;
 	private EditText sequenceTitleView;
@@ -94,6 +95,7 @@ public class SequenceActivity extends Activity {
 		okButton = (ImageButton) findViewById(R.id.ok_button);
 		cancelButton = (ImageButton) findViewById(R.id.cancel_button);
         returnButton = (ImageButton) findViewById(R.id.return_button);
+        editSequenceNameButton = (ImageButton) findViewById(R.id.edit_sequence_name_button);
 
 
 		initializeTopBar();
@@ -139,17 +141,20 @@ public class SequenceActivity extends Activity {
 				if (value == false) {
 					okButton.setAlpha(0.3f);
 					cancelButton.setAlpha(0.3f);
-                    returnButton.setAlpha(1.0f);
+                    returnButton.setAlpha(0.3f);
+                    editSequenceNameButton.setAlpha(0.3f);
 				} else {
 					okButton.setAlpha(1.0f);
 					cancelButton.setAlpha(1.0f);
-                    returnButton.setAlpha(0.3f);
+                    returnButton.setAlpha(1.0f);
+                    editSequenceNameButton.setAlpha(1.0f);
 				}
 
 				// Disable/enable buttons
 				okButton.setEnabled(value);
 				cancelButton.setEnabled(value);
                 returnButton.setEnabled(value);
+                editSequenceNameButton.setEnabled(value);
 
 			}
 		});
@@ -184,10 +189,10 @@ public class SequenceActivity extends Activity {
 
 		sequenceTitleView.setEnabled(isInEditMode);
 
-		cancelButton
-				.setVisibility(isInEditMode ? View.VISIBLE : View.INVISIBLE);
+		cancelButton.setVisibility(isInEditMode ? View.VISIBLE : View.INVISIBLE);
 		okButton.setVisibility(isInEditMode ? View.VISIBLE : View.INVISIBLE);
         returnButton.setVisibility(isInEditMode ? View.INVISIBLE : View.VISIBLE);
+        editSequenceNameButton.setVisibility(isInEditMode ? View.VISIBLE : View.INVISIBLE);
 
 		sequenceViewGroup.setEditModeEnabled(isInEditMode);
 	}
@@ -510,6 +515,7 @@ public class SequenceActivity extends Activity {
 		if (!isInEditMode) {
 			okButton.setVisibility(View.INVISIBLE);
             cancelButton.setVisibility(View.INVISIBLE);
+            editSequenceNameButton.setVisibility(View.INVISIBLE);
 		}
 
         if(isInEditMode){
@@ -538,6 +544,13 @@ public class SequenceActivity extends Activity {
             @Override
             public void onClick(View v) {
                 showReturnDialog();
+            }
+        });
+
+        editSequenceNameButton.setOnClickListener(new ImageButton.OnClickListener(){
+            @Override public void onClick (View v) {
+                EditText et = (EditText)findViewById(R.id.sequence_title);
+                et.requestFocus();
             }
         });
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="700dp"
+    android:layout_width="600dp"
     android:layout_height="270dp"
     android:background="@drawable/dialog_box_bg"
     android:orientation="vertical"
@@ -17,26 +17,26 @@
         android:layout_alignParentLeft="true"
         android:layout_marginTop="20dp"
         android:gravity="center_horizontal" >
-
-        <Button
-            android:id="@+id/btn_save"
-            android:layout_width="162dp"
+		
+		<Button
+            android:id="@+id/btn_yes"
+            android:layout_width="1dp"
             android:layout_height="fill_parent"
             android:layout_weight="0.05"
+            android:layout_marginRight="25dp"
             android:background="@drawable/custom_btn"
             android:paddingBottom="10dp"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:paddingTop="10dp"
-            android:text="@string/save"
+            android:text="@string/Finished"
             android:textColor="@color/text_color"
             android:textSize="26sp"
             android:textStyle="bold" />
-
-
-        <Button
-            android:id="@+id/btn_dont_save"
-            android:layout_width="162dp"
+			
+		<Button
+            android:id="@+id/btn_no"
+            android:layout_width="1dp"
             android:layout_height="fill_parent"
             android:layout_marginLeft="25dp"
             android:layout_weight="0.05"
@@ -45,23 +45,7 @@
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:paddingTop="10dp"
-            android:text="@string/dont_save"
-            android:textColor="@color/text_color"
-            android:textSize="26sp"
-            android:textStyle="bold" />
-
-        <Button
-            android:id="@+id/btn_back_cancel"
-            android:layout_width="162dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="25dp"
-            android:layout_weight="0.05"
-            android:background="@drawable/custom_btn"
-            android:paddingBottom="10dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingTop="10dp"
-            android:text="@string/cancel"
+            android:text="@string/Go_back"
             android:textColor="@color/text_color"
             android:textSize="26sp"
             android:textStyle="bold" />
@@ -69,7 +53,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="600dp"
+        android:layout_width="500dp"
         android:layout_height="wrap_content"
         android:layout_above="@+id/btn_container"
         android:layout_centerHorizontal="true"
@@ -88,7 +72,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="@string/back_question"
+            android:text="@string/return_question"
             android:textColor="@color/text_color"
             android:textSize="28sp" />
     </LinearLayout>

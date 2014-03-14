@@ -44,7 +44,6 @@ public class SequenceActivity extends Activity {
 	private ImageButton okButton;
 	private ImageButton cancelButton;
     private ImageButton returnButton;
-    private ImageButton returnButton2;
 
 	private SequenceViewGroup sequenceViewGroup;
 	private EditText sequenceTitleView;
@@ -95,7 +94,6 @@ public class SequenceActivity extends Activity {
 		okButton = (ImageButton) findViewById(R.id.ok_button);
 		cancelButton = (ImageButton) findViewById(R.id.cancel_button);
         returnButton = (ImageButton) findViewById(R.id.return_button);
-        returnButton2 = (ImageButton) findViewById(R.id.another_return_button);
 
 
 		initializeTopBar();
@@ -141,20 +139,18 @@ public class SequenceActivity extends Activity {
 				if (value == false) {
 					okButton.setAlpha(0.3f);
 					cancelButton.setAlpha(0.3f);
-                    returnButton.setAlpha(0.3f);
-                    returnButton2.setAlpha(1.0f);
+                    returnButton.setAlpha(1.0f);
 				} else {
 					okButton.setAlpha(1.0f);
 					cancelButton.setAlpha(1.0f);
-                    returnButton.setAlpha(1.0f);
-                    returnButton2.setAlpha(0.3f);
+                    returnButton.setAlpha(0.3f);
 				}
 
 				// Disable/enable buttons
 				okButton.setEnabled(value);
 				cancelButton.setEnabled(value);
                 returnButton.setEnabled(value);
-                returnButton2.setEnabled(value);
+
 			}
 		});
 	}
@@ -191,8 +187,7 @@ public class SequenceActivity extends Activity {
 		cancelButton
 				.setVisibility(isInEditMode ? View.VISIBLE : View.INVISIBLE);
 		okButton.setVisibility(isInEditMode ? View.VISIBLE : View.INVISIBLE);
-        returnButton.setVisibility(isInEditMode ? View.VISIBLE : View.INVISIBLE);
-        returnButton2.setVisibility(isInEditMode ? View.INVISIBLE : View.VISIBLE);
+        returnButton.setVisibility(isInEditMode ? View.INVISIBLE : View.VISIBLE);
 
 		sequenceViewGroup.setEditModeEnabled(isInEditMode);
 	}
@@ -244,6 +239,38 @@ public class SequenceActivity extends Activity {
 		dialog.show();
 	}
 
+    private void showReturnDialog () {
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.return_dialog_box);
+        dialog.getWindow().setBackgroundDrawable(
+                new ColorDrawable(Color.TRANSPARENT));
+
+        final Button yesButton = (Button) dialog.findViewById(R.id.btn_yes);
+        yesButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                finish();
+            }
+        });
+
+
+        final Button noButton = (Button)dialog.findViewById(R.id.btn_no);
+        noButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+
+    }
+
+/*
 	private void showDiscardDialog() {
 
 		final Dialog dialog = new Dialog(this);
@@ -281,6 +308,7 @@ public class SequenceActivity extends Activity {
 		dialog.show();
 	}
 
+*/
 	@Override
 	public void onBackPressed() {
 		if (isInEditMode) {
@@ -480,23 +508,14 @@ public class SequenceActivity extends Activity {
 		childName.setText(child.getName());
 
 		if (!isInEditMode) {
-			cancelButton.setVisibility(View.INVISIBLE);
 			okButton.setVisibility(View.INVISIBLE);
-            returnButton.setVisibility(View.INVISIBLE);
+            cancelButton.setVisibility(View.INVISIBLE);
 		}
 
-        if (isInEditMode) {
-            returnButton2.setVisibility(View.INVISIBLE);
+        if(isInEditMode){
+            returnButton.setVisibility(View.INVISIBLE);
         }
 
-		cancelButton.setOnClickListener(new ImageButton.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				showDiscardDialog();
-			}
-
-		});
 
 		okButton.setOnClickListener(new ImageButton.OnClickListener() {
 
@@ -506,7 +525,7 @@ public class SequenceActivity extends Activity {
 			}
 		});
 
-        returnButton.setOnClickListener(new ImageButton.OnClickListener() {
+        cancelButton.setOnClickListener(new ImageButton.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -514,11 +533,11 @@ public class SequenceActivity extends Activity {
             }
         });
 
-        returnButton2.setOnClickListener(new ImageButton.OnClickListener() {
+        returnButton.setOnClickListener(new ImageButton.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                showBackDialog();
+                showReturnDialog();
             }
         });
 

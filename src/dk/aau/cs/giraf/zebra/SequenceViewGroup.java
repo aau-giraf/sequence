@@ -311,10 +311,6 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		/*
-		 * TODO: What happens when we insist on larger space than parent will permit? (Problem outside of scrollers?)
-		 *
-		 * Is this even possible? wait for database synchronization to test this!
-		 *
 		 * This method dictates what size all children of the given parent must have. The method is a general method, meaning we ignore measure mode.
 		 * The ViewGroup requires all children to have the same size, itemWidth and itemHeight as the parent.
 		 */
@@ -362,11 +358,6 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 		
 		//We want to take as much width as possible.
 		if (getParent().getParent() instanceof ViewGroup) {
-
-			//TODO: The view group is laying within another framelayout.
-
-            //
-
 			ViewGroup parent = (ViewGroup)getParent().getParent();
 			MarginLayoutParams params = (MarginLayoutParams)getLayoutParams();
 			
@@ -654,7 +645,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 
 	@Override
 	public View getSelectedView() {
-		return null; //TODO???
+		return null;
 	}
 
 	@Override
@@ -678,7 +669,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 	
 	@Override
 	public void setSelection(int position) {
-		return; //TODO ????
+		return;
 	}
 	
 	private class AdapterDataSetObserver extends DataSetObserver {
@@ -712,7 +703,6 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 		long timeBefore = -1;
 		
 		private View getScroller(View viewGroup) {
-			// TODO: This is ridiculous. The viewgroup must lay in a framelayout in order for the scroll view to allow margin.
 			return (View)viewGroup.getParent().getParent();
 		}
 		

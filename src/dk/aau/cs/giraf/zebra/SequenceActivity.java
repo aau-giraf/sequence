@@ -125,13 +125,14 @@ public class SequenceActivity extends Activity {
 			public void onFocusChange(View v, boolean hasFocus) {
 				if (hasFocus) {
 					setDeleteButtonVisible(false);
+                    EditText sequenceTitle = (EditText) findViewById(R.id.sequence_title);
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.showSoftInput(sequenceTitle, InputMethodManager.SHOW_IMPLICIT);
 				} else {
 					// Closing the keyboard when the text field is not active
 					// anymore
 					InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-					in.hideSoftInputFromWindow(v.getWindowToken(),
-							InputMethodManager.HIDE_NOT_ALWAYS);
-
+					in.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 					setDeleteButtonVisible(true);
 				}
 			}
@@ -546,7 +547,7 @@ public class SequenceActivity extends Activity {
                 showReturnDialog();
             }
         });
-
+        //When clicking the button, the cursor is placed in the Sequence title field.
         editSequenceNameButton.setOnClickListener(new ImageButton.OnClickListener(){
             @Override public void onClick (View v) {
                 EditText et = (EditText)findViewById(R.id.sequence_title);

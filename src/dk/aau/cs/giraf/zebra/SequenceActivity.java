@@ -51,8 +51,6 @@ public class SequenceActivity extends Activity {
 
 	private ImageView sequenceImageView;
 
-	private Child child;
-
 	private boolean isInEditMode;
 	private boolean isNew;
 
@@ -79,7 +77,6 @@ public class SequenceActivity extends Activity {
 		isNew = extras.getBoolean("new");
 		isInEditMode = extras.getBoolean("editMode");
 
-		child = ZebraApplication.getChildFromId(profileId);
 		originalSequence = MainActivity.selectedChild.getSequenceFromId(sequenceId);
 
 		// Get a clone of the sequence so the original sequence is not modified

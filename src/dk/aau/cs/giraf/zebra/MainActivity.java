@@ -125,7 +125,7 @@ public class MainActivity extends Activity {
     		
     		for (Profile p : childProfiles) {
     			if (p.getId()==childId) {
-                    String name = p.getFirstname() + " " + p.getSurname();
+                    String name = p.getName();
                     Drawable picture = Drawable.createFromPath(p.getPicture());
                     Child c = new Child(p.getId(), name, picture);
                     selectedChild = c;

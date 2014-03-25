@@ -23,7 +23,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageButton;
-import android.widget.ListView;
+//import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 // import android.widget.Toast;
@@ -38,10 +38,10 @@ import dk.aau.cs.giraf.zebra.serialization.SequenceFileStore;
 
 public class MainActivity extends Activity {
 
-	private List<Child> children = ZebraApplication.getChildren();
+	//private List<Child> children = ZebraApplication.getChildren();
 	private List<Sequence> sequences = new ArrayList<Sequence>();
 	
-	private ChildAdapter childAdapter;
+	//private ChildAdapter childAdapter;
 	
 	private GridView sequenceGrid;
 	private boolean isInEditMode = false;
@@ -50,27 +50,27 @@ public class MainActivity extends Activity {
 	
 	private SequenceListAdapter sequenceAdapter;
 	
-	Child selectedChild;
+	public static Child selectedChild;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		childAdapter = new ChildAdapter(this, children);
+		//childAdapter = new ChildAdapter(this, children);
 		
-		ListView childList = (ListView)findViewById(R.id.child_list);
-		childList.setAdapter(childAdapter);
+		//ListView childList = (ListView)findViewById(R.id.child_list);
+		//childList.setAdapter(childAdapter);
 
 		sequenceAdapter = setupAdapter();
 		
 		sequenceGrid = (GridView)findViewById(R.id.sequence_grid);
 		sequenceGrid.setAdapter(sequenceAdapter);
 		
-		// Load children from the guardian
-		getChildren();
+		// Load the (from launcher) selected child
+		setChild();
 		
-		childList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+		/*childList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 				
@@ -85,7 +85,7 @@ public class MainActivity extends Activity {
 				//sequenceGridView.smoothScrollToPositionFromTop(0, 0, 0);
 				
 			}
-		});
+		});*/
 		
 		//Load Sequence
 		sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -146,10 +146,8 @@ public class MainActivity extends Activity {
 		});
 	}
 
-	private void getChildren() {
-		children.clear();
+	private void setChild() {
 		sequences.clear();
-
 		Bundle extras = getIntent().getExtras();
         if (extras != null) {        	
         	guardianId = extras.getLong("currentGuardianID");
@@ -157,30 +155,25 @@ public class MainActivity extends Activity {
         	
     		Helper helper = new Helper(this);
     		Profile guardian = helper.profilesHelper.getProfileById(guardianId);
-    		
     		List<Profile> childProfiles = helper.profilesHelper.getChildrenByGuardian(guardian);
-    		Collections.sort(childProfiles, new Comparator<Profile>() {
+    		/*Collections.sort(childProfiles, new Comparator<Profile>() {
     	        @Override
     	        public int compare(Profile p1, Profile p2) {
     	            return p1.getFirstname().compareToIgnoreCase(p2.getFirstname());
     	        }
-    		});
+    		});*/
     		
     		for (Profile p : childProfiles) {
-    			
-    			String name = p.getFirstname() + " " + p.getSurname();
-    			Drawable picture = Drawable.createFromPath(p.getPicture());
-    			
-    			Child c = new Child(p.getId(), name, picture);
-    			children.add(c);
-    			
-    			if (childId == p.getId()) {
-    				selectedChild = c;
-    			}
+    			if (p.getId()==childId) {
+                    String name = p.getFirstname() + " " + p.getSurname();
+                    Drawable picture = Drawable.createFromPath(p.getPicture());
+                    Child c = new Child(p.getId(), name, picture);
+                    selectedChild = c;
+                }
     		}
     		loadSequences();
     		refreshSelectedChild();
-        }
+        }/*
         else {
         	//TODO: UNCOMMENT WHEN LAUNCHER IS READY - Displays toast and closes App if not launched from launcher
 //        	Toast toast = Toast.makeText(this, "Zebra must be started from the GIRAF Launcher", Toast.LENGTH_LONG);
@@ -214,7 +207,7 @@ public class MainActivity extends Activity {
     		loadSequences();
     		refreshSelectedChild();
         	
-        }
+        } */
 	}
 	
 	private SequenceListAdapter setupAdapter() {
@@ -271,7 +264,7 @@ public class MainActivity extends Activity {
 				dialog.dismiss();
 				selectedChild.getSequences().remove(position);
 				SequenceFileStore.writeSequences(MainActivity.this, selectedChild, selectedChild.getSequences());
-				childAdapter.notifyDataSetChanged();
+				//childAdapter.notifyDataSetChanged();
 				refreshSelectedChild();
 
 			}
@@ -293,17 +286,17 @@ public class MainActivity extends Activity {
 	
 
 	private void loadSequences() {
-		for (Child child : children) {
-			List<Sequence> list = SequenceFileStore.getSequences(this, child);
-			child.setSequences(list);
-		}
+		//for (Child child : selectedChild) {
+			List<Sequence> list = SequenceFileStore.getSequences(this, selectedChild);
+			selectedChild.setSequences(list);
+		//}
 	}
 	
 	public void refreshSelectedChild() {
 		((TextView)findViewById(R.id.child_name)).setText(selectedChild.getName());
-		
 		sequences.clear();
 		sequences.addAll(selectedChild.getSequences());
+        loadSequences();
 		sequenceAdapter.notifyDataSetChanged();
 	}
 
@@ -328,7 +321,7 @@ public class MainActivity extends Activity {
 
 		super.onResume();
 
-		childAdapter.notifyDataSetChanged();
+		//childAdapter.notifyDataSetChanged();
 		refreshSelectedChild();
 
 		// Remove highlighting from all images

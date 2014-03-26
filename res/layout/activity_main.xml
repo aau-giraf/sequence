@@ -54,7 +54,7 @@
         android:layout_marginTop="-6dp"
         android:baselineAligned="false" >
 
-        <dk.aau.cs.giraf.zebra.BounceListView
+        <!--<dk.aau.cs.giraf.zebra.BounceListView
             android:id="@+id/child_list"
             android:layout_width="375dp"
             android:layout_height="match_parent"
@@ -62,7 +62,7 @@
             android:dividerHeight="1dp"
             android:fadeScrollbars="false"
             android:listSelector="@drawable/list_selector" >
-        </dk.aau.cs.giraf.zebra.BounceListView>
+        </dk.aau.cs.giraf.zebra.BounceListView> -->
 
         <GridView
             android:id="@+id/sequence_grid"
@@ -70,7 +70,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:numColumns="4"
+            android:numColumns="6"
             android:listSelector="#00000000"
             android:fadeScrollbars="false">
         </GridView>

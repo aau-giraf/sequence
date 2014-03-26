@@ -10,49 +10,6 @@
     android:paddingBottom="25dp" >
 
     <LinearLayout
-        android:id="@+id/btn_container"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginTop="20dp"
-        android:gravity="center_horizontal" >
-		
-		<Button
-            android:id="@+id/btn_yes"
-            android:layout_width="1dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="0.05"
-            android:layout_marginRight="25dp"
-            android:background="@drawable/custom_btn"
-            android:paddingBottom="10dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingTop="10dp"
-            android:text="@string/Finished"
-            android:textColor="@color/text_color"
-            android:textSize="26sp"
-            android:textStyle="bold" />
-			
-		<Button
-            android:id="@+id/btn_no"
-            android:layout_width="1dp"
-            android:layout_height="fill_parent"
-            android:layout_marginLeft="25dp"
-            android:layout_weight="0.05"
-            android:background="@drawable/custom_btn"
-            android:paddingBottom="10dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingTop="10dp"
-            android:text="@string/Go_back"
-            android:textColor="@color/text_color"
-            android:textSize="26sp"
-            android:textStyle="bold" />
-
-    </LinearLayout>
-
-    <LinearLayout
         android:layout_width="500dp"
         android:layout_height="wrap_content"
         android:layout_above="@+id/btn_container"

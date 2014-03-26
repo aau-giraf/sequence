@@ -25,6 +25,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
+
+import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.zebra.PictogramView.OnDeleteClickListener;
 import dk.aau.cs.giraf.zebra.SequenceAdapter.OnAdapterGetViewListener;
 import dk.aau.cs.giraf.zebra.SequenceViewGroup.OnNewButtonClickedListener;
@@ -195,6 +197,17 @@ public class SequenceActivity extends Activity {
 
 		sequenceViewGroup.setEditModeEnabled(isInEditMode);
 	}
+/*
+    private void showBackDialog(View v){
+
+        GDialog returnDialog = GDialog(v.getContext(),
+                R.drawable.ic_launcher,
+                "Afslut Sekvens"
+                "Du er ved at afslutte sekvensen. Vil du gemme dine ændringer?",
+
+        );
+    }
+*/
 
 	private void showBackDialog() {
 
@@ -242,77 +255,24 @@ public class SequenceActivity extends Activity {
 
 		dialog.show();
 	}
-
-    private void showReturnDialog () {
-        final Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.return_dialog_box);
-        dialog.getWindow().setBackgroundDrawable(
-                new ColorDrawable(Color.TRANSPARENT));
-
-        final Button yesButton = (Button) dialog.findViewById(R.id.btn_yes);
-        yesButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                finish();
-            }
-        });
-
-
-        final Button noButton = (Button)dialog.findViewById(R.id.btn_no);
-        noButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-
-        dialog.show();
-
-    }
-
 /*
-	private void showDiscardDialog() {
+    public void showReturnDialog(View v) {
+        GDialog returnDialog = new GDialog(v.getContext(),
+                R.drawable.ic_launcher,
+                "Afslut Sekvens",
+                "Du er ved at afslutte sekvensen",
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        finish();
+                    }
+                });
 
-		final Dialog dialog = new Dialog(this);
-		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		dialog.setContentView(R.layout.discard_dialog_box);
-		dialog.getWindow().setBackgroundDrawable(
-				new ColorDrawable(Color.TRANSPARENT));
 
-		final Button undoButton = (Button) dialog.findViewById(R.id.btn_undo_changes);
-		undoButton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				dialog.dismiss();
-
-				// If the sequence is new, the sequence will be deleted.
-				if (isNew) {
-					child.getSequences().remove(originalSequence);
-					finish();
-				} else {
-					discardChanges();
-				}
-			}
-		});
-
-		final Button cancelButton = (Button) dialog.findViewById(R.id.btn_discard_cancel);
-		cancelButton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				dialog.dismiss();
-			}
-		});
-
-		dialog.show();
-	}
-
+        returnDialog.show();
+    }
 */
+
 	@Override
 	public void onBackPressed() {
 		if (isInEditMode) {
@@ -542,7 +502,8 @@ public class SequenceActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                showReturnDialog();
+//                showReturnDialog(v);
+                  showBackDialog();
             }
         });
         //When clicking the button, the cursor is placed in the Sequence title field.

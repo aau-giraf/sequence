@@ -1,8 +1,8 @@
 package dk.aau.cs.giraf.zebra;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageButton;
@@ -149,8 +149,8 @@ public class PictogramView extends LinearLayout {
 		return isInEditMode;
 	}
 
-	public void setImage(Drawable drawable) {
-		pictogram.setImageDrawable(drawable);
+	public void setImage(Bitmap bitmap) {
+		pictogram.setImageBitmap(bitmap);
 	}
 	
 	public void setTitle(String newTitle)

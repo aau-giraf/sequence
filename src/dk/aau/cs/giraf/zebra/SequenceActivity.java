@@ -103,7 +103,7 @@ public class SequenceActivity extends Activity {
 			sequenceImageView.setImageDrawable(getResources().getDrawable(
 					R.drawable.sequence_placeholder));
 		} else {
-			sequenceImageView.setImageDrawable(sequence.getImage(this));
+			sequenceImageView.setImageBitmap(sequence.getImage(this));
 		}
 
 		sequenceImageView.setOnClickListener(new ImageView.OnClickListener() {
@@ -433,10 +433,10 @@ public class SequenceActivity extends Activity {
 	}
 
 	private void OnNewPictogramResult(Intent data) {
-		long[] checkoutIds = data.getExtras().getLongArray(
+		int[] checkoutIds = data.getExtras().getIntArray(
 				PICTO_INTENT_CHECKOUT_ID);
 
-		for (long id : checkoutIds) {
+		for (int id : checkoutIds) {
 			Pictogram pictogram = new Pictogram();
 			pictogram.setPictogramId(id);
 			sequence.addPictogramAtEnd(pictogram);
@@ -444,7 +444,7 @@ public class SequenceActivity extends Activity {
 
 		if (sequence.getImageId() == 0 && checkoutIds.length > 0) {
 			sequence.setImageId(checkoutIds[0]);
-			sequenceImageView.setImageDrawable(sequence.getImage(this));
+			sequenceImageView.setImageBitmap(sequence.getImage(this));
 		}
 
 		adapter.notifyDataSetChanged();
@@ -454,7 +454,7 @@ public class SequenceActivity extends Activity {
 		if (pictogramEditPos < 0)
 			return;
 
-		long[] checkoutIds = data.getExtras().getLongArray(
+		int[] checkoutIds = data.getExtras().getIntArray(
 				PICTO_INTENT_CHECKOUT_ID);
 
 		if (checkoutIds.length == 0)
@@ -465,13 +465,13 @@ public class SequenceActivity extends Activity {
 	}
 
 	private void OnEditSequenceImageResult(Intent data) {
-		long[] checkoutIds = data.getExtras().getLongArray(
+		int[] checkoutIds = data.getExtras().getIntArray(
 				PICTO_INTENT_CHECKOUT_ID);
 
 		if (checkoutIds.length == 0)
 			return;
 		sequence.setImageId(checkoutIds[0]);
-		sequenceImageView.setImageDrawable(sequence.getImage(this));
+		sequenceImageView.setImageBitmap(sequence.getImage(this));
 	}
 
 	private void initializeTopBar() {

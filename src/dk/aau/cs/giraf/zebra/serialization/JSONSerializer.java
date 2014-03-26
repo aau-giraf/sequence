@@ -85,7 +85,7 @@ public class JSONSerializer {
 	private Sequence readSequence(JSONObject jsonSequence) throws JSONException {
 		long sequenceId = jsonSequence.getLong(KEY_SEQUENCE_ID);
 		String title = jsonSequence.getString(KEY_SEQUENCE_TITLE);
-		long imageId = jsonSequence.getLong(KEY_SEQUENCE_IMAGE_ID);
+		int imageId = jsonSequence.getInt(KEY_SEQUENCE_IMAGE_ID);
 		
 		Sequence sequence = new Sequence();
 		sequence.setSequenceId(sequenceId);
@@ -118,7 +118,7 @@ public class JSONSerializer {
 	private Pictogram readPictogram(JSONObject jsonPictogram)
 			throws JSONException {
 		Pictogram pictogram = new Pictogram();
-		pictogram.setPictogramId(jsonPictogram.getLong(KEY_PICTOGRAM_ID));
+		pictogram.setPictogramId(jsonPictogram.getInt(KEY_PICTOGRAM_ID));
 		return pictogram;
 	}
 	

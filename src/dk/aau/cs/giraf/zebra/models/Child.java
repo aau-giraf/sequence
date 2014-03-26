@@ -3,18 +3,18 @@ package dk.aau.cs.giraf.zebra.models;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.graphics.drawable.Drawable;
+import android.graphics.Bitmap;
 
 
 public class Child {
 	
 	private long profileId;
 	private String name;
-	private Drawable picture;
+	private Bitmap picture;
 	
 	private List<Sequence> sequences = new ArrayList<Sequence>();
 	
-	public Child(long profileId, String name, Drawable picture) {
+	public Child(long profileId, String name, Bitmap picture) {
 		this.profileId = profileId;
 		this.name = name;
 		this.picture = picture;
@@ -27,11 +27,7 @@ public class Child {
 	public String getName() {
 		return name;
 	}
-	
-	public Drawable getPicture() {
-		return picture;
-	}
-	
+
 	public List<Sequence> getSequences() {
 		return sequences;
 	}

@@ -53,8 +53,6 @@ public class SequenceActivity extends Activity {
 
 	private ImageView sequenceImageView;
 
-	private Child child;
-
 	private boolean isInEditMode;
 	private boolean isNew;
 
@@ -81,8 +79,7 @@ public class SequenceActivity extends Activity {
 		isNew = extras.getBoolean("new");
 		isInEditMode = extras.getBoolean("editMode");
 
-		child = ZebraApplication.getChildFromId(profileId);
-		originalSequence = child.getSequenceFromId(sequenceId);
+		originalSequence = MainActivity.selectedChild.getSequenceFromId(sequenceId);
 
 		// Get a clone of the sequence so the original sequence is not modified
 		sequence = originalSequence.getClone();
@@ -127,12 +124,13 @@ public class SequenceActivity extends Activity {
 			public void onFocusChange(View v, boolean hasFocus) {
 				if (hasFocus) {
 					setDeleteButtonVisible(false);
+
+                    // Forces the keyboard to pop up when using the editSequenceNameButton
                     EditText sequenceTitle = (EditText) findViewById(R.id.sequence_title);
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.showSoftInput(sequenceTitle, InputMethodManager.SHOW_IMPLICIT);
 				} else {
-					// Closing the keyboard when the text field is not active
-					// anymore
+					// Closing the keyboard when the text field is not active anymore
 					InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 					in.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 					setDeleteButtonVisible(true);
@@ -176,14 +174,14 @@ public class SequenceActivity extends Activity {
 		setEditModeEnabled(false);
 		
 		if (isNew && sequence.getPictograms().size() == 0) {
-			child.getSequences().remove(originalSequence);
+			MainActivity.selectedChild.getSequences().remove(originalSequence);
 		}
 		else {
 			// Saving changes
 			sequence.setTitle(sequenceTitleView.getText().toString());
 			originalSequence.copyFromSequence(sequence);
 	
-			SequenceFileStore.writeSequences(this, child, child.getSequences());
+			SequenceFileStore.writeSequences(this, MainActivity.selectedChild, MainActivity.selectedChild.getSequences());
 		}
 	}
 
@@ -240,7 +238,7 @@ public class SequenceActivity extends Activity {
 
 				// If the sequence is new, the sequence will be deleted.
 				if (isNew) {
-					child.getSequences().remove(originalSequence);
+					MainActivity.selectedChild.getSequences().remove(originalSequence);
 				}
 				finish();
 			}
@@ -471,7 +469,7 @@ public class SequenceActivity extends Activity {
 		});
 
 		TextView childName = (TextView) findViewById(R.id.child_name);
-		childName.setText(child.getName());
+		childName.setText(MainActivity.selectedChild.getName());
 
 		if (!isInEditMode) {
 			okButton.setVisibility(View.INVISIBLE);
@@ -560,7 +558,7 @@ public class SequenceActivity extends Activity {
 	private void callPictoAdmin(int modeId) {
 		Intent intent = new Intent();
 		intent.setComponent(new ComponentName(PICTO_ADMIN_PACKAGE, PICTO_ADMIN_CLASS));
-		intent.putExtra("currentChildID", child.getProfileId());
+		intent.putExtra("currentChildID", MainActivity.selectedChild.getProfileId());
 		intent.putExtra("currentGuardianID", guardianId);
 		
 		if (modeId == PICTO_NEW_PICTOGRAM_CALL)

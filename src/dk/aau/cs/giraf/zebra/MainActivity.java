@@ -1,8 +1,6 @@
 package dk.aau.cs.giraf.zebra;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import android.app.ActionBar;
@@ -23,7 +21,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 // import android.widget.Toast;
@@ -37,55 +34,24 @@ import dk.aau.cs.giraf.zebra.serialization.SequenceFileStore;
 
 
 public class MainActivity extends Activity {
-
-	private List<Child> children = ZebraApplication.getChildren();
 	private List<Sequence> sequences = new ArrayList<Sequence>();
-	
-	private ChildAdapter childAdapter;
-	
 	private GridView sequenceGrid;
 	private boolean isInEditMode = false;
-	
 	private long guardianId;
-	
 	private SequenceListAdapter sequenceAdapter;
-	
-	Child selectedChild;
+	public static Child selectedChild;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		childAdapter = new ChildAdapter(this, children);
-		
-		ListView childList = (ListView)findViewById(R.id.child_list);
-		childList.setAdapter(childAdapter);
-
 		sequenceAdapter = setupAdapter();
-		
 		sequenceGrid = (GridView)findViewById(R.id.sequence_grid);
 		sequenceGrid.setAdapter(sequenceAdapter);
 		
-		// Load children from the guardian
-		getChildren();
-		
-		childList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-				
-				selectedChild = childAdapter.getItem(arg2);
-				refreshSelectedChild();
-
-                //TODO:These lines of code doesn't seem to have an effect on the program
-
-				// final GridView sequenceGridView = ((GridView)findViewById(R.id.sequence_grid));
-
-                //Auto scrolls to the top of the gridview every time
-				//sequenceGridView.smoothScrollToPositionFromTop(0, 0, 0);
-				
-			}
-		});
+		// Load the (from launcher) selected child
+		setChild();
 		
 		//Load Sequence
 		sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -145,11 +111,9 @@ public class MainActivity extends Activity {
 			}
 		});
 	}
-
-	private void getChildren() {
-		children.clear();
+    //TODO: This can possibly be done better if we can get the (from launcher) selected child using context
+	private void setChild() {
 		sequences.clear();
-
 		Bundle extras = getIntent().getExtras();
         if (extras != null) {        	
         	guardianId = extras.getLong("currentGuardianID");
@@ -157,64 +121,27 @@ public class MainActivity extends Activity {
         	
     		Helper helper = new Helper(this);
     		Profile guardian = helper.profilesHelper.getProfileById(guardianId);
-    		
     		List<Profile> childProfiles = helper.profilesHelper.getChildrenByGuardian(guardian);
-    		Collections.sort(childProfiles, new Comparator<Profile>() {
-    	        @Override
-    	        public int compare(Profile p1, Profile p2) {
-    	            return p1.getFirstname().compareToIgnoreCase(p2.getFirstname());
-    	        }
-    		});
     		
     		for (Profile p : childProfiles) {
-    			
-    			String name = p.getFirstname() + " " + p.getSurname();
-    			Drawable picture = Drawable.createFromPath(p.getPicture());
-    			
-    			Child c = new Child(p.getId(), name, picture);
-    			children.add(c);
-    			
-    			if (childId == p.getId()) {
-    				selectedChild = c;
-    			}
+    			if (p.getId()==childId) {
+                    String name = p.getName();
+                    Drawable picture = Drawable.createFromPath(p.getPicture());
+                    Child c = new Child(p.getId(), name, picture);
+                    selectedChild = c;
+                }
     		}
     		loadSequences();
     		refreshSelectedChild();
         }
-        else {
-        	//TODO: UNCOMMENT WHEN LAUNCHER IS READY - Displays toast and closes App if not launched from launcher
+        //TODO: UNCOMMENT WHEN LAUNCHER IS READY - Displays toast and closes App if not launched from launcher
+//        else {
 //        	Toast toast = Toast.makeText(this, "Zebra must be started from the GIRAF Launcher", Toast.LENGTH_LONG);
 //        	toast.show();
 //
 //        	finish();
         	
-        	//TODO: REMOVE THE FOLLOWING WHEN ADMIN IS READY - rewrite code to adjust to the admin program (this code finds the first guardian and uses it in order to have a guardian)
-       		Helper helper = new Helper(this);
 
-   	    	Profile guardian = helper.profilesHelper.getGuardians().get(0);
-   	    	guardianId = guardian.getId();
-
-    		List<Profile> childProfiles = helper.profilesHelper.getChildrenByGuardian(guardian);
-    		Collections.sort(childProfiles, new Comparator<Profile>() {
-    	        @Override
-    	        public int compare(Profile p1, Profile p2) {
-    	            return p1.getFirstname().compareToIgnoreCase(p2.getFirstname());
-    	        }
-    		});
-    		
-    		for (Profile p : childProfiles) {
-    			
-    			String name = p.getFirstname() + " " + p.getSurname();
-    			Drawable picture = Drawable.createFromPath(p.getPicture());
-    			
-    			Child c = new Child(p.getId(), name, picture);
-    			children.add(c);
-    		}
-    		selectedChild = children.get(0);
-    		loadSequences();
-    		refreshSelectedChild();
-        	
-        }
 	}
 	
 	private SequenceListAdapter setupAdapter() {
@@ -271,7 +198,6 @@ public class MainActivity extends Activity {
 				dialog.dismiss();
 				selectedChild.getSequences().remove(position);
 				SequenceFileStore.writeSequences(MainActivity.this, selectedChild, selectedChild.getSequences());
-				childAdapter.notifyDataSetChanged();
 				refreshSelectedChild();
 
 			}
@@ -293,17 +219,15 @@ public class MainActivity extends Activity {
 	
 
 	private void loadSequences() {
-		for (Child child : children) {
-			List<Sequence> list = SequenceFileStore.getSequences(this, child);
-			child.setSequences(list);
-		}
+			List<Sequence> list = SequenceFileStore.getSequences(this, selectedChild);
+			selectedChild.setSequences(list);
 	}
 	
 	public void refreshSelectedChild() {
 		((TextView)findViewById(R.id.child_name)).setText(selectedChild.getName());
-		
 		sequences.clear();
 		sequences.addAll(selectedChild.getSequences());
+        loadSequences();
 		sequenceAdapter.notifyDataSetChanged();
 	}
 
@@ -327,8 +251,6 @@ public class MainActivity extends Activity {
 	protected void onResume() {
 
 		super.onResume();
-
-		childAdapter.notifyDataSetChanged();
 		refreshSelectedChild();
 
 		// Remove highlighting from all images

@@ -24,6 +24,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
@@ -56,6 +58,8 @@ public class SequenceActivity extends Activity {
 
 	private ImageView sequenceImageView;
 
+    private int appBgColor;
+
 	private boolean isInEditMode;
 	private boolean isNew;
 
@@ -81,6 +85,7 @@ public class SequenceActivity extends Activity {
 		guardianId = extras.getLong("guardianId");
 		isNew = extras.getBoolean("new");
 		isInEditMode = extras.getBoolean("editMode");
+        appBgColor = extras.getInt("appBackgroundColor");
 
 		originalSequence = MainActivity.selectedChild.getSequenceFromId(sequenceId);
 
@@ -98,6 +103,11 @@ public class SequenceActivity extends Activity {
 		cancelButton = (GButton) findViewById(R.id.cancel_button);
         returnButton = (GButton) findViewById(R.id.return_button);
         editSequenceNameButton = (GButton) findViewById(R.id.edit_sequence_name_button);
+
+        LinearLayout bgLayout = (LinearLayout) findViewById(R.id.parent_container);
+        bgLayout.setBackgroundColor(appBgColor);
+        RelativeLayout topbarLayout = (RelativeLayout) findViewById(R.id.sequence_bar);
+        topbarLayout.setBackgroundColor(appBgColor);
 
 
 		initializeTopBar();

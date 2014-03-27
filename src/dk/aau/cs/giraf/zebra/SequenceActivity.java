@@ -279,12 +279,12 @@ public class SequenceActivity extends Activity {
 
         returnDialog.show();
     }
-/*
+
     public void showExitDialog(View v) {
         MyDialog exitEditting = new MyDialog(v.getContext());
         exitEditting.show();
     }
-*/
+
 /*
 	@Override
 	public void onBackPressed() {
@@ -294,7 +294,7 @@ public class SequenceActivity extends Activity {
 			super.onBackPressed();
 		}
 	}
-
+*/
     public class MyDialog extends GDialog {
 
         public MyDialog(Context context) {
@@ -342,7 +342,7 @@ public class SequenceActivity extends Activity {
         }
 
     }
-*/
+
 
 	private SequenceViewGroup setupSequenceViewGroup(
 			final SequenceAdapter adapter) {

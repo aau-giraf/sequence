@@ -303,6 +303,7 @@ public class SequenceActivity extends Activity {
         public MyDialog(Context context) {
 
             super(context);
+            setContentView(R.layout.exit_sequence_dialog);
 
             GButton saveChanges;
             GButton discardChanges;

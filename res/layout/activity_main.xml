@@ -4,14 +4,13 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:orientation="vertical"
-	android:background="@drawable/main_gradient_bg"
-	android:focusableInTouchMode="true" >
+
+    android:focusableInTouchMode="true" >
 
     <RelativeLayout
         android:id="@+id/sequence_bar"
         android:layout_width="match_parent"
         android:layout_height="140sp"
-        android:background="@drawable/main_topbar_gradient_bg"
         android:orientation="horizontal" >
 
         <TextView
@@ -57,7 +56,7 @@
         android:layout_marginTop="-6dp"
         android:baselineAligned="false" >
 
-<GridView
+<dk.aau.cs.giraf.gui.GGridView
             android:id="@+id/sequence_grid"
             android:layout_width="0dip"
             android:layout_height="match_parent"
@@ -66,7 +65,7 @@
             android:numColumns="5"
             android:listSelector="#00000000"
             android:fadeScrollbars="false">
-        </GridView>
+        </dk.aau.cs.giraf.gui.GGridView>
     </LinearLayout>
 
 </LinearLayout>

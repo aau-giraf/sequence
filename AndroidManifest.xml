@@ -20,9 +20,6 @@
             android:screenOrientation="landscape" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <!-- This should be the ONLY .LAUNCHER! Otherwise you get two icons for the app when compiling.
-                     If this still happens, check the dependencies. Any .LAUNCHER there will cause the same error. -->
-                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity

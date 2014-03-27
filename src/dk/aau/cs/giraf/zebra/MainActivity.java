@@ -43,7 +43,6 @@ public class MainActivity extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		Bundle LauncherData = getIntent().getExtras();
 
         super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
@@ -52,14 +51,15 @@ public class MainActivity extends Activity {
 		sequenceGrid = (GridView)findViewById(R.id.sequence_grid);
 		sequenceGrid.setAdapter(sequenceAdapter);
 
+        // Loads the (from launcher) selected child
+        setChild();
+
+        Bundle LauncherData = getIntent().getExtras();
         appBgColor = LauncherData.getInt("appBackgroundColor");
         LinearLayout BgLayout = (LinearLayout) findViewById(R.id.parent_container);
         BgLayout.setBackgroundColor(appBgColor);
         RelativeLayout topbarLayout = (RelativeLayout) findViewById(R.id.sequence_bar);
         topbarLayout.setBackgroundColor(appBgColor);
-
-		// Loads the (from launcher) selected child
-		setChild();
 
 		//Loads a sequence when clicked
 		sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -121,29 +121,22 @@ public class MainActivity extends Activity {
 	private void setChild() {
 		sequences.clear();
 		Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-        	guardianId = extras.getInt("currentGuardianID");
-        	/*int childId = extras.getInt("currentChildID");
-    		Helper helper = new Helper(this);
-    		Profile guardian = helper.profilesHelper.getProfileById(guardianId);
-    		List<Profile> childProfiles = helper.profilesHelper.getChildrenByGuardian(guardian);
-    		
-    		for (Profile p : childProfiles) {
-    			if (p.getId()==childId) {
-                    String name = p.getName();
-                    Bitmap picture = p.getImage();*/
-                    Child c = new Child(0, "Hamun Leth Laustsen", null);
-                    selectedChild = c;
+        guardianId = extras.getInt("currentGuardianID");
+        /*int childId = extras.getInt("currentChildID");
+    	Helper helper = new Helper(this);
+   		Profile guardian = helper.profilesHelper.getProfileById(guardianId);
+   		List<Profile> childProfiles = helper.profilesHelper.getChildrenByGuardian(guardian);
+
+    	for (Profile p : childProfiles) {
+    		if (p.getId()==childId) {
+                String name = p.getName();
+                Bitmap picture = p.getImage();*/
+                Child c = new Child(0, "Hamun Leth Laustsen", null);
+                selectedChild = c;
                 //}
-    		loadSequences();
-    		refreshSelectedChild();
+   		loadSequences();
+   		refreshSelectedChild();
         }
-        else{
-            Toast toast = Toast.makeText(this, "Sequence must be started from the GIRAF Launcher", Toast.LENGTH_LONG);
-            toast.show();
-            finish();
-        }
-	}
 	
 	private SequenceListAdapter setupAdapter() {
 		final SequenceListAdapter adapter = new SequenceListAdapter(this, sequences);

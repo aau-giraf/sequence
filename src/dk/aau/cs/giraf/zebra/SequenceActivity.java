@@ -305,16 +305,11 @@ public class SequenceActivity extends Activity {
             super(context);
             setContentView(R.layout.exit_sequence_dialog);
 
-            GButton saveChanges;
-            GButton discardChanges;
-            GButton returntoEditting;
+            GButton saveChanges = (GButton) findViewById(R.id.save_changes);
+            GButton discardChanges = (GButton) findViewById(R.id.discard_changes);
+            GButton returntoEditting = (GButton) findViewById(R.id.return_to_editting);
 
             View layout = LayoutInflater.from(this.getContext()).inflate(R.layout.exit_sequence_dialog,null);
-
-            saveChanges = (GButton) findViewById(R.id.save_changes);
-            discardChanges = (GButton) findViewById(R.id.discard_changes);
-            returntoEditting = (GButton) findViewById(R.id.return_to_editting);
-
 
             saveChanges.setOnClickListener(new GButton.OnClickListener() {
 

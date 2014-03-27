@@ -46,10 +46,10 @@ public class SequenceActivity extends Activity {
 	private Sequence sequence;
 	private SequenceAdapter adapter;
 
-	private ImageButton okButton;
-	private ImageButton cancelButton;
-    private ImageButton returnButton;
-    private ImageButton editSequenceNameButton;
+	private GButton okButton;
+	private GButton cancelButton;
+    private GButton returnButton;
+    private GButton editSequenceNameButton;
 
 	private SequenceViewGroup sequenceViewGroup;
 	private EditText sequenceTitleView;
@@ -94,10 +94,10 @@ public class SequenceActivity extends Activity {
 		sequenceViewGroup = setupSequenceViewGroup(adapter);
 		sequenceTitleView = (EditText) findViewById(R.id.sequence_title);
 
-		okButton = (ImageButton) findViewById(R.id.ok_button);
-		cancelButton = (ImageButton) findViewById(R.id.cancel_button);
-        returnButton = (ImageButton) findViewById(R.id.return_button);
-        editSequenceNameButton = (ImageButton) findViewById(R.id.edit_sequence_name_button);
+		okButton = (GButton) findViewById(R.id.ok_button);
+		cancelButton = (GButton) findViewById(R.id.cancel_button);
+        returnButton = (GButton) findViewById(R.id.return_button);
+        editSequenceNameButton = (GButton) findViewById(R.id.edit_sequence_name_button);
 
 
 		initializeTopBar();

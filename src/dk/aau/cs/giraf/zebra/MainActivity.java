@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 import android.widget.Toast;
 
+import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.zebra.PictogramView.OnDeleteClickListener;
@@ -61,7 +62,7 @@ public class MainActivity extends Activity {
 		});
 
 		// Creates a clean sequence and starts the sequence activity
-		final ImageButton createButton = (ImageButton)findViewById(R.id.add_button);
+		final GButton createButton = (GButton)findViewById(R.id.add_button);
 		createButton.setVisibility(isInEditMode ? View.VISIBLE : View.GONE);
 		
 		createButton.setOnClickListener(new OnClickListener() {

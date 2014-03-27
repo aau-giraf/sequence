@@ -16,6 +16,8 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 import android.widget.Toast;
@@ -37,16 +39,25 @@ public class MainActivity extends Activity {
 	private List<Sequence> sequences = new ArrayList<Sequence>();
     public static Child selectedChild;
 	private int guardianId;
+    private int appBgColor;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+		Bundle LauncherData = getIntent().getExtras();
+
+        super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
 		sequenceAdapter = setupAdapter();
 		sequenceGrid = (GridView)findViewById(R.id.sequence_grid);
 		sequenceGrid.setAdapter(sequenceAdapter);
-		
+
+        appBgColor = LauncherData.getInt("appBackgroundColor");
+        LinearLayout BgLayout = (LinearLayout) findViewById(R.id.parent_container);
+        BgLayout.setBackgroundColor(appBgColor);
+        RelativeLayout topbarLayout = (RelativeLayout) findViewById(R.id.sequence_bar);
+        topbarLayout.setBackgroundColor(appBgColor);
+
 		// Loads the (from launcher) selected child
 		setChild();
 
@@ -227,6 +238,7 @@ public class MainActivity extends Activity {
 		intent.putExtra("guardianId", guardianId);
 		intent.putExtra("editMode", isInEditMode);
 		intent.putExtra("new", isNew);
+        intent.putExtra("appBackgroundColor",appBgColor);
 
 		startActivity(intent);
 	}

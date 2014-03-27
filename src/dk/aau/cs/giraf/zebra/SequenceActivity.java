@@ -301,16 +301,16 @@ public class SequenceActivity extends Activity {
         exitEditting.show();
     }
 
-/*
+
 	@Override
 	public void onBackPressed() {
 		if (isInEditMode) {
-			MyDialog();
+			cancelButton.performClick();
 		} else {
 			super.onBackPressed();
 		}
 	}
-*/
+
     public class MyDialog extends GDialog {
 
         public MyDialog(Context context) {

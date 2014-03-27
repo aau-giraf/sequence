@@ -163,7 +163,7 @@ public class SequenceActivity extends Activity {
 			}
 		});
 	}
-
+/*
 	private void discardChanges() {
 		setEditModeEnabled(false);
 
@@ -172,9 +172,11 @@ public class SequenceActivity extends Activity {
 		sequenceTitleView.setText(sequence.getTitle());
 		adapter.notifyDataSetChanged();
 	}
-
+*/
 	private void saveChanges() {
-		setEditModeEnabled(false);
+
+        finish();
+/*		setEditModeEnabled(false);
 		
 		if (isNew && sequence.getPictograms().size() == 0) {
 			MainActivity.selectedChild.getSequences().remove(originalSequence);
@@ -186,6 +188,7 @@ public class SequenceActivity extends Activity {
 	
 			SequenceFileStore.writeSequences(this, MainActivity.selectedChild, MainActivity.selectedChild.getSequences());
 		}
+*/
 	}
 
 	private void setEditModeEnabled(boolean isInEditMode) {
@@ -303,13 +306,14 @@ public class SequenceActivity extends Activity {
         public MyDialog(Context context) {
 
             super(context);
-            setContentView(R.layout.exit_sequence_dialog);
 
             GButton saveChanges;
             GButton discardChanges;
             GButton returntoEditting;
 
             View layout = LayoutInflater.from(this.getContext()).inflate(R.layout.exit_sequence_dialog,null);
+
+            this.SetView(layout);
 
             saveChanges = (GButton) findViewById(R.id.save_changes);
             discardChanges = (GButton) findViewById(R.id.discard_changes);
@@ -320,7 +324,7 @@ public class SequenceActivity extends Activity {
 
                 @Override
                 public void onClick(View v) {
-                    SequenceActivity.this.saveChanges();
+//                    SequenceActivity.this.saveChanges();
                 }
             });
 
@@ -328,7 +332,7 @@ public class SequenceActivity extends Activity {
 
                 @Override
                 public void onClick(View v) {
-                    SequenceActivity.this.discardChanges();
+                    finish();
                 }
             });
 
@@ -339,10 +343,6 @@ public class SequenceActivity extends Activity {
                     dismiss();
                 }
             });
-
-
-
-            this.SetView(layout);
         }
 
     }

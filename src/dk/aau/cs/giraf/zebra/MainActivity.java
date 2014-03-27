@@ -18,8 +18,7 @@ import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
-//TODO: Uncomment when launcher is ready - Used for displaying toast if app is not launched from launcher
-// import android.widget.Toast;
+import android.widget.Toast;
 
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
@@ -78,8 +77,6 @@ public class MainActivity extends Activity {
 			}
 		});
 		
-		
-		
 		// Toggles guardian/child mode
 		ToggleButton button = (ToggleButton) findViewById(R.id.edit_mode_toggle);
 		
@@ -105,6 +102,7 @@ public class MainActivity extends Activity {
 			}
 		});
 	}
+
     //TODO: This can possibly be done better if we can get the (from launcher) selected child using context
     //Finds the child we want to work with. This is given through a passed extra, "currentChildID".
     //TODO: This is a temporary fix because there is currently no way of using the database! Uncomment and change Child c when possible to get a real child.
@@ -114,7 +112,6 @@ public class MainActivity extends Activity {
         if (extras != null) {
         	guardianId = extras.getInt("currentGuardianID");
         	/*int childId = extras.getInt("currentChildID");
-        	
     		Helper helper = new Helper(this);
     		Profile guardian = helper.profilesHelper.getProfileById(guardianId);
     		List<Profile> childProfiles = helper.profilesHelper.getChildrenByGuardian(guardian);
@@ -126,58 +123,43 @@ public class MainActivity extends Activity {
                     Child c = new Child(0, "Hamun Leth Laustsen", null);
                     selectedChild = c;
                 //}
-    		}
     		loadSequences();
     		refreshSelectedChild();
         }
-        //TODO: Uncomment when launcher is ready - Displays toast and closes app if not launched from launcher
-            /*
-            else {
-        	Toast toast = Toast.makeText(this, "Zebra must be started from the GIRAF Launcher", Toast.LENGTH_LONG);
-        	toast.show();
-
-        	finish();
-
-        	
-
-	}*/
+        else{
+            Toast toast = Toast.makeText(this, "Sequence must be started from the GIRAF Launcher", Toast.LENGTH_LONG);
+            toast.show();
+            finish();
+        }
+	}
 	
 	private SequenceListAdapter setupAdapter() {
 		final SequenceListAdapter adapter = new SequenceListAdapter(this, sequences);
-		
-		adapter.setOnAdapterGetViewListener(new OnAdapterGetViewListener() {
-			
+        adapter.setOnAdapterGetViewListener(new OnAdapterGetViewListener() {
 			@Override
 			public void onAdapterGetView(final int position, View view) {
 				if (view instanceof PictogramView) {
 					PictogramView pictoView = (PictogramView) view;
-					
-					pictoView.setOnDeleteClickListener(new OnDeleteClickListener() {
-						
+                    pictoView.setOnDeleteClickListener(new OnDeleteClickListener() {
 						@Override
 						public void onDeleteClick() {
 							deleteSequenceDialog(position);
 						}
 					});
 				}
-				
 			}
 		});
-		
 		return adapter;
 	}
 
 	private boolean deleteSequenceDialog(final int position) {
-
 		final Dialog dialog = new Dialog(this);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		dialog.setContentView(R.layout.delete_dialog_box);
 		dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-		
 		TextView questionField = (TextView)dialog.findViewById(R.id.question);
 		String sequenceName = selectedChild.getSequences().get(position).getTitle();
 		String question;
-		
 		
 		if (sequenceName.length() == 0) {
 			question = "Du er ved at slette sekvensen. Er du sikker?";
@@ -189,32 +171,25 @@ public class MainActivity extends Activity {
 		
 		final Button deleteButton = (Button)dialog.findViewById(R.id.btn_delete);
 		deleteButton.setOnClickListener(new View.OnClickListener() {
-			
 			@Override
 			public void onClick(View v) {
-				
 				dialog.dismiss();
 				selectedChild.getSequences().remove(position);
 				SequenceFileStore.writeSequences(MainActivity.this, selectedChild, selectedChild.getSequences());
 				refreshSelectedChild();
-
 			}
 		});
 		
 		final Button cancelButton = (Button)dialog.findViewById(R.id.btn_delete_cancel);
 		cancelButton.setOnClickListener(new View.OnClickListener() {
-			
 			@Override
 			public void onClick(View v) {
 				dialog.dismiss();
 			}
 		});
-
 		dialog.show();
-		
 		return true;
 	}
-	
 
 	private void loadSequences() {
 			List<Sequence> list = SequenceFileStore.getSequences(this, selectedChild);
@@ -229,25 +204,8 @@ public class MainActivity extends Activity {
 		sequenceAdapter.notifyDataSetChanged();
 	}
 
-
-    /* When the user presses the home button, the application should close and be destroyed.
-    This overrides default Android behaviour, but is done by customer request */
-    /*This is commented because it will create a bug where it closes Zebra when returning from Pictosearch
-
-    protected void onDestory(){
-        super.onDestroy();
-        finish();
-    }
-    @Override
-    protected void onStop(){
-        super.onStop();
-        finish();
-    }
-    */
-
 	@Override
 	protected void onResume() {
-
 		super.onResume();
 		refreshSelectedChild();
 
@@ -259,7 +217,6 @@ public class MainActivity extends Activity {
 				((PictogramView)view).placeDown();
 			}
 		}
-
 	}
 
 	private void enterSequence(Sequence sequence, boolean isNew) {

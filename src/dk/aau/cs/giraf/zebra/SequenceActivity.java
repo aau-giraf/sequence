@@ -317,19 +317,18 @@ public class SequenceActivity extends Activity {
 
             super(context);
 
+            this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.exit_sequence_dialog,null));
+
             GButton saveChanges = (GButton) findViewById(R.id.save_changes);
             GButton discardChanges = (GButton) findViewById(R.id.discard_changes);
-            GButton returntoEditting = (GButton) findViewById(R.id.return_to_editting);;
+            GButton returntoEditting = (GButton) findViewById(R.id.return_to_editting);
 
-            View layout = LayoutInflater.from(this.getContext()).inflate(R.layout.exit_sequence_dialog,null);
-
-            this.SetView(layout);
 
             saveChanges.setOnClickListener(new GButton.OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
-//                    SequenceActivity.this.saveChanges();
+ //                     SequenceActivity.this.saveChanges();
                 }
             });
 

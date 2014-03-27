@@ -27,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
+import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.zebra.PictogramView.OnDeleteClickListener;
@@ -199,6 +200,8 @@ public class SequenceActivity extends Activity {
 
 		sequenceViewGroup.setEditModeEnabled(isInEditMode);
 	}
+
+
 /*
     private void showBackDialog(View v){
 
@@ -301,18 +304,18 @@ public class SequenceActivity extends Activity {
 
             super(context);
 
-            ImageButton saveChanges;
-            ImageButton discardChanges;
-            ImageButton returntoEditting;
+            GButton saveChanges;
+            GButton discardChanges;
+            GButton returntoEditting;
 
-            View layout = LayoutInflater.from(this.getContext()).inflate(R.layout.gdialog_layout,null);
+            View layout = LayoutInflater.from(this.getContext()).inflate(R.layout.exit_sequence_dialog,null);
 
-            saveChanges = (ImageButton) findViewById(R.id.save_changes);
-            discardChanges = (ImageButton) findViewById(R.id.discard_changes);
-            returntoEditting = (ImageButton) findViewById(R.id.return_to_editting);
+            saveChanges = (GButton) findViewById(R.id.save_changes);
+            discardChanges = (GButton) findViewById(R.id.discard_changes);
+            returntoEditting = (GButton) findViewById(R.id.return_to_editting);
 
 
-            saveChanges.setOnClickListener(new ImageButton.OnClickListener() {
+            saveChanges.setOnClickListener(new GButton.OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
@@ -320,7 +323,7 @@ public class SequenceActivity extends Activity {
                 }
             });
 
-            discardChanges.setOnClickListener(new ImageButton.OnClickListener() {
+            discardChanges.setOnClickListener(new GButton.OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
@@ -328,7 +331,7 @@ public class SequenceActivity extends Activity {
                 }
             });
 
-            returntoEditting.setOnClickListener(new ImageButton.OnClickListener() {
+            returntoEditting.setOnClickListener(new GButton.OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
@@ -539,7 +542,7 @@ public class SequenceActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-//                showExitDialog(v);
+                showExitDialog(v);
             }
         });
 

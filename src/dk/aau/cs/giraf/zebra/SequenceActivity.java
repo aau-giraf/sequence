@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
@@ -28,7 +29,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
+import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GDialog;
+import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.zebra.PictogramView.OnDeleteClickListener;
 import dk.aau.cs.giraf.zebra.SequenceAdapter.OnAdapterGetViewListener;
 import dk.aau.cs.giraf.zebra.SequenceViewGroup.OnNewButtonClickedListener;
@@ -45,10 +48,10 @@ public class SequenceActivity extends Activity {
 	private Sequence sequence;
 	private SequenceAdapter adapter;
 
-	private ImageButton okButton;
-	private ImageButton cancelButton;
-    private ImageButton returnButton;
-    private ImageButton editSequenceNameButton;
+	private GButton okButton;
+	private GButton cancelButton;
+    private GButton returnButton;
+    private GButton editSequenceNameButton;
 
 	private SequenceViewGroup sequenceViewGroup;
 	private EditText sequenceTitleView;
@@ -96,10 +99,10 @@ public class SequenceActivity extends Activity {
 		sequenceViewGroup = setupSequenceViewGroup(adapter);
 		sequenceTitleView = (EditText) findViewById(R.id.sequence_title);
 
-		okButton = (ImageButton) findViewById(R.id.ok_button);
-		cancelButton = (ImageButton) findViewById(R.id.cancel_button);
-        returnButton = (ImageButton) findViewById(R.id.return_button);
-        editSequenceNameButton = (ImageButton) findViewById(R.id.edit_sequence_name_button);
+		okButton = (GButton) findViewById(R.id.ok_button);
+		cancelButton = (GButton) findViewById(R.id.cancel_button);
+        returnButton = (GButton) findViewById(R.id.return_button);
+        editSequenceNameButton = (GButton) findViewById(R.id.edit_sequence_name_button);
 
         LinearLayout bgLayout = (LinearLayout) findViewById(R.id.parent_container);
         RelativeLayout topbarLayout = (RelativeLayout) findViewById(R.id.sequence_bar);
@@ -206,17 +209,24 @@ public class SequenceActivity extends Activity {
 
 		sequenceViewGroup.setEditModeEnabled(isInEditMode);
 	}
+
+
 /*
     private void showBackDialog(View v){
 
-        GDialog returnDialog = GDialog(v.getContext(),
+        GDialogMessage returnDialog = new GDialogMessage(v.getContext(),
                 R.drawable.ic_launcher,
-                "Afslut Sekvens"
+                "Afslut Sekvens",
                 "Du er ved at afslutte sekvensen. Vil du gemme dine ændringer?",
-
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view){
+                        finish();
+                    }
+                }
         );
     }
-*/
+
 
 	private void showBackDialog() {
 
@@ -264,9 +274,10 @@ public class SequenceActivity extends Activity {
 
 		dialog.show();
 	}
-/*
+*/
+
     public void showReturnDialog(View v) {
-        GDialog returnDialog = new GDialog(v.getContext(),
+        GDialogMessage returnDialog = new GDialogMessage(v.getContext(),
                 R.drawable.ic_launcher,
                 "Afslut Sekvens",
                 "Du er ved at afslutte sekvensen",
@@ -280,33 +291,66 @@ public class SequenceActivity extends Activity {
 
         returnDialog.show();
     }
-*/
 
+    public void showExitDialog(View v) {
+        MyDialog exitEditting = new MyDialog(v.getContext());
+        exitEditting.show();
+    }
+
+/*
 	@Override
 	public void onBackPressed() {
 		if (isInEditMode) {
-			showBackDialog();
+			MyDialog();
 		} else {
 			super.onBackPressed();
 		}
 	}
+*/
+    public class MyDialog extends GDialog {
 
-    //This will occur when the user presses the home button.
-    /*This is commented because it will create a bug where it closes Zebra when returning from Pictosearch
+        public MyDialog(Context context) {
 
-    @Override
-    public void onUserLeaveHint (){
-        if (isInEditMode) {
-            super.onUserLeaveHint();
-            finish(); //Kills the activities within this app
+            super(context);
+            setContentView(R.layout.exit_sequence_dialog);
 
-        } else {
-            super.onUserLeaveHint();
-            finish();
+            GButton saveChanges = (GButton) findViewById(R.id.save_changes);
+            GButton discardChanges = (GButton) findViewById(R.id.discard_changes);
+            GButton returntoEditting = (GButton) findViewById(R.id.return_to_editting);
+
+            View layout = LayoutInflater.from(this.getContext()).inflate(R.layout.exit_sequence_dialog,null);
+
+            saveChanges.setOnClickListener(new GButton.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    SequenceActivity.this.saveChanges();
+                }
+            });
+
+            discardChanges.setOnClickListener(new GButton.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    SequenceActivity.this.discardChanges();
+                }
+            });
+
+            returntoEditting.setOnClickListener(new GButton.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    dismiss();
+                }
+            });
+
+
+
+            this.SetView(layout);
         }
 
     }
-    */
+
 
 	private SequenceViewGroup setupSequenceViewGroup(
 			final SequenceAdapter adapter) {
@@ -503,7 +547,7 @@ public class SequenceActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                showBackDialog();
+                showExitDialog(v);
             }
         });
 
@@ -511,10 +555,10 @@ public class SequenceActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-//                showReturnDialog(v);
-                  showBackDialog();
+                showReturnDialog(v);
             }
         });
+
         //When clicking the button, the cursor is placed in the Sequence title field.
         editSequenceNameButton.setOnClickListener(new ImageButton.OnClickListener(){
             @Override public void onClick (View v) {
@@ -577,4 +621,5 @@ public class SequenceActivity extends Activity {
 		
 		startActivityForResult(intent, modeId);
 	}
+
 }

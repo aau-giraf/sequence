@@ -22,7 +22,7 @@
             android:text="ZEBRA"
             android:textSize="60sp"
             android:textColor="@color/text_color" />
-        
+
         <ToggleButton
             android:id="@+id/edit_mode_toggle"
             android:layout_width="wrap_content"
@@ -35,15 +35,18 @@
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp" />
 
-        <ImageButton
+
+        <dk.aau.cs.giraf.gui.GButton
             android:id="@+id/add_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignRight="@+id/edit_mode_toggle"
+            android:layout_width="85dp"
+            android:layout_height="85dp"
+            android:layout_centerInParent="true"
+            android:layout_alignRight="@id/edit_mode_toggle"
+            android:drawableLeft="@drawable/okay_icon"
+            android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="87dp"
-            android:background="@null"
-            android:src="@drawable/btn_add_sequence" />
+            />
 
     </RelativeLayout>
 

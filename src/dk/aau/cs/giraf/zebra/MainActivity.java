@@ -24,6 +24,7 @@ import android.widget.ToggleButton;
 import android.widget.Toast;
 
 import dk.aau.cs.giraf.gui.GButton;
+import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.zebra.PictogramView.OnDeleteClickListener;
@@ -159,8 +160,23 @@ public class MainActivity extends Activity {
 		});
 		return adapter;
 	}
+/*
+    // TODO: Make a functionality to delete a sequence. Require database syncronization
+    public void deleteSequenceDialog (View v) {
+        GDialogMessage deleteSequence = new GDialogMessage(v.getContext(),
+            R.drawable.ic_launcher,
+            "Slet Sekvens",
+            "Du er ved at slette sekvensen, er du sikker på du vil det?",
+            new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
-	private boolean deleteSequenceDialog(final int position) {
+                }
+            });
+    }
+*/
+    private boolean deleteSequenceDialog(final int position) {
+
 		final Dialog dialog = new Dialog(this);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		dialog.setContentView(R.layout.delete_dialog_box);
@@ -187,6 +203,7 @@ public class MainActivity extends Activity {
 				refreshSelectedChild();
 			}
 		});
+
 		
 		final Button cancelButton = (Button)dialog.findViewById(R.id.btn_delete_cancel);
 		cancelButton.setOnClickListener(new View.OnClickListener() {

@@ -113,11 +113,14 @@ public class SequenceActivity extends Activity {
 
 		initializeTopBar();
 
+
+
+
 		sequenceImageView = (ImageView) findViewById(R.id.sequence_image);
 
 		if (sequence.getImageId() == 0) {
 			sequenceImageView.setImageDrawable(getResources().getDrawable(
-					R.drawable.sequence_placeholder));
+					R.drawable.ic_launcher));
 		} else {
 			sequenceImageView.setImageBitmap(sequence.getImage(this));
 		}

@@ -19,7 +19,7 @@
         android:layout_height="140dp"
         android:orientation="horizontal">
         
-        <dk.aau.cs.giraf.zebra.RoundedImageView 
+        <ImageView
             android:id="@+id/sequence_image"
             android:layout_width="85dp"
             android:layout_height="85dp"
@@ -32,9 +32,9 @@
             android:layout_height="85dp"
             android:layout_centerInParent="true"
             android:drawableBottom="@drawable/morten"
-            android:layout_alignLeft="@+id/sequence_image"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="87dp"
+            android:layout_toRightOf="@+id/sequence_image"
+            android:layout_marginLeft="15dp"
             />
 
         <dk.aau.cs.giraf.gui.GButton
@@ -42,7 +42,7 @@
             android:layout_width="85dp"
             android:layout_height="85dp"
             android:layout_centerInParent="true"
-            android:drawableBottom="@drawable/cancel_okay"
+            android:drawableBottom="@drawable/cancel_icon"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="15dp"
@@ -53,7 +53,7 @@
             android:layout_width="85dp"
             android:layout_height="85dp"
             android:layout_centerInParent="true"
-            android:drawableLeft="@drawable/cancel_okay"
+            android:drawableLeft="@drawable/cancel_icon"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="15dp"
@@ -64,10 +64,10 @@
             android:layout_width="85dp"
             android:layout_height="85dp"
             android:layout_centerInParent="true"
-            android:drawableLeft="@drawable/okay_icon"
-            android:layout_alignRight="@+id/cancel_button"
+            android:drawableLeft="@drawable/ok_icon"
             android:layout_centerVertical="true"
-            android:layout_marginRight="87dp"
+            android:layout_toLeftOf="@+id/cancel_button"
+            android:layout_marginRight="15dp"
             />
 
         <LinearLayout

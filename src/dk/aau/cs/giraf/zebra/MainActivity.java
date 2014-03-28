@@ -6,6 +6,7 @@ import java.util.List;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -122,21 +123,23 @@ public class MainActivity extends Activity {
 		sequences.clear();
 		Bundle extras = getIntent().getExtras();
         guardianId = extras.getInt("currentGuardianID");
-        /*int childId = extras.getInt("currentChildID");
+      /*  int childId = extras.getInt("currentChildID");
     	Helper helper = new Helper(this);
    		Profile guardian = helper.profilesHelper.getProfileById(guardianId);
    		List<Profile> childProfiles = helper.profilesHelper.getChildrenByGuardian(guardian);
 
     	for (Profile p : childProfiles) {
     		if (p.getId()==childId) {
+                //Child c = new Child(childId, p.getName(), p.getImage());
                 String name = p.getName();
                 Bitmap picture = p.getImage();*/
                 Child c = new Child(0, "Hamun Leth Laustsen", null);
                 selectedChild = c;
-                //}
+       // }
    		loadSequences();
    		refreshSelectedChild();
         }
+  //  }
 	
 	private SequenceListAdapter setupAdapter() {
 		final SequenceListAdapter adapter = new SequenceListAdapter(this, sequences);

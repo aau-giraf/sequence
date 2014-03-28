@@ -32,6 +32,7 @@ import android.widget.TextView.OnEditorActionListener;
 import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogMessage;
+import dk.aau.cs.giraf.gui.GTextView;
 import dk.aau.cs.giraf.zebra.PictogramView.OnDeleteClickListener;
 import dk.aau.cs.giraf.zebra.SequenceAdapter.OnAdapterGetViewListener;
 import dk.aau.cs.giraf.zebra.SequenceViewGroup.OnNewButtonClickedListener;
@@ -214,72 +215,6 @@ public class SequenceActivity extends Activity {
 		sequenceViewGroup.setEditModeEnabled(isInEditMode);
 	}
 
-
-/*
-    private void showBackDialog(View v){
-
-        GDialogMessage returnDialog = new GDialogMessage(v.getContext(),
-                R.drawable.ic_launcher,
-                "Afslut Sekvens",
-                "Du er ved at afslutte sekvensen. Vil du gemme dine ændringer?",
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view){
-                        finish();
-                    }
-                }
-        );
-    }
-
-
-	private void showBackDialog() {
-
-		final Dialog dialog = new Dialog(this);
-		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		dialog.setContentView(R.layout.back_dialog_box);
-		dialog.getWindow().setBackgroundDrawable(
-				new ColorDrawable(Color.TRANSPARENT));
-
-		final Button saveButton = (Button) dialog.findViewById(R.id.btn_save);
-		saveButton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				dialog.dismiss();
-				SequenceActivity.this.saveChanges();
-				
-				finish();
-			}
-		});
-
-		final Button dontSaveButton = (Button) dialog.findViewById(R.id.btn_dont_save);
-		dontSaveButton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				dialog.dismiss();
-
-				// If the sequence is new, the sequence will be deleted.
-				if (isNew) {
-					MainActivity.selectedChild.getSequences().remove(originalSequence);
-				}
-				finish();
-			}
-		});
-
-		final Button cancelButton = (Button)dialog.findViewById(R.id.btn_back_cancel);
-		cancelButton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				dialog.dismiss();
-			}
-		});
-
-		dialog.show();
-	}
-*/
-
     public void showReturnDialog(View v) {
         GDialogMessage returnDialog = new GDialogMessage(v.getContext(),
                 R.drawable.ic_launcher,
@@ -323,6 +258,8 @@ public class SequenceActivity extends Activity {
             GButton discardChanges = (GButton) findViewById(R.id.discard_changes);
             GButton returntoEditting = (GButton) findViewById(R.id.return_to_editting);
 
+            TextView returnHeadline = (TextView) findViewById(R.id.return_sequence_headline);
+            TextView returnDescription = (TextView) findViewById(R.id.return_sequence_description);
 
             saveChanges.setOnClickListener(new GButton.OnClickListener() {
 

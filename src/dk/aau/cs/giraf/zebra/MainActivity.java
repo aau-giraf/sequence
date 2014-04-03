@@ -41,7 +41,8 @@ public class MainActivity extends Activity {
 	private List<Sequence> sequences = new ArrayList<Sequence>();
     public static Child selectedChild;
 	private int guardianId;
-    private int appBgColor;
+    private int appBgColor = 101010;
+    Helper helper;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +57,8 @@ public class MainActivity extends Activity {
         // Loads the (from launcher) selected child
         setChild();
 
-        Bundle LauncherData = getIntent().getExtras();
-        appBgColor = LauncherData.getInt("appBackgroundColor");
+        //Bundle LauncherData = getIntent().getExtras();
+        //appBgColor = LauncherData.getInt("appBackgroundColor");
         LinearLayout BgLayout = (LinearLayout) findViewById(R.id.parent_container);
         BgLayout.setBackgroundColor(appBgColor);
         RelativeLayout topbarLayout = (RelativeLayout) findViewById(R.id.sequence_bar);
@@ -122,25 +123,28 @@ public class MainActivity extends Activity {
     //TODO: This is a temporary fix because there is currently no way of using the database! Uncomment and change Child c when possible to get a real child.
 	private void setChild() {
 		sequences.clear();
-		Bundle extras = getIntent().getExtras();
-        guardianId = extras.getInt("currentGuardianID");
-      /*  int childId = extras.getInt("currentChildID");
-    	Helper helper = new Helper(this);
+		//Bundle extras = getIntent().getExtras();
+        //guardianId = extras.getInt("currentGuardianID");
+        guardianId = 1;
+        /*int childId = extras.getInt("currentChildID");
+
+        try{helper = new Helper(this);}
+        catch(Exception e){}
    		Profile guardian = helper.profilesHelper.getProfileById(guardianId);
    		List<Profile> childProfiles = helper.profilesHelper.getChildrenByGuardian(guardian);
 
     	for (Profile p : childProfiles) {
     		if (p.getId()==childId) {
-                //Child c = new Child(childId, p.getName(), p.getImage());
+                Child c = new Child(childId, p.getName(), p.getImage());
                 String name = p.getName();
                 Bitmap picture = p.getImage();*/
                 Child c = new Child(0, "Hamun Leth Laustsen", null);
                 selectedChild = c;
-       // }
+       //}
    		loadSequences();
    		refreshSelectedChild();
-        }
-  //  }
+       }
+   //}
 	
 	private SequenceListAdapter setupAdapter() {
 		final SequenceListAdapter adapter = new SequenceListAdapter(this, sequences);

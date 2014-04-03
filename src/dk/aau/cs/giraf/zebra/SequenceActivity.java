@@ -147,6 +147,9 @@ public class SequenceActivity extends Activity {
                     EditText sequenceTitle = (EditText) findViewById(R.id.sequence_title);
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.showSoftInput(sequenceTitle, InputMethodManager.SHOW_IMPLICIT);
+
+                    //Removes the hint text from the SequenceTitle
+                    sequenceTitle.setHint(null);
 				} else {
 					// Closing the keyboard when the text field is not active anymore
 					InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);

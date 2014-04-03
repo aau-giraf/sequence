@@ -42,6 +42,7 @@ public class MainActivity extends Activity {
 	private int guardianId;
     Helper helper;
     private int applicationColor = Color.WHITE;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
@@ -52,13 +53,8 @@ public class MainActivity extends Activity {
 		sequenceGrid = (GridView)findViewById(R.id.sequence_grid);
 		sequenceGrid.setAdapter(sequenceAdapter);
 
-        // Loads the (from launcher) selected child
         setChild();
-
-        LinearLayout backgroundLayout = (LinearLayout) findViewById(R.id.parent_container);
-        RelativeLayout topbarLayout = (RelativeLayout) findViewById(R.id.sequence_bar);
-        backgroundLayout.setBackgroundColor(applicationColor);
-        topbarLayout.setBackgroundColor(applicationColor);
+        setColors();
 
 		//Loads a sequence when clicked
 		sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -113,6 +109,14 @@ public class MainActivity extends Activity {
 			}
 		});
 	}
+
+    private void setColors(){
+
+        LinearLayout backgroundLayout = (LinearLayout) findViewById(R.id.parent_container);
+        RelativeLayout topbarLayout = (RelativeLayout) findViewById(R.id.sequence_bar);
+        backgroundLayout.setBackgroundColor(applicationColor);
+        topbarLayout.setBackgroundColor(applicationColor);
+    }
 
     //TODO: This can possibly be done better if we can get the (from launcher) selected child using context
     //Finds the child we want to work with. This is given through a passed extra, "currentChildID".

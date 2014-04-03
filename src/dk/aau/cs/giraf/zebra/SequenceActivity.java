@@ -49,9 +49,11 @@ public class SequenceActivity extends Activity {
 	private Sequence sequence;
 	private SequenceAdapter adapter;
 
-	private GButton okButton;
+//	private GButton okButton;
 	private GButton cancelButton;
-    private GButton returnButton;
+    private GButton saveButton;
+    private GButton addButton;
+//    private GButton returnButton;
     private GButton editSequenceNameButton;
 
 	private SequenceViewGroup sequenceViewGroup;
@@ -100,9 +102,9 @@ public class SequenceActivity extends Activity {
 		sequenceViewGroup = setupSequenceViewGroup(adapter);
 		sequenceTitleView = (EditText) findViewById(R.id.sequence_title);
 
-		okButton = (GButton) findViewById(R.id.ok_button);
 		cancelButton = (GButton) findViewById(R.id.cancel_button);
-        returnButton = (GButton) findViewById(R.id.return_button);
+        saveButton = (GButton) findViewById(R.id.save_button);
+        addButton = (GButton) findViewById(R.id.add_button);
         editSequenceNameButton = (GButton) findViewById(R.id.edit_sequence_name_button);
 
         LinearLayout bgLayout = (LinearLayout) findViewById(R.id.parent_container);
@@ -140,7 +142,6 @@ public class SequenceActivity extends Activity {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
 				if (hasFocus) {
-					setDeleteButtonVisible(false);
 
                     // Forces the keyboard to pop up when using the editSequenceNameButton
                     EditText sequenceTitle = (EditText) findViewById(R.id.sequence_title);
@@ -150,74 +151,36 @@ public class SequenceActivity extends Activity {
 					// Closing the keyboard when the text field is not active anymore
 					InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 					in.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-					setDeleteButtonVisible(true);
 				}
 			}
-
+/*
 			private void setDeleteButtonVisible(boolean value) {
 				// Make buttons transparent
 				if (value == false) {
-					okButton.setAlpha(0.3f);
+//					okButton.setAlpha(0.3f);
 					cancelButton.setAlpha(0.3f);
-                    returnButton.setAlpha(0.3f);
                     editSequenceNameButton.setAlpha(0.3f);
 				} else {
-					okButton.setAlpha(1.0f);
+//					okButton.setAlpha(1.0f);
 					cancelButton.setAlpha(1.0f);
-                    returnButton.setAlpha(1.0f);
                     editSequenceNameButton.setAlpha(1.0f);
 				}
 
 				// Disable/enable buttons
-				okButton.setEnabled(value);
+//				okButton.setEnabled(value);
 				cancelButton.setEnabled(value);
-                returnButton.setEnabled(value);
                 editSequenceNameButton.setEnabled(value);
 
-			}
+			} */
 		});
 	}
-/*
-	private void discardChanges() {
-		setEditModeEnabled(false);
 
-		// Discarding changes
-		sequence = originalSequence.getClone();
-		sequenceTitleView.setText(sequence.getTitle());
-		adapter.notifyDataSetChanged();
-	}
-*/
 	private void saveChanges() {
-
+        //TODO: SAVE IN THE NEW DATABASE
         finish();
-/*		setEditModeEnabled(false);
-		
-		if (isNew && sequence.getPictograms().size() == 0) {
-			MainActivity.selectedChild.getSequences().remove(originalSequence);
-		}
-		else {
-			// Saving changes
-			sequence.setTitle(sequenceTitleView.getText().toString());
-			originalSequence.copyFromSequence(sequence);
-	
-			SequenceFileStore.writeSequences(this, MainActivity.selectedChild, MainActivity.selectedChild.getSequences());
-		}
-*/
 	}
 
-	private void setEditModeEnabled(boolean isInEditMode) {
-		this.isInEditMode = isInEditMode;
-
-		sequenceTitleView.setEnabled(isInEditMode);
-
-		cancelButton.setVisibility(isInEditMode ? View.VISIBLE : View.INVISIBLE);
-		okButton.setVisibility(isInEditMode ? View.VISIBLE : View.INVISIBLE);
-        returnButton.setVisibility(isInEditMode ? View.INVISIBLE : View.VISIBLE);
-        editSequenceNameButton.setVisibility(isInEditMode ? View.VISIBLE : View.INVISIBLE);
-
-		sequenceViewGroup.setEditModeEnabled(isInEditMode);
-	}
-
+    /* TODO:Dette er koden til knappen der skal bruges i sequenceViewer
     public void showReturnDialog(View v) {
         GDialogMessage returnDialog = new GDialogMessage(v.getContext(),
                 R.drawable.ic_launcher,
@@ -233,12 +196,30 @@ public class SequenceActivity extends Activity {
 
         returnDialog.show();
     }
+*/
+    public void showSaveDialog(View v) {
+        GDialogMessage saveDialog = new GDialogMessage(v.getContext(),
+                R.drawable.ic_launcher,
+                "Gem Sekvens",
+                "Du er ved at gemme sekvensen",
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        finish();
+                    }
+                });
+        saveDialog.show();
+    }
 
     public void showExitDialog(View v) {
-        MyDialog exitEditting = new MyDialog(v.getContext());
+        backDialog exitEditting = new backDialog(v.getContext());
         exitEditting.show();
     }
 
+    public void showAddDialog(View v) {
+        addDialog addFrame = new addDialog(v.getContext());
+        addFrame.show();
+    }
 
 	@Override
 	public void onBackPressed() {
@@ -249,9 +230,9 @@ public class SequenceActivity extends Activity {
 		}
 	}
 
-    public class MyDialog extends GDialog {
+    public class backDialog extends GDialog {
 
-        public MyDialog(Context context) {
+        public backDialog(Context context) {
 
             super(context);
 
@@ -261,8 +242,6 @@ public class SequenceActivity extends Activity {
             GButton discardChanges = (GButton) findViewById(R.id.discard_changes);
             GButton returntoEditting = (GButton) findViewById(R.id.return_to_editting);
 
-            TextView returnHeadline = (TextView) findViewById(R.id.return_sequence_headline);
-            TextView returnDescription = (TextView) findViewById(R.id.return_sequence_description);
 
             saveChanges.setOnClickListener(new GButton.OnClickListener() {
 
@@ -289,6 +268,43 @@ public class SequenceActivity extends Activity {
             });
         }
 
+    }
+
+    public class addDialog extends GDialog {
+
+        public addDialog(Context context) {
+            super(context);
+
+            this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.add_frame_dialog,null));
+
+            GButton getSequence = (GButton) findViewById(R.id.get_sequence);
+            GButton getPictogram = (GButton) findViewById(R.id.get_pictogram);
+            GButton getChoice = (GButton) findViewById(R.id.get_choice);
+
+            getSequence.setOnClickListener(new GButton.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    dismiss();
+                }
+            });
+
+            getPictogram.setOnClickListener(new GButton.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    dismiss();
+                }
+            });
+
+            getChoice.setOnClickListener(new GButton.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    dismiss();
+                }
+            });
+        }
     }
 
 
@@ -463,23 +479,19 @@ public class SequenceActivity extends Activity {
 
 		TextView childName = (TextView) findViewById(R.id.child_name);
 		childName.setText(MainActivity.selectedChild.getName());
-
+/*
 		if (!isInEditMode) {
 			okButton.setVisibility(View.INVISIBLE);
             cancelButton.setVisibility(View.INVISIBLE);
             editSequenceNameButton.setVisibility(View.INVISIBLE);
 		}
+*/
 
-        if(isInEditMode){
-            returnButton.setVisibility(View.INVISIBLE);
-        }
-
-
-		okButton.setOnClickListener(new ImageButton.OnClickListener() {
+		saveButton.setOnClickListener(new ImageButton.OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				SequenceActivity.this.saveChanges();
+				showSaveDialog(v);
 			}
 		});
 
@@ -491,6 +503,15 @@ public class SequenceActivity extends Activity {
             }
         });
 
+        addButton.setOnClickListener(new ImageButton.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                showAddDialog(v);
+            }
+        });
+
+/*
         returnButton.setOnClickListener(new ImageButton.OnClickListener() {
 
             @Override
@@ -498,7 +519,7 @@ public class SequenceActivity extends Activity {
                 showReturnDialog(v);
             }
         });
-
+*/
         //When clicking the button, the cursor is placed in the Sequence title field.
         editSequenceNameButton.setOnClickListener(new ImageButton.OnClickListener(){
             @Override public void onClick (View v) {

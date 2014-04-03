@@ -31,7 +31,7 @@
             android:layout_width="85dp"
             android:layout_height="85dp"
             android:layout_centerInParent="true"
-            android:drawableBottom="@drawable/morten"
+            android:drawableBottom="@drawable/edit_icon"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/sequence_image"
             android:layout_marginLeft="15dp"
@@ -53,29 +53,41 @@
             android:layout_width="85dp"
             android:layout_height="85dp"
             android:layout_centerInParent="true"
-            android:drawableLeft="@drawable/cancel_icon"
+            android:drawableLeft="@drawable/back_icon"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/save_button"
+            android:layout_marginRight="15dp"
+            />
+
+        <dk.aau.cs.giraf.gui.GButton
+            android:id="@+id/save_button"
+            android:layout_width="85dp"
+            android:layout_height="85dp"
+            android:layout_centerInParent="true"
+            android:drawableLeft="@drawable/save_icon"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/add_button"
+            android:layout_marginRight="15dp"
+            />
+
+        <dk.aau.cs.giraf.gui.GButton
+            android:id="@+id/add_button"
+            android:layout_width="85dp"
+            android:layout_height="85dp"
+            android:layout_centerInParent="true"
+            android:drawableLeft="@drawable/add_icon"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="15dp"
             />
 
-        <dk.aau.cs.giraf.gui.GButton
-            android:id="@+id/ok_button"
-            android:layout_width="85dp"
-            android:layout_height="85dp"
-            android:layout_centerInParent="true"
-            android:drawableLeft="@drawable/ok_icon"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/cancel_button"
-            android:layout_marginRight="15dp"
-            />
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/ok_button"
-            android:layout_toRightOf="@+id/sequence_image"
+            android:layout_toLeftOf="@+id/cancel_button"
+            android:layout_toRightOf="@+id/edit_sequence_name_button"
             android:orientation="vertical" >
 
             <EditText

@@ -42,7 +42,6 @@ public class MainActivity extends Activity {
     public static Child selectedChild;
 	private int guardianId;
     private int appBgColor = 101010;
-    Helper helper;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -64,58 +63,13 @@ public class MainActivity extends Activity {
         RelativeLayout topbarLayout = (RelativeLayout) findViewById(R.id.sequence_bar);
         topbarLayout.setBackgroundColor(appBgColor);
 
-		//Loads a sequence when clicked
-		sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-				((PictogramView)arg1).liftUp();
-				Sequence sequence = sequenceAdapter.getItem(arg2);
-				enterSequence(sequence, false);
-			}
-		});
-
-		// Creates a clean sequence and starts the sequence activity
-		final GButton createButton = (GButton)findViewById(R.id.add_button);
-		createButton.setVisibility(isInEditMode ? View.VISIBLE : View.GONE);
-		
-		createButton.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				
-				Sequence sequence = new Sequence();
-				sequence.setSequenceId(selectedChild.getNextSequenceId());
-				selectedChild.getSequences().add(sequence);
-				
-				enterSequence(sequence, true);
-			}
-		});
-		
-		// Toggles guardian/child mode
-		ToggleButton button = (ToggleButton) findViewById(R.id.edit_mode_toggle);
-		
-		button.setOnClickListener(new ImageButton.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				ToggleButton button = (ToggleButton)v;
-				isInEditMode = button.isChecked();
-
-				// Make sure that all views currently not visible will have the correct edit mode when they become visible
-				sequenceAdapter.setEditModeEnabled(isInEditMode);
-				createButton.setVisibility(isInEditMode ? View.VISIBLE : View.GONE);
-				
-				// Update the edit mode of all visible views in the grid
-				for (int i = 0; i < sequenceGrid.getChildCount(); i++) {
-					View view = sequenceGrid.getChildAt(i);
-					
-					if (view instanceof PictogramView) {
-						((PictogramView)view).setEditModeEnabled(isInEditMode);
-					}
-				}
-			}
-		});
+        //TODO: find out what the guardianId is if its in childmode.
+        if (guardianId != 100) {
+            setupGuardianMode();
+        }
+        else {
+            setupChildMode();
+        }
 	}
 
     //TODO: This can possibly be done better if we can get the (from launcher) selected child using context
@@ -247,6 +201,80 @@ public class MainActivity extends Activity {
 			}
 		}
 	}
+
+
+    private void setupGuardianMode() {
+
+
+        sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                ((PictogramView)arg1).liftUp();
+                Sequence sequence = sequenceAdapter.getItem(arg2);
+                enterSequence(sequence, false);
+            }
+        });
+
+        final GButton addButton = (GButton)findViewById(R.id.add_button);
+        final GButton deleteButton = (GButton)findViewById(R.id.delete_button);
+        final GButton copyButton = (GButton)findViewById(R.id.copy_button);
+
+
+        addButton.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                Sequence sequence = new Sequence();
+                sequence.setSequenceId(selectedChild.getNextSequenceId());
+                selectedChild.getSequences().add(sequence);
+
+                enterSequence(sequence, true);
+            }
+        });
+
+        deleteButton.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                showMainDeleteDialog(v);
+            }
+        });
+
+        copyButton.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+
+            }
+        });
+    }
+
+
+    void showMainDeleteDialog(View v) {
+
+        //TODO: Call the deletesequence method here
+        GDialogMessage deleteDialog = new GDialogMessage(v.getContext(),
+                R.drawable.ic_launcher,
+                "Slet Sekvens",
+                "Du er ved at slette et antal sekvenser",
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        finish();
+                    }
+                });
+
+        deleteDialog.show();
+    }
+
+    private void setupChildMode() {
+
+
+
+    }
 
 	private void enterSequence(Sequence sequence, boolean isNew) {
 		Intent intent = new Intent(getApplication(), SequenceActivity.class);

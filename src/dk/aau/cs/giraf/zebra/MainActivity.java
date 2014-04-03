@@ -21,7 +21,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
-import android.widget.Toast;
 
 import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GDialogMessage;
@@ -41,8 +40,8 @@ public class MainActivity extends Activity {
 	private List<Sequence> sequences = new ArrayList<Sequence>();
     public static Child selectedChild;
 	private int guardianId;
-    private int appBgColor = 101010;
-	
+    private int applicationColor = Color.WHITE;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
@@ -53,15 +52,8 @@ public class MainActivity extends Activity {
 		sequenceGrid = (GridView)findViewById(R.id.sequence_grid);
 		sequenceGrid.setAdapter(sequenceAdapter);
 
-        // Loads the (from launcher) selected child
         setChild();
-
-        //Bundle LauncherData = getIntent().getExtras();
-        //appBgColor = LauncherData.getInt("appBackgroundColor");
-        LinearLayout BgLayout = (LinearLayout) findViewById(R.id.parent_container);
-        BgLayout.setBackgroundColor(appBgColor);
-        RelativeLayout topbarLayout = (RelativeLayout) findViewById(R.id.sequence_bar);
-        topbarLayout.setBackgroundColor(appBgColor);
+        setColors();
 
         //TODO: find out what the guardianId is if its in childmode.
         if (guardianId != 100) {
@@ -71,6 +63,14 @@ public class MainActivity extends Activity {
             setupChildMode();
         }
 	}
+
+    private void setColors(){
+
+        LinearLayout backgroundLayout = (LinearLayout) findViewById(R.id.parent_container);
+        RelativeLayout topbarLayout = (RelativeLayout) findViewById(R.id.sequence_bar);
+        backgroundLayout.setBackgroundColor(applicationColor);
+        topbarLayout.setBackgroundColor(applicationColor);
+    }
 
     //TODO: This can possibly be done better if we can get the (from launcher) selected child using context
     //Finds the child we want to work with. This is given through a passed extra, "currentChildID".
@@ -283,7 +283,7 @@ public class MainActivity extends Activity {
 		intent.putExtra("guardianId", guardianId);
 		intent.putExtra("editMode", isInEditMode);
 		intent.putExtra("new", isNew);
-        intent.putExtra("appBackgroundColor",appBgColor);
+        intent.putExtra("applicationColor",applicationColor);
 
 		startActivity(intent);
 	}

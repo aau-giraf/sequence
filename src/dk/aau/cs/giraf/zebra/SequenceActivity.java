@@ -61,7 +61,7 @@ public class SequenceActivity extends Activity {
 
 	private ImageView sequenceImageView;
 
-    private int appBgColor;
+    private int applicationColor;
 
 	private boolean isInEditMode;
 	private boolean isNew;
@@ -88,7 +88,7 @@ public class SequenceActivity extends Activity {
 		guardianId = extras.getLong("guardianId");
 		isNew = extras.getBoolean("new");
 		isInEditMode = extras.getBoolean("editMode");
-        appBgColor = extras.getInt("appBackgroundColor");
+        applicationColor = extras.getInt("applicationColor");
 
 		originalSequence = MainActivity.selectedChild.getSequenceFromId(sequenceId);
 
@@ -107,10 +107,10 @@ public class SequenceActivity extends Activity {
         addButton = (GButton) findViewById(R.id.add_button);
         editSequenceNameButton = (GButton) findViewById(R.id.edit_sequence_name_button);
 
-        LinearLayout bgLayout = (LinearLayout) findViewById(R.id.parent_container);
-        bgLayout.setBackgroundColor(appBgColor);
+        LinearLayout backgroundLayout = (LinearLayout) findViewById(R.id.parent_container);
         RelativeLayout topbarLayout = (RelativeLayout) findViewById(R.id.sequence_bar);
-        topbarLayout.setBackgroundColor(appBgColor);
+        backgroundLayout.setBackgroundColor(applicationColor);
+        topbarLayout.setBackgroundColor(applicationColor);
 
 
 		initializeTopBar();

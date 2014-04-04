@@ -1,13 +1,11 @@
 package dk.aau.cs.giraf.zebra;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -15,12 +13,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -32,11 +28,9 @@ import android.widget.TextView.OnEditorActionListener;
 import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogMessage;
-import dk.aau.cs.giraf.gui.GTextView;
 import dk.aau.cs.giraf.zebra.PictogramView.OnDeleteClickListener;
 import dk.aau.cs.giraf.zebra.SequenceAdapter.OnAdapterGetViewListener;
 import dk.aau.cs.giraf.zebra.SequenceViewGroup.OnNewButtonClickedListener;
-import dk.aau.cs.giraf.zebra.models.Child;
 import dk.aau.cs.giraf.zebra.models.Pictogram;
 import dk.aau.cs.giraf.zebra.models.Sequence;
 import dk.aau.cs.giraf.zebra.serialization.SequenceFileStore;
@@ -49,7 +43,6 @@ public class SequenceActivity extends Activity {
 	private Sequence sequence;
 	private SequenceAdapter adapter;
 
-//	private GButton okButton;
 	private GButton cancelButton;
     private GButton saveButton;
     private GButton addButton;
@@ -112,11 +105,7 @@ public class SequenceActivity extends Activity {
         backgroundLayout.setBackgroundColor(applicationColor);
         topbarLayout.setBackgroundColor(applicationColor);
 
-
 		initializeTopBar();
-
-
-
 
 		sequenceImageView = (ImageView) findViewById(R.id.sequence_image);
 
@@ -207,7 +196,6 @@ public class SequenceActivity extends Activity {
                     }
                 });
 
-
         returnDialog.show();
     }
 */
@@ -256,7 +244,6 @@ public class SequenceActivity extends Activity {
             GButton discardChanges = (GButton) findViewById(R.id.discard_changes);
             GButton returntoEditting = (GButton) findViewById(R.id.return_to_editting);
 
-
             saveChanges.setOnClickListener(new GButton.OnClickListener() {
 
                 @Override
@@ -281,7 +268,6 @@ public class SequenceActivity extends Activity {
                 }
             });
         }
-
     }
 
     public class addDialog extends GDialog {
@@ -542,7 +528,6 @@ public class SequenceActivity extends Activity {
                 et.requestFocus();
             }
         });
-
 	}
 
 	public void hideSoftKeyboardFromView(View view) {
@@ -550,13 +535,13 @@ public class SequenceActivity extends Activity {
 		imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 	}
 
-	/**
-	 * Creates listeners to remove focus from EditText when something else is
-	 * touched (to hide the softkeyboard)
-	 * 
-	 * @param view
-	 *            The parent container. The function runs recursively on its
-	 *            children
+	/*
+	   Creates listeners to remove focus from EditText when something else is
+	   touched (to hide the softkeyboard)
+
+	   @param view
+	              The parent container. The function runs recursively on its
+	              children
 	 */
 	public void createClearFocusListeners(View view) {
 		// Create listener to remove focus from EditText when something else is
@@ -574,8 +559,7 @@ public class SequenceActivity extends Activity {
 			});
 		}
 
-		// If the view is a container, run the function recursively on the
-		// children
+		// If the view is a container, run the function recursively on the children
 		if (view instanceof ViewGroup) {
 			for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
 				View innerView = ((ViewGroup) view).getChildAt(i);

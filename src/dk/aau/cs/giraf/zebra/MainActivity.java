@@ -4,23 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.GridView;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
 import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GDialogMessage;
@@ -40,7 +34,7 @@ public class MainActivity extends Activity {
 	private List<Sequence> sequences = new ArrayList<Sequence>();
     public static Child selectedChild;
 	private int guardianId;
-    private int applicationColor = Color.YELLOW;
+    private int applicationColor = Color.LTGRAY;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -187,7 +181,7 @@ public class MainActivity extends Activity {
         s.setTitle("Johan lugter af tis");
         s.setImageId(10);
         List <Sequence> list = sequences;
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 12; i++) {
             list.add(s);
         }
         return list;

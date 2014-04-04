@@ -140,7 +140,7 @@
                 svg:horizontalSpacing="20dp"
                 svg:itemHeight="@dimen/activity_main_picto_size"
                 svg:itemWidth="@dimen/activity_main_picto_size"
-                android:background="@drawable/main_picto_container_bg"
+                android:background="@layout/main_picto_container_bg"
                 android:layout_gravity="center_vertical">
             </dk.aau.cs.giraf.zebra.SequenceViewGroup>
         </FrameLayout>

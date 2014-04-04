@@ -141,19 +141,30 @@ public class SequenceActivity extends Activity {
 
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
+
+                EditText sequenceTitle = (EditText) findViewById(R.id.sequence_title);
 				if (hasFocus) {
 
                     // Forces the keyboard to pop up when using the editSequenceNameButton
-                    EditText sequenceTitle = (EditText) findViewById(R.id.sequence_title);
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.showSoftInput(sequenceTitle, InputMethodManager.SHOW_IMPLICIT);
 
-                    //Removes the hint text from the SequenceTitle
-                    sequenceTitle.setHint(null);
+                    // Enforces that the sequenceTitleView can not get larger than parent
+                    // For some reason the parent view overlaps with buttons. Therefore the width have to be 200 less than parent.
+                    // TODO: Figure our why. Probably an issue with activity_sequence.xml
+                    View container = findViewById(R.id.titles_container);
+                    int width = container.getWidth();
+                    sequenceTitleView.setMaxWidth(width-200);
+
+                    //Makes the hint text from the SequenceTitle transparent if sequenceTitle is blank
+                    if (sequenceTitle.getText().toString().equals("")) {
+                        sequenceTitle.setHintTextColor(Color.TRANSPARENT);
+                    }
 				} else {
-					// Closing the keyboard when the text field is not active anymore
+					// Hides the keyboard and reverts hint color when sequenceTitle is not active
 					InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 					in.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    sequenceTitle.setHintTextColor(Color.parseColor("#55624319"));
 				}
 			}
 /*
@@ -447,6 +458,7 @@ public class SequenceActivity extends Activity {
 	}
 
 	private void initializeTopBar() {
+
 		sequenceTitleView.setEnabled(isInEditMode);
 		sequenceTitleView.setText(sequence.getTitle());
 
@@ -454,16 +466,16 @@ public class SequenceActivity extends Activity {
 		// keyboard
 		sequenceTitleView
 				.setOnEditorActionListener(new OnEditorActionListener() {
-					@Override
-					public boolean onEditorAction(TextView v, int actionId,
-							KeyEvent event) {
-						if (actionId == EditorInfo.IME_ACTION_DONE) {
-							EditText editText = (EditText) findViewById(R.id.sequence_title);
-							editText.clearFocus();
-						}
-						return false;
-					}
-				});
+                    @Override
+                    public boolean onEditorAction(TextView v, int actionId,
+                                                  KeyEvent event) {
+                        if (actionId == EditorInfo.IME_ACTION_DONE) {
+                            EditText editText = (EditText) findViewById(R.id.sequence_title);
+                            editText.clearFocus();
+                        }
+                        return false;
+                    }
+                });
 
 		// Create listeners on every view to remove focus from the EditText when
 		// touched

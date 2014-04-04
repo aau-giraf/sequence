@@ -83,19 +83,22 @@
 
 
         <LinearLayout
-            android:layout_width="fill_parent"
+            android:id="@+id/titles_container"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/cancel_button"
             android:layout_toRightOf="@+id/edit_sequence_name_button"
             android:orientation="vertical" >
 
+            <!--Without the 50dp margin in EditText, it is not in the middle of the screen-->
             <EditText
                 android:id="@+id/sequence_title"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="100dp"
-                android:background="#00000000"
+                android:layout_marginLeft="50dp"
+                android:layout_gravity="center"
+                android:background="@drawable/rounded_edittext"
                 android:gravity="center"
                 android:imeOptions="actionDone"
                 android:inputType="text"
@@ -114,6 +117,7 @@
                 android:textColor="@color/text_color_light"
                 android:textIsSelectable="true"
                 android:textSize="26sp" />
+
         </LinearLayout>
 
     </RelativeLayout>

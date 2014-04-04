@@ -34,7 +34,7 @@ import dk.aau.cs.giraf.zebra.serialization.SequenceFileStore;
 
 
 public class MainActivity extends Activity {
-    private boolean isInEditMode = false;
+    private boolean isInEditMode = true;
     private GridView sequenceGrid;
     private SequenceListAdapter sequenceAdapter;
 	private List<Sequence> sequences = new ArrayList<Sequence>();

@@ -134,7 +134,7 @@ public class MainActivity extends Activity {
     }
 */
     private boolean deleteSequenceDialog(final int position) {
-
+        /*
 		final Dialog dialog = new Dialog(this);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		dialog.setContentView(R.layout.delete_dialog_box);
@@ -142,15 +142,15 @@ public class MainActivity extends Activity {
 		TextView questionField = (TextView)dialog.findViewById(R.id.question);
 		String sequenceName = selectedChild.getSequences().get(position).getTitle();
 		String question;
-		
+
 		if (sequenceName.length() == 0) {
 			question = "Du er ved at slette sekvensen. Er du sikker?";
 		} else {
 			question = "Du er ved at slette sekvensen \"" + sequenceName + "\". Er du sikker?";
 		}
-		
+
 		questionField.setText(question);
-		
+
 		final Button deleteButton = (Button)dialog.findViewById(R.id.btn_delete);
 		deleteButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -159,10 +159,9 @@ public class MainActivity extends Activity {
 				selectedChild.getSequences().remove(position);
 				SequenceFileStore.writeSequences(MainActivity.this, selectedChild, selectedChild.getSequences());
 				refreshSelectedChild();
-			}
-		});
+			}		});
 
-		
+
 		final Button cancelButton = (Button)dialog.findViewById(R.id.btn_delete_cancel);
 		cancelButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -171,14 +170,16 @@ public class MainActivity extends Activity {
 			}
 		});
 		dialog.show();
-		return true;
+        */
+    	return true;
+
 	}
 
 	private void loadSequences() {
 			List<Sequence> list = SequenceFileStore.getSequences(this, selectedChild);
 			selectedChild.setSequences(list);
 	}
-	
+
 	public void refreshSelectedChild() {
 		((TextView)findViewById(R.id.child_name)).setText(selectedChild.getName());
 		sequences.clear();
@@ -200,7 +201,7 @@ public class MainActivity extends Activity {
 				((PictogramView)view).placeDown();
 			}
 		}
-	}
+    }
 
 
     private void setupGuardianMode() {

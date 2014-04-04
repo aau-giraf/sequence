@@ -105,7 +105,9 @@
                 android:textColor="@color/text_color"
                 android:textSize="48sp"
                 android:textColorHint="@color/text_hint_color"
+                android:textCursorDrawable="@null"
                 android:hint="@string/unnamed_sequence" >
+
             </EditText>
 
             <TextView

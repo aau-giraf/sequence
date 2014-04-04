@@ -40,7 +40,7 @@ public class MainActivity extends Activity {
 	private List<Sequence> sequences = new ArrayList<Sequence>();
     public static Child selectedChild;
 	private int guardianId;
-    private int applicationColor = Color.WHITE;
+    private int applicationColor = Color.YELLOW;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -176,9 +176,22 @@ public class MainActivity extends Activity {
 	}
 
 	private void loadSequences() {
-			List<Sequence> list = SequenceFileStore.getSequences(this, selectedChild);
+        //TODO createFakeSequences is a temporary fix to generate some Sequences
+	    List<Sequence> list; // = SequenceFileStore.getSequences(this, selectedChild);
+        list = createFakeSequences();
 			selectedChild.setSequences(list);
 	}
+
+    private List<Sequence> createFakeSequences() {
+        Sequence s = new Sequence();
+        s.setTitle("Johan lugter af tis");
+        s.setImageId(10);
+        List <Sequence> list = sequences;
+        for (int i = 0; i < 20; i++) {
+            list.add(s);
+        }
+        return list;
+    }
 
 	public void refreshSelectedChild() {
 		((TextView)findViewById(R.id.child_name)).setText(selectedChild.getName());

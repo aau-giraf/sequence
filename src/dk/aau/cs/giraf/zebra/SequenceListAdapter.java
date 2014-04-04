@@ -3,6 +3,8 @@ package dk.aau.cs.giraf.zebra;
 import java.util.List;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.BitmapFactory;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -38,9 +40,11 @@ public class SequenceListAdapter extends BaseAdapter {
         
         v.setTitle(sequence.getTitle());
         v.setEditModeEnabled(isInEditMode);
-		v.setImage(sequence.getImage(context));
-        
-        
+        //TODO: This is a temporary fix to get a blank yellow picture on any Sequence.
+		//v.setImage(sequence.getImage(context));
+        v.setImage(BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.nice));
+
+
         if (onAdapterGetViewListener != null)
 			onAdapterGetViewListener.onAdapterGetView(position, v);
 

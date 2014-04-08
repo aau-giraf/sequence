@@ -127,7 +127,7 @@ public class MainActivity extends Activity {
 
     private List<Sequence> createFakeSequences() {
         Sequence s = new Sequence();
-        s.setTitle("Johan lugter af tis");
+        s.setTitle("Morten Lugter selv a tis");
         s.setImageId(10);
         List <Sequence> list = sequences;
         for (int i = 0; i < 12; i++) {

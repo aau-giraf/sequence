@@ -112,59 +112,8 @@ public class MainActivity extends Activity {
 		});
 		return adapter;
 	}
-/*
-    // TODO: Make a functionality to delete a sequence. Require database syncronization
-    public void deleteSequenceDialog (View v) {
-        GDialogMessage deleteSequence = new GDialogMessage(v.getContext(),
-            R.drawable.ic_launcher,
-            "Slet Sekvens",
-            "Du er ved at slette sekvensen, er du sikker på du vil det?",
-            new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                }
-            });
-    }
-*/
+    //TODO: create this functionality when database sync is ready.
     private boolean deleteSequenceDialog(final int position) {
-        /*
-		final Dialog dialog = new Dialog(this);
-		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		dialog.setContentView(R.layout.delete_dialog_box);
-		dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-		TextView questionField = (TextView)dialog.findViewById(R.id.question);
-		String sequenceName = selectedChild.getSequences().get(position).getTitle();
-		String question;
-
-		if (sequenceName.length() == 0) {
-			question = "Du er ved at slette sekvensen. Er du sikker?";
-		} else {
-			question = "Du er ved at slette sekvensen \"" + sequenceName + "\". Er du sikker?";
-		}
-
-		questionField.setText(question);
-
-		final Button deleteButton = (Button)dialog.findViewById(R.id.btn_delete);
-		deleteButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				dialog.dismiss();
-				selectedChild.getSequences().remove(position);
-				SequenceFileStore.writeSequences(MainActivity.this, selectedChild, selectedChild.getSequences());
-				refreshSelectedChild();
-			}		});
-
-
-		final Button cancelButton = (Button)dialog.findViewById(R.id.btn_delete_cancel);
-		cancelButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				dialog.dismiss();
-			}
-		});
-		dialog.show();
-        */
     	return true;
 
 	}

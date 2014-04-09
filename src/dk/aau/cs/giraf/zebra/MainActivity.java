@@ -35,6 +35,7 @@ public class MainActivity extends Activity {
     public static Child selectedChild;
 	private int guardianId;
     private int applicationColor = Color.LTGRAY;
+    Helper helper;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -68,13 +69,13 @@ public class MainActivity extends Activity {
 
     //TODO: This can possibly be done better if we can get the (from launcher) selected child using context
     //Finds the child we want to work with. This is given through a passed extra, "currentChildID".
-    //TODO: This is a temporary fix because there is currently no way of using the database! Uncomment and change Child c when possible to get a real child.
 	private void setChild() {
 		sequences.clear();
-		//Bundle extras = getIntent().getExtras();
-        //guardianId = extras.getInt("currentGuardianID");
-        guardianId = 1;
-        /*int childId = extras.getInt("currentChildID");
+		Bundle extras = getIntent().getExtras();
+        guardianId = extras.getInt("currentGuardianID");
+        //TODO: childId from launcher is currently long, but we expect it to be int soon. This is why we parse it here.
+        long childIdLong = extras.getLong("currentChildID");
+        int childId = Integer.parseInt(Long.toString(childIdLong));
 
         try{helper = new Helper(this);}
         catch(Exception e){}
@@ -82,17 +83,15 @@ public class MainActivity extends Activity {
    		List<Profile> childProfiles = helper.profilesHelper.getChildrenByGuardian(guardian);
 
     	for (Profile p : childProfiles) {
-    		if (p.getId()==childId) {
+    		if (p.getId() == childId) {
                 Child c = new Child(childId, p.getName(), p.getImage());
                 String name = p.getName();
-                Bitmap picture = p.getImage();*/
-                Child c = new Child(0, "Hamun Leth Laustsen", null);
+                Bitmap picture = p.getImage();
                 selectedChild = c;
-       //}
-   		loadSequences();
-   		refreshSelectedChild();
+            }
        }
-   //}
+        refreshSelectedChild();
+   }
 	
 	private SequenceListAdapter setupAdapter() {
 		final SequenceListAdapter adapter = new SequenceListAdapter(this, sequences);
@@ -121,13 +120,13 @@ public class MainActivity extends Activity {
 	private void loadSequences() {
         //TODO createFakeSequences is a temporary fix to generate some Sequences
 	    List<Sequence> list; // = SequenceFileStore.getSequences(this, selectedChild);
-        list = createFakeSequences();
-			selectedChild.setSequences(list);
+		list = createFakeSequences();
+        selectedChild.setSequences(list);
 	}
 
     private List<Sequence> createFakeSequences() {
         Sequence s = new Sequence();
-        s.setTitle("Morten Lugter selv a tis");
+        s.setTitle("Johan er meget sød");
         s.setImageId(10);
         List <Sequence> list = sequences;
         for (int i = 0; i < 12; i++) {

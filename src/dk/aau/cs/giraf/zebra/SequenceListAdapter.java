@@ -41,9 +41,8 @@ public class SequenceListAdapter extends BaseAdapter {
         v.setTitle(sequence.getTitle());
         v.setEditModeEnabled(isInEditMode);
         //TODO: This is a temporary fix to get a blank yellow picture on any Sequence.
-		//v.setImage(sequence.getImage(context));
+        //v.setImage(sequence.getImage(context));
         v.setImage(BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.nice));
-
 
         if (onAdapterGetViewListener != null)
 			onAdapterGetViewListener.onAdapterGetView(position, v);

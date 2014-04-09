@@ -8,19 +8,19 @@ import android.graphics.Bitmap;
 
 public class Child {
 	
-	private long profileId;
+	private int profileId;
 	private String name;
 	private Bitmap picture;
 	
 	private List<Sequence> sequences = new ArrayList<Sequence>();
 	
-	public Child(long profileId, String name, Bitmap picture) {
+	public Child(int profileId, String name, Bitmap picture) {
 		this.profileId = profileId;
 		this.name = name;
 		this.picture = picture;
 	}
 	
-	public long getProfileId() {
+	public int getProfileId() {
 		return profileId;
 	}
 	

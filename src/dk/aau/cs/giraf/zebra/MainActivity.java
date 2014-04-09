@@ -28,7 +28,7 @@ import dk.aau.cs.giraf.zebra.serialization.SequenceFileStore;
 
 
 public class MainActivity extends Activity {
-    private boolean isInEditMode = true;
+    private boolean isInEditMode = false;
     private GridView sequenceGrid;
     private SequenceListAdapter sequenceAdapter;
 	private List<Sequence> sequences = new ArrayList<Sequence>();
@@ -162,7 +162,7 @@ public class MainActivity extends Activity {
 
     private void setupGuardianMode() {
 
-
+        isInEditMode = true;
         sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -229,8 +229,17 @@ public class MainActivity extends Activity {
 
     private void setupChildMode() {
 
+        GButton addButton = (GButton)findViewById(R.id.add_button);
+        GButton deleteButton = (GButton)findViewById(R.id.delete_button);
+        GButton copyButton = (GButton)findViewById(R.id.copy_button);
 
+    if(!isInEditMode) {
 
+        addButton.setVisibility(View.INVISIBLE);
+        deleteButton.setVisibility(View.INVISIBLE);
+        copyButton.setVisibility(View.INVISIBLE);
+
+        }
     }
 
 	private void enterSequence(Sequence sequence, boolean isNew) {

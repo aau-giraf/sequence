@@ -218,6 +218,11 @@ public class SequenceActivity extends Activity {
         exitEditting.show();
     }
 
+    public void showChoiceDialog(View v) {
+        choiceDialog ChoiceDialog = new choiceDialog(v.getContext());
+        ChoiceDialog.show();
+    }
+
     public void showAddDialog(View v) {
         addDialog addFrame = new addDialog(v.getContext());
         addFrame.show();
@@ -288,7 +293,6 @@ public class SequenceActivity extends Activity {
                     dismiss();
                 }
             });
-
             getPictogram.setOnClickListener(new GButton.OnClickListener() {
 
                 @Override
@@ -296,17 +300,83 @@ public class SequenceActivity extends Activity {
                     dismiss();
                 }
             });
-
             getChoice.setOnClickListener(new GButton.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    dismiss();
+                    showChoiceDialog(v);
+                }
+            });
+        }
+    }
+
+    public class choiceDialog extends GDialog {
+
+        public choiceDialog(Context context) {
+            super(context);
+
+            this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.choice_dialog,null));
+
+            GButton saveChoice = (GButton) findViewById(R.id.save_choice);
+            GButton discardChoice = (GButton) findViewById(R.id.discard_choice);
+
+            saveChoice.setOnClickListener(new GButton.OnClickListener(){
 
                 @Override
                 public void onClick(View v) {
                     dismiss();
                 }
             });
+            discardChoice.setOnClickListener(new GButton.OnClickListener(){
+
+                @Override
+                public void onClick(View v) {
+                    dismiss();
+                }
+            });
+            setupchoiceAdapter(adapter);
+        }
+
+        private SequenceViewGroup setupchoiceAdapter(
+                final SequenceAdapter adapter) {
+            final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.choice_view_group);
+            sequenceGroup.setEditModeEnabled(isInEditMode);
+            sequenceGroup.setAdapter(adapter);
+
+            // Handle rearrange
+            sequenceGroup
+                    .setOnRearrangeListener(new SequenceViewGroup.OnRearrangeListener() {
+                        @Override
+                        public void onRearrange(int indexFrom, int indexTo) {
+                            sequence.rearrange(indexFrom, indexTo);
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+
+            // Handle new view
+            sequenceGroup
+                    .setOnNewButtonClickedListener(new OnNewButtonClickedListener() {
+                        @Override
+                        public void onNewButtonClicked() {
+                            final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.choice_view_group);
+                            sequenceGroup.liftUpAddNewButton();
+
+                            callPictoAdmin(PICTO_NEW_PICTOGRAM_CALL);
+                        }
+                    });
+
+            sequenceGroup.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapter, View view,
+                                        int position, long id) {
+                    pictogramEditPos = position;
+                    callPictoAdmin(PICTO_EDIT_PICTOGRAM_CALL);
+                }
+            });
+        return sequenceGroup;
         }
     }
-
 
 	private SequenceViewGroup setupSequenceViewGroup(
 			final SequenceAdapter adapter) {
@@ -480,13 +550,6 @@ public class SequenceActivity extends Activity {
 
 		TextView childName = (TextView) findViewById(R.id.child_name);
 		childName.setText(MainActivity.selectedChild.getName());
-/*
-		if (!isInEditMode) {
-			okButton.setVisibility(View.INVISIBLE);
-            cancelButton.setVisibility(View.INVISIBLE);
-            editSequenceNameButton.setVisibility(View.INVISIBLE);
-		}
-*/
 
 		saveButton.setOnClickListener(new ImageButton.OnClickListener() {
 

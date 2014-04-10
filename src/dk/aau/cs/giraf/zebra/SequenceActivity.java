@@ -76,9 +76,9 @@ public class SequenceActivity extends Activity {
 		setContentView(R.layout.activity_sequence);
 
 		Bundle extras = getIntent().getExtras();
-		long profileId = extras.getLong("profileId");
+		long profileId = extras.getInt("profileId");
 		long sequenceId = extras.getLong("sequenceId");
-		guardianId = extras.getLong("guardianId");
+		guardianId = extras.getInt("guardianId");
 		isNew = extras.getBoolean("new");
 		isInEditMode = extras.getBoolean("editMode");
         applicationColor = extras.getInt("applicationColor");
@@ -261,6 +261,7 @@ public class SequenceActivity extends Activity {
 
                 @Override
                 public void onClick(View v) {
+                    //TODO: This needs to be done properly. This method leaks memory.
                     finish();
                 }
             });

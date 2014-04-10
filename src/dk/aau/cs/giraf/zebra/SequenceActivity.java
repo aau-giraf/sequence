@@ -635,6 +635,7 @@ public class SequenceActivity extends Activity {
 	private void callPictoAdmin(int modeId) {
 		Intent intent = new Intent();
 		intent.setComponent(new ComponentName(PICTO_ADMIN_PACKAGE, PICTO_ADMIN_CLASS));
+        //TODO: Pictosearch currently still eats a long for currentChildId. Casting profileId below to long fixes it.
 		intent.putExtra("currentChildID", MainActivity.selectedChild.getProfileId());
 		intent.putExtra("currentGuardianID", guardianId);
 		

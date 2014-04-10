@@ -41,7 +41,9 @@ public class SequenceActivity extends Activity {
 	
 	private Sequence originalSequence;
 	private Sequence sequence;
+    private Sequence choice;
 	private SequenceAdapter adapter;
+    private SequenceAdapter choiceAdapter;
 
 	private GButton cancelButton;
     private GButton saveButton;
@@ -323,6 +325,9 @@ public class SequenceActivity extends Activity {
             GButton saveChoice = (GButton) findViewById(R.id.save_choice);
             GButton discardChoice = (GButton) findViewById(R.id.discard_choice);
 
+            //Adapter to display a list of pictograms in the choice dialog
+            choiceAdapter = setupchoiceAdapter();
+
             saveChoice.setOnClickListener(new GButton.OnClickListener(){
 
                 @Override
@@ -337,27 +342,27 @@ public class SequenceActivity extends Activity {
                     dismiss();
                 }
             });
-            setupchoiceAdapter(adapter);
+            setupChoiceGroup(choiceAdapter);
         }
 
-        private SequenceViewGroup setupchoiceAdapter(
+        private SequenceViewGroup setupChoiceGroup(
                 final SequenceAdapter adapter) {
-            final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.choice_view_group);
-            sequenceGroup.setEditModeEnabled(isInEditMode);
-            sequenceGroup.setAdapter(adapter);
+            final SequenceViewGroup choiceGroup = (SequenceViewGroup) findViewById(R.id.choice_view_group);
+            choiceGroup.setEditModeEnabled(isInEditMode);
+            choiceGroup.setAdapter(adapter);
 
             // Handle rearrange
-            sequenceGroup
+            choiceGroup
                     .setOnRearrangeListener(new SequenceViewGroup.OnRearrangeListener() {
                         @Override
                         public void onRearrange(int indexFrom, int indexTo) {
-                            sequence.rearrange(indexFrom, indexTo);
+                            choice.rearrange(indexFrom, indexTo);
                             adapter.notifyDataSetChanged();
                         }
                     });
 
             // Handle new view
-            sequenceGroup
+            choiceGroup
                     .setOnNewButtonClickedListener(new OnNewButtonClickedListener() {
                         @Override
                         public void onNewButtonClicked() {
@@ -368,7 +373,7 @@ public class SequenceActivity extends Activity {
                         }
                     });
 
-            sequenceGroup.setOnItemClickListener(new OnItemClickListener() {
+            choiceGroup.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapter, View view,
                                         int position, long id) {
@@ -376,7 +381,9 @@ public class SequenceActivity extends Activity {
                     callPictoAdmin(PICTO_EDIT_PICTOGRAM_CALL);
                 }
             });
-        return sequenceGroup;
+
+
+        return choiceGroup;
         }
     }
 
@@ -443,6 +450,30 @@ public class SequenceActivity extends Activity {
 
 		return adapter;
 	}
+
+    private SequenceAdapter setupchoiceAdapter() {
+        final SequenceAdapter adapter = new SequenceAdapter(this, choice);
+
+        // Setup delete handler.
+        adapter.setOnAdapterGetViewListener(new OnAdapterGetViewListener() {
+            @Override
+            public void onAdapterGetView(final int position, final View view) {
+                if (view instanceof PictogramView) {
+                    PictogramView pictoView = (PictogramView) view;
+                    pictoView
+                            .setOnDeleteClickListener(new OnDeleteClickListener() {
+                                @Override
+                                public void onDeleteClick() {
+                                    choice.deletePictogram(position);
+                                    adapter.notifyDataSetChanged();
+                                }
+                            });
+                }
+            }
+        });
+
+        return adapter;
+    }
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -520,8 +551,7 @@ public class SequenceActivity extends Activity {
 		sequenceTitleView.setEnabled(isInEditMode);
 		sequenceTitleView.setText(sequence.getTitle());
 
-		// Create listener to remove focus when "Done" is pressed on the
-		// keyboard
+		// Create listener to remove focus when "Done" is pressed on the keyboard
 		sequenceTitleView
 				.setOnEditorActionListener(new OnEditorActionListener() {
                     @Override
@@ -535,12 +565,10 @@ public class SequenceActivity extends Activity {
                     }
                 });
 
-		// Create listeners on every view to remove focus from the EditText when
-		// touched
+		// Create listeners on every view to remove focus from the EditText when touched
 		createClearFocusListeners(findViewById(R.id.parent_container));
 
-		// Create listener to hide the keyboard and save when the EditText loses
-		// focus
+		// Create listener to hide the keyboard and save when the EditText loses focus
 		sequenceTitleView.setOnFocusChangeListener(new OnFocusChangeListener() {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
@@ -605,12 +633,10 @@ public class SequenceActivity extends Activity {
 	   touched (to hide the softkeyboard)
 
 	   @param view
-	              The parent container. The function runs recursively on its
-	              children
+	              The parent container. The function runs recursively on its children
 	 */
 	public void createClearFocusListeners(View view) {
-		// Create listener to remove focus from EditText when something else is
-		// touched
+		// Create listener to remove focus from EditText when something else is touched
 		if (!(view instanceof EditText)) {
 			view.setOnTouchListener(new View.OnTouchListener() {
 				@Override

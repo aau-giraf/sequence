@@ -109,12 +109,13 @@ public class SequenceActivity extends Activity {
 
 		sequenceImageView = (ImageView) findViewById(R.id.sequence_image);
 
-		if (sequence.getImageId() == 0) {
+        //TODO Uncomment the stuff below when fake images is no longer needed.
+		//if (sequence.getImageId() == 0) {
 			sequenceImageView.setImageDrawable(getResources().getDrawable(
 					R.drawable.ic_launcher));
-		} else {
+		/*} else {
 			sequenceImageView.setImageBitmap(sequence.getImage(this));
-		}
+		}*/
 
 		sequenceImageView.setOnClickListener(new ImageView.OnClickListener() {
 

@@ -23,6 +23,7 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.zebra.PictogramView.OnDeleteClickListener;
 import dk.aau.cs.giraf.zebra.SequenceListAdapter.OnAdapterGetViewListener;
 import dk.aau.cs.giraf.zebra.models.Child;
+import dk.aau.cs.giraf.zebra.models.Pictogram;
 import dk.aau.cs.giraf.zebra.models.Sequence;
 import dk.aau.cs.giraf.zebra.serialization.SequenceFileStore;
 
@@ -126,9 +127,22 @@ public class MainActivity extends Activity {
 	}
 
     private List<Sequence> createFakeSequences() {
+
         Sequence s = new Sequence();
         s.setTitle("Johan er meget sød");
         s.setImageId(10);
+        s.setSequenceId(5);
+
+        Pictogram a = new Pictogram();
+        Pictogram b = new Pictogram();
+        Pictogram c = new Pictogram();
+        a.setPictogramId(0);
+        b.setPictogramId(1);
+        c.setPictogramId(2);
+        s.addPictogramAtEnd(a);
+        s.addPictogramAtEnd(b);
+        s.addPictogramAtEnd(c);
+
         List <Sequence> list = sequences;
         for (int i = 0; i < 12; i++) {
             list.add(s);

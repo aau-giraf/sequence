@@ -50,6 +50,7 @@ public class MainActivity extends Activity {
         setChild();
         setColors();
 
+
         //TODO: find out what the guardianId is if its in childmode.
         if (guardianId != 100) {
             setupGuardianMode();
@@ -172,9 +173,12 @@ public class MainActivity extends Activity {
             }
         });
 
+
+
         final GButton addButton = (GButton)findViewById(R.id.add_button);
         final GButton deleteButton = (GButton)findViewById(R.id.delete_button);
         final GButton copyButton = (GButton)findViewById(R.id.copy_button);
+        final GButton settingsButton = (GButton)findViewById(R.id.settings_button);
 
 
         addButton.setOnClickListener(new OnClickListener() {
@@ -231,14 +235,14 @@ public class MainActivity extends Activity {
         GButton addButton = (GButton)findViewById(R.id.add_button);
         GButton deleteButton = (GButton)findViewById(R.id.delete_button);
         GButton copyButton = (GButton)findViewById(R.id.copy_button);
+        GButton settingsButton = (GButton)findViewById(R.id.settings_button);
 
-    if(!isInEditMode) {
 
         addButton.setVisibility(View.INVISIBLE);
         deleteButton.setVisibility(View.INVISIBLE);
         copyButton.setVisibility(View.INVISIBLE);
+        settingsButton.setVisibility(View.INVISIBLE);
 
-        }
     }
 
 	private void enterSequence(Sequence sequence, boolean isNew) {

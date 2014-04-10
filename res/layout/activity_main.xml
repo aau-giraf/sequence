@@ -19,6 +19,28 @@
         android:layout_height="140sp"
         android:orientation="horizontal" >
 
+        <dk.aau.cs.giraf.gui.GButton
+            android:id="@+id/relog_button"
+            android:layout_width="85dp"
+            android:layout_height="85dp"
+            android:layout_centerInParent="true"
+            android:drawableLeft="@drawable/relog_icon"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            />
+
+        <dk.aau.cs.giraf.gui.GButton
+            android:id="@+id/settings_button"
+            android:layout_width="85dp"
+            android:layout_height="85dp"
+            android:layout_centerInParent="true"
+            android:drawableLeft="@drawable/settings_icon"
+            android:layout_alignLeft="@+id/relog_button"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="100dp"
+            />
+
         <TextView
             android:id="@+id/child_name"
             android:layout_width="wrap_content"

@@ -54,38 +54,6 @@
         </FrameLayout>
 
     </HorizontalScrollView>
-    <!--
-    <LinearLayout
-        android:id="@+id/GDialog_image_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/GDialogMessage_topWrapper"
-        >
-        <ImageView
-            android:id="@+id/pictogram_one"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/add_pictogram"
-            android:layout_marginRight="25dp"
-            android:layout_marginLeft="25dp"
-            />
-
-        <ImageView
-            android:id="@+id/pictogram_two"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/add_pictogram"
-            android:layout_marginRight="25dp"
-            />
-
-        <ImageView
-            android:id="@+id/pictogram_three"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/add_pictogram"
-            />
-    </LinearLayout>
-   -->
     <LinearLayout
         android:id="@+id/GDialog_button_layout"
         android:layout_width="wrap_content"

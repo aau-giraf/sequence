@@ -34,9 +34,11 @@ public class MainActivity extends Activity {
     private SequenceListAdapter sequenceAdapter;
 	private List<Sequence> sequences = new ArrayList<Sequence>();
     public static Child selectedChild;
-	private int guardianId;
-    private int applicationColor = Color.LTGRAY;
+    public static Long nestedSequenceId;
     Helper helper;
+    private int applicationColor = Color.parseColor("#8ba4bd");
+    private int guardianId;
+    private int childId;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,12 +50,21 @@ public class MainActivity extends Activity {
 		sequenceGrid = (GridView)findViewById(R.id.sequence_grid);
 		sequenceGrid.setAdapter(sequenceAdapter);
 
+        Bundle extras = getIntent().getExtras();
+        guardianId = extras.getInt("currentGuardianID");
+        //TODO: childId from launcher is currently long, but we expect it to be int soon. This is why we parse it here.
+        long childIdLong = extras.getLong("currentChildID");
+        childId = Integer.parseInt(Long.toString(childIdLong));
+
         setChild();
         setColors();
 
-
+        //If MainActivity is started from SequenceActivity, insertSequence should be true.
+        if (extras.getBoolean("insertSequence")) {
+            setupNestedMode();
+        }
         //TODO: find out what the guardianId is if its in childmode.
-        if (guardianId != 100) {
+        else if (guardianId != 100) {
             setupGuardianMode();
         }
         else {
@@ -73,12 +84,6 @@ public class MainActivity extends Activity {
     //Finds the child we want to work with. This is given through a passed extra, "currentChildID".
 	private void setChild() {
 		sequences.clear();
-		Bundle extras = getIntent().getExtras();
-        guardianId = extras.getInt("currentGuardianID");
-        //TODO: childId from launcher is currently long, but we expect it to be int soon. This is why we parse it here.
-        long childIdLong = extras.getLong("currentChildID");
-        int childId = Integer.parseInt(Long.toString(childIdLong));
-
         try{helper = new Helper(this);}
         catch(Exception e){}
    		Profile guardian = helper.profilesHelper.getProfileById(guardianId);
@@ -113,6 +118,7 @@ public class MainActivity extends Activity {
 		});
 		return adapter;
 	}
+
     //TODO: create this functionality when database sync is ready.
     private boolean deleteSequenceDialog(final int position) {
     	return true;
@@ -129,7 +135,7 @@ public class MainActivity extends Activity {
     private List<Sequence> createFakeSequences() {
 
         Sequence s = new Sequence();
-        s.setTitle("Johan er meget sød");
+        s.setTitle("Testsekvens");
         s.setImageId(10);
         s.setSequenceId(5);
 
@@ -176,7 +182,6 @@ public class MainActivity extends Activity {
 		}
     }
 
-
     private void setupGuardianMode() {
 
         isInEditMode = true;
@@ -190,13 +195,11 @@ public class MainActivity extends Activity {
             }
         });
 
-
-
         final GButton addButton = (GButton)findViewById(R.id.add_button);
         final GButton deleteButton = (GButton)findViewById(R.id.delete_button);
         final GButton copyButton = (GButton)findViewById(R.id.copy_button);
         final GButton settingsButton = (GButton)findViewById(R.id.settings_button);
-
+        final GButton logoutButton = (GButton) findViewById(R.id.relog_button);
 
         addButton.setOnClickListener(new OnClickListener() {
 
@@ -248,18 +251,42 @@ public class MainActivity extends Activity {
     }
 
     private void setupChildMode() {
+        hideButtons();
+    }
+
+    private void setupNestedMode() {
+        hideButtons();
+        GButton logoutButton = (GButton) findViewById(R.id.relog_button);
+        logoutButton.setVisibility(View.INVISIBLE);
+
+        sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                ((PictogramView)arg1).liftUp();
+                Sequence sequence = sequenceAdapter.getItem(arg2);
+                nestedSequenceId = sequence.getSequenceId();
+                finish();
+            }
+        });
+
+
+    }
+
+    private void hideButtons() {
 
         GButton addButton = (GButton)findViewById(R.id.add_button);
         GButton deleteButton = (GButton)findViewById(R.id.delete_button);
         GButton copyButton = (GButton)findViewById(R.id.copy_button);
         GButton settingsButton = (GButton)findViewById(R.id.settings_button);
+        GButton logoutButton = (GButton) findViewById(R.id.relog_button);
 
 
         addButton.setVisibility(View.INVISIBLE);
         deleteButton.setVisibility(View.INVISIBLE);
         copyButton.setVisibility(View.INVISIBLE);
         settingsButton.setVisibility(View.INVISIBLE);
-
+        logoutButton.setVisibility(View.VISIBLE);
     }
 
 	private void enterSequence(Sequence sequence, boolean isNew) {

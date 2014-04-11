@@ -37,7 +37,8 @@ import dk.aau.cs.giraf.zebra.serialization.SequenceFileStore;
 
 public class SequenceActivity extends Activity {
 
-	private long guardianId;
+	private int guardianId;
+    private long profileId;
 	
 	private Sequence originalSequence;
 	private Sequence sequence;
@@ -78,7 +79,7 @@ public class SequenceActivity extends Activity {
 		setContentView(R.layout.activity_sequence);
 
 		Bundle extras = getIntent().getExtras();
-		long profileId = extras.getInt("profileId");
+		profileId = extras.getInt("profileId");
 		long sequenceId = extras.getLong("sequenceId");
 		guardianId = extras.getInt("guardianId");
 		isNew = extras.getBoolean("new");
@@ -229,6 +230,29 @@ public class SequenceActivity extends Activity {
     public void showAddDialog(View v) {
         addDialog addFrame = new addDialog(v.getContext());
         addFrame.show();
+    }
+
+    public void showNestedSequenceDialog(View v) {
+        GDialogMessage nestedDialog = new GDialogMessage(v.getContext(),
+                R.drawable.ic_launcher,
+                "Åbner sekvensvalg",
+                "Et nyt vindue åbnes, hvor du kan vælge en anden sekvens at indsætte",
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        isInEditMode = false;
+                        Intent intent = new Intent(getApplication(), MainActivity.class);
+                        intent.putExtra("insertSequence", true);
+                        intent.putExtra("currentGuardianID", guardianId);
+                        intent.putExtra("currentChildID", profileId);
+                        startActivity(intent);
+                        isInEditMode = true;
+                        //TODO: Get chosen sequence from MainActivity.nestedSequenceId
+                        // Log.d("Debug", "Ran this. Also, nestedSequenceId is: " + Long.toString(MainActivity.nestedSequenceId));
+                    }
+                });
+
+        nestedDialog.show();
     }
 
 	@Override
@@ -428,7 +452,7 @@ public class SequenceActivity extends Activity {
                     showChoiceDialog(view);
                 }
                 else if (type == "sequence") {
-                    //TODO: Indsæt dialogboks til notifikation af at du går ind i en nested sekvens evt. VIL DU GEMME?
+                    showNestedSequenceDialog(view);
                 }
                 // if none of the above, assume type == pictogram.
                 else {

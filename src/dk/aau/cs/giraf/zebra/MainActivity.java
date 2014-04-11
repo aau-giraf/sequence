@@ -139,6 +139,9 @@ public class MainActivity extends Activity {
         a.setPictogramId(0);
         b.setPictogramId(1);
         c.setPictogramId(2);
+        a.setType("pictogram");
+        b.setType("choice");
+        c.setType("sequence");
         s.addPictogramAtEnd(a);
         s.addPictogramAtEnd(b);
         s.addPictogramAtEnd(c);

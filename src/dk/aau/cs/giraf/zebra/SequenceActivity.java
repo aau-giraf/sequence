@@ -88,7 +88,7 @@ public class SequenceActivity extends Activity {
 		originalSequence = MainActivity.selectedChild.getSequenceFromId(sequenceId);
 
 		// Get a clone of the sequence so the original sequence is not modified
-		sequence = originalSequence.getClone();
+		sequence = originalSequence;
 
 		// Create Adapter
 		adapter = setupAdapter();
@@ -332,6 +332,7 @@ public class SequenceActivity extends Activity {
 
                 @Override
                 public void onClick(View v) {
+                    //TODO: Closing the choiceDialog should save the result, but is not possible yet (Database)
                     dismiss();
                 }
             });
@@ -420,7 +421,19 @@ public class SequenceActivity extends Activity {
 			public void onItemClick(AdapterView<?> adapter, View view,
 					int position, long id) {
 				pictogramEditPos = position;
-				callPictoAdmin(PICTO_EDIT_PICTOGRAM_CALL);
+
+                //Perform action depending on the type of pictogram clicked.
+                String type = sequence.getPictograms().get(position).getType();
+                if (type == "choice")  {
+                    showChoiceDialog(view);
+                }
+                else if (type == "sequence") {
+                    //TODO: Indsæt dialogboks til notifikation af at du går ind i en nested sekvens evt. VIL DU GEMME?
+                }
+                // if none of the above, assume type == pictogram.
+                else {
+                    callPictoAdmin(PICTO_EDIT_PICTOGRAM_CALL);
+                }
 			}
 		});
 

@@ -85,20 +85,7 @@ public class Sequence {
 	public void deletePictogram(int position) {
 		pictograms.remove(position);
 	}
-	
-	public Sequence getClone() {
-		Sequence clone = new Sequence();
-		clone.sequenceId = this.sequenceId;
-		clone.title = this.title;
-		clone.imageId = this.imageId;
-		
-		for (Pictogram pictogram : pictograms) {
-			clone.pictograms.add(pictogram.getClone());
-		}
-		
-		return clone;
-	}
-	
+
 	public void copyFromSequence(Sequence sequence) {
 		this.setSequenceId(sequence.sequenceId);
 		this.setTitle(sequence.title);

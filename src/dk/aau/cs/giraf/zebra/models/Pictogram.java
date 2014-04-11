@@ -10,6 +10,7 @@ import dk.aau.cs.giraf.zebra.R;
 public class Pictogram {
 	private int pictogramId;
 	private String imagePath;
+    private String type;
 	
 	public long getPictogramId() {
 		return pictogramId;
@@ -19,6 +20,13 @@ public class Pictogram {
 		this.pictogramId = pictogramId;
 		this.imagePath = null;
 	}
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 	
 	public Pictogram getClone() {
 		Pictogram clone = new Pictogram();

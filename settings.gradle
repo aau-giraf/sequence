@@ -1,7 +1,4 @@
 include ':OasisLib'
 include ':pictogram-lib'
-include ':Ambilwarna'
-include ':CategoryLib'
-include ':PictoSearch'
 include ':GIRAF_Components'
 include ':Zebra'

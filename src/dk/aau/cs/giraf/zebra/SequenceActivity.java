@@ -37,7 +37,8 @@ import dk.aau.cs.giraf.zebra.serialization.SequenceFileStore;
 
 public class SequenceActivity extends Activity {
 
-	private long guardianId;
+	private int guardianId;
+    private long profileId;
 	
 	private Sequence originalSequence;
 	private Sequence sequence;
@@ -78,7 +79,7 @@ public class SequenceActivity extends Activity {
 		setContentView(R.layout.activity_sequence);
 
 		Bundle extras = getIntent().getExtras();
-		long profileId = extras.getInt("profileId");
+		profileId = extras.getInt("profileId");
 		long sequenceId = extras.getLong("sequenceId");
 		guardianId = extras.getInt("guardianId");
 		isNew = extras.getBoolean("new");
@@ -88,7 +89,7 @@ public class SequenceActivity extends Activity {
 		originalSequence = MainActivity.selectedChild.getSequenceFromId(sequenceId);
 
 		// Get a clone of the sequence so the original sequence is not modified
-		sequence = originalSequence.getClone();
+		sequence = originalSequence;
 
 		// Create Adapter
 		adapter = setupAdapter();
@@ -231,6 +232,29 @@ public class SequenceActivity extends Activity {
         addFrame.show();
     }
 
+    public void showNestedSequenceDialog(View v) {
+        GDialogMessage nestedDialog = new GDialogMessage(v.getContext(),
+                R.drawable.ic_launcher,
+                "Åbner sekvensvalg",
+                "Et nyt vindue åbnes, hvor du kan vælge en anden sekvens at indsætte",
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        isInEditMode = false;
+                        Intent intent = new Intent(getApplication(), MainActivity.class);
+                        intent.putExtra("insertSequence", true);
+                        intent.putExtra("currentGuardianID", guardianId);
+                        intent.putExtra("currentChildID", profileId);
+                        startActivity(intent);
+                        isInEditMode = true;
+                        //TODO: Get chosen sequence from MainActivity.nestedSequenceId
+                        // Log.d("Debug", "Ran this. Also, nestedSequenceId is: " + Long.toString(MainActivity.nestedSequenceId));
+                    }
+                });
+
+        nestedDialog.show();
+    }
+
 	@Override
 	public void onBackPressed() {
 		if (isInEditMode) {
@@ -332,6 +356,7 @@ public class SequenceActivity extends Activity {
 
                 @Override
                 public void onClick(View v) {
+                    //TODO: Closing the choiceDialog should save the result, but is not possible yet (Database)
                     dismiss();
                 }
             });
@@ -420,7 +445,19 @@ public class SequenceActivity extends Activity {
 			public void onItemClick(AdapterView<?> adapter, View view,
 					int position, long id) {
 				pictogramEditPos = position;
-				callPictoAdmin(PICTO_EDIT_PICTOGRAM_CALL);
+
+                //Perform action depending on the type of pictogram clicked.
+                String type = sequence.getPictograms().get(position).getType();
+                if (type == "choice")  {
+                    showChoiceDialog(view);
+                }
+                else if (type == "sequence") {
+                    showNestedSequenceDialog(view);
+                }
+                // if none of the above, assume type == pictogram.
+                else {
+                    callPictoAdmin(PICTO_EDIT_PICTOGRAM_CALL);
+                }
 			}
 		});
 

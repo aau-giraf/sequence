@@ -51,6 +51,20 @@ public class MainActivity extends Activity {
         setChild();
         setColors();
 
+        final GButton exitButton = (GButton) findViewById(R.id.exit_button);
+
+        exitButton.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                finish();
+            }
+        });
+
+
+
+
 
         //TODO: find out what the guardianId is if its in childmode.
         if (guardianId != 100) {

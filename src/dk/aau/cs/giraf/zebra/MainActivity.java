@@ -56,6 +56,7 @@ public class MainActivity extends Activity {
         long childIdLong = extras.getLong("currentChildID");
         childId = Integer.parseInt(Long.toString(childIdLong));
 
+        Buttons();
         setChild();
         setColors();
 
@@ -200,6 +201,72 @@ public class MainActivity extends Activity {
         final GButton copyButton = (GButton)findViewById(R.id.copy_button);
         final GButton settingsButton = (GButton)findViewById(R.id.settings_button);
         final GButton logoutButton = (GButton) findViewById(R.id.relog_button);
+        final GButton exitButton = (GButton) findViewById(R.id.exit_button);
+
+        addButton.setVisibility(View.VISIBLE);
+        deleteButton.setVisibility(View.VISIBLE);
+        copyButton.setVisibility(View.VISIBLE);
+        settingsButton.setVisibility(View.VISIBLE);
+        logoutButton.setVisibility(View.VISIBLE);
+        exitButton.setVisibility(View.VISIBLE);
+
+
+    }
+
+
+    void showMainDeleteDialog(View v) {
+
+        //TODO: Call the deletesequence method here
+        GDialogMessage deleteDialog = new GDialogMessage(v.getContext(),
+                R.drawable.ic_launcher,
+                "Slet Sekvens",
+                "Du er ved at slette et antal sekvenser",
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        finish();
+                    }
+                });
+
+        deleteDialog.show();
+    }
+
+    private void setupChildMode() {
+    }
+
+    private void setupNestedMode() {
+        sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                ((PictogramView)arg1).liftUp();
+                Sequence sequence = sequenceAdapter.getItem(arg2);
+                nestedSequenceId = sequence.getSequenceId();
+                finish();
+            }
+        });
+
+
+    }
+
+    private void Buttons() {
+
+        GButton addButton = (GButton)findViewById(R.id.add_button);
+        GButton deleteButton = (GButton)findViewById(R.id.delete_button);
+        GButton copyButton = (GButton)findViewById(R.id.copy_button);
+        GButton settingsButton = (GButton)findViewById(R.id.settings_button);
+        GButton logoutButton = (GButton) findViewById(R.id.relog_button);
+        GButton exitButton = (GButton) findViewById(R.id.exit_button);
+
+
+        addButton.setVisibility(View.INVISIBLE);
+        deleteButton.setVisibility(View.INVISIBLE);
+        copyButton.setVisibility(View.INVISIBLE);
+        settingsButton.setVisibility(View.INVISIBLE);
+        logoutButton.setVisibility(View.INVISIBLE);
+        exitButton.setVisibility(View.INVISIBLE);
+
+
 
         addButton.setOnClickListener(new OnClickListener() {
 
@@ -230,63 +297,14 @@ public class MainActivity extends Activity {
 
             }
         });
-    }
 
-
-    void showMainDeleteDialog(View v) {
-
-        //TODO: Call the deletesequence method here
-        GDialogMessage deleteDialog = new GDialogMessage(v.getContext(),
-                R.drawable.ic_launcher,
-                "Slet Sekvens",
-                "Du er ved at slette et antal sekvenser",
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        finish();
-                    }
-                });
-
-        deleteDialog.show();
-    }
-
-    private void setupChildMode() {
-        hideButtons();
-    }
-
-    private void setupNestedMode() {
-        hideButtons();
-        GButton logoutButton = (GButton) findViewById(R.id.relog_button);
-        logoutButton.setVisibility(View.INVISIBLE);
-
-        sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        exitButton.setOnClickListener(new OnClickListener() {
 
             @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-                ((PictogramView)arg1).liftUp();
-                Sequence sequence = sequenceAdapter.getItem(arg2);
-                nestedSequenceId = sequence.getSequenceId();
+            public void onClick(View v) {
                 finish();
             }
         });
-
-
-    }
-
-    private void hideButtons() {
-
-        GButton addButton = (GButton)findViewById(R.id.add_button);
-        GButton deleteButton = (GButton)findViewById(R.id.delete_button);
-        GButton copyButton = (GButton)findViewById(R.id.copy_button);
-        GButton settingsButton = (GButton)findViewById(R.id.settings_button);
-        GButton logoutButton = (GButton) findViewById(R.id.relog_button);
-
-
-        addButton.setVisibility(View.INVISIBLE);
-        deleteButton.setVisibility(View.INVISIBLE);
-        copyButton.setVisibility(View.INVISIBLE);
-        settingsButton.setVisibility(View.INVISIBLE);
-        logoutButton.setVisibility(View.VISIBLE);
     }
 
 	private void enterSequence(Sequence sequence, boolean isNew) {

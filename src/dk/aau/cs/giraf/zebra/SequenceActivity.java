@@ -50,7 +50,6 @@ public class SequenceActivity extends Activity {
     private GButton saveButton;
     private GButton addButton;
 //    private GButton returnButton;
-    private GButton editSequenceNameButton;
 
 	private SequenceViewGroup sequenceViewGroup;
 	private EditText sequenceTitleView;
@@ -101,7 +100,6 @@ public class SequenceActivity extends Activity {
 		cancelButton = (GButton) findViewById(R.id.cancel_button);
         saveButton = (GButton) findViewById(R.id.save_button);
         addButton = (GButton) findViewById(R.id.add_button);
-        editSequenceNameButton = (GButton) findViewById(R.id.edit_sequence_name_button);
 
         LinearLayout backgroundLayout = (LinearLayout) findViewById(R.id.parent_container);
         RelativeLayout topbarLayout = (RelativeLayout) findViewById(R.id.sequence_bar);
@@ -137,10 +135,6 @@ public class SequenceActivity extends Activity {
 
                 EditText sequenceTitle = (EditText) findViewById(R.id.sequence_title);
 				if (hasFocus) {
-
-                    // Forces the keyboard to pop up when using the editSequenceNameButton
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.showSoftInput(sequenceTitle, InputMethodManager.SHOW_IMPLICIT);
 
                     // Enforces that the sequenceTitleView can not get larger than parent
                     // For some reason the parent view overlaps with buttons. Therefore the width have to be 200 less than parent.
@@ -651,13 +645,6 @@ public class SequenceActivity extends Activity {
             }
         });
 */
-        //When clicking the button, the cursor is placed in the Sequence title field.
-        editSequenceNameButton.setOnClickListener(new ImageButton.OnClickListener(){
-            @Override public void onClick (View v) {
-                EditText et = (EditText)findViewById(R.id.sequence_title);
-                et.requestFocus();
-            }
-        });
 	}
 
 	public void hideSoftKeyboardFromView(View view) {

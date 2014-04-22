@@ -32,48 +32,28 @@ public class MainActivity extends Activity {
     private boolean isInEditMode = false;
     private GridView sequenceGrid;
     private SequenceListAdapter sequenceAdapter;
-	private List<Sequence> sequences = new ArrayList<Sequence>();
+    private List<Sequence> sequences = new ArrayList<Sequence>();
     public static Child selectedChild;
     public static Long nestedSequenceId;
-    Helper helper;
-    private int applicationColor = Color.parseColor("#8ba4bd");
     private int guardianId;
     private int childId;
+    Helper helper;
+    private int applicationColor = Color.parseColor("#8ba4bd");
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main);
 
-		sequenceAdapter = setupAdapter();
-		sequenceGrid = (GridView)findViewById(R.id.sequence_grid);
-		sequenceGrid.setAdapter(sequenceAdapter);
-
-        Bundle extras = getIntent().getExtras();
-        guardianId = extras.getInt("currentGuardianID");
-        //TODO: childId from launcher is currently long, but we expect it to be int soon. This is why we parse it here.
-        long childIdLong = extras.getLong("currentChildID");
-        childId = Integer.parseInt(Long.toString(childIdLong));
-
-        Buttons();
+        setupGridView();
+        setButtons();
+        loadIntents();
         setChild();
         setColors();
+    }
 
-        //If MainActivity is started from SequenceActivity, insertSequence should be true.
-        if (extras.getBoolean("insertSequence")) {
-            setupNestedMode();
-        }
-        //TODO: find out what the guardianId is if its in childmode.
-        else if (guardianId != 100) {
-            setupGuardianMode();
-        }
-        else {
-            setupChildMode();
-        }
-	}
-
-    private void setColors(){
+    private void setColors() {
 
         LinearLayout backgroundLayout = (LinearLayout) findViewById(R.id.parent_container);
         RelativeLayout topbarLayout = (RelativeLayout) findViewById(R.id.sequence_bar);
@@ -82,56 +62,82 @@ public class MainActivity extends Activity {
     }
 
     //TODO: This can possibly be done better if we can get the (from launcher) selected child using context
-    //Finds the child we want to work with. This is given through a passed extra, "currentChildID".
-	private void setChild() {
-		sequences.clear();
-        try{helper = new Helper(this);}
-        catch(Exception e){}
-   		Profile guardian = helper.profilesHelper.getProfileById(guardianId);
-   		List<Profile> childProfiles = helper.profilesHelper.getChildrenByGuardian(guardian);
+    //Finds the child we want to work with. This is given through the extra, "currentChildID".
+    private void setChild() {
+        //TODO: Is it still needed to clear sequences?
+        sequences.clear();
 
-    	for (Profile p : childProfiles) {
-    		if (p.getId() == childId) {
+        //Creates helper to get the relevant profiles from their ID's. When the correct child is found it is created using a local child class
+        try {
+            helper = new Helper(this);
+        } catch (Exception e) {
+        }
+
+        Profile guardian = helper.profilesHelper.getProfileById(guardianId);
+        List<Profile> childProfiles = helper.profilesHelper.getChildrenByGuardian(guardian);
+
+        for (Profile p : childProfiles) {
+            if (p.getId() == childId) {
                 Child c = new Child(childId, p.getName(), p.getImage());
                 String name = p.getName();
                 Bitmap picture = p.getImage();
                 selectedChild = c;
+                ((TextView) findViewById(R.id.child_name)).setText(selectedChild.getName());
             }
-       }
-        refreshSelectedChild();
-   }
-	
-	private SequenceListAdapter setupAdapter() {
-		final SequenceListAdapter adapter = new SequenceListAdapter(this, sequences);
+        }
+        updateSequences();
+    }
+
+    private SequenceListAdapter setupAdapter() {
+        final SequenceListAdapter adapter = new SequenceListAdapter(this, sequences);
         adapter.setOnAdapterGetViewListener(new OnAdapterGetViewListener() {
-			@Override
-			public void onAdapterGetView(final int position, View view) {
-				if (view instanceof PictogramView) {
-					PictogramView pictoView = (PictogramView) view;
+            @Override
+            public void onAdapterGetView(final int position, View view) {
+                if (view instanceof PictogramView) {
+                    PictogramView pictoView = (PictogramView) view;
                     pictoView.setOnDeleteClickListener(new OnDeleteClickListener() {
-						@Override
-						public void onDeleteClick() {
-							deleteSequenceDialog(position);
-						}
-					});
-				}
-			}
-		});
-		return adapter;
-	}
+                        @Override
+                        public void onDeleteClick() {
+                            deleteSequenceDialog(position);
+                        }
+                    });
+                }
+            }
+        });
+        return adapter;
+    }
 
-    //TODO: create this functionality when database sync is ready.
-    private boolean deleteSequenceDialog(final int position) {
-    	return true;
+    private void setupGridView() {
+        //Sets the GridView and adapter to display Sequences
+        sequenceAdapter = setupAdapter();
+        sequenceGrid = (GridView) findViewById(R.id.sequence_grid);
+        sequenceGrid.setAdapter(sequenceAdapter);
+    }
 
-	}
-
-	private void loadSequences() {
-        //TODO createFakeSequences is a temporary fix to generate some Sequences
-	    List<Sequence> list; // = SequenceFileStore.getSequences(this, selectedChild);
-		list = createFakeSequences();
+    private void loadSequences() {
+        //TODO createFakeSequences is a temporary fix to generate some Sequences. Delete when done.
+        List<Sequence> list; // = SequenceFileStore.getSequences(this, selectedChild);
+        list = createFakeSequences();
         selectedChild.setSequences(list);
-	}
+    }
+
+    private void loadIntents() {
+        //Fetches intents from launcher or SequenceActivity and sets up mode accordingly
+        Bundle extras = getIntent().getExtras();
+        guardianId = extras.getInt("currentGuardianID");
+        //TODO: childId from launcher is currently long, but we expect it to be int soon. This is why we parse it here.
+        long childIdLong = extras.getLong("currentChildID");
+        childId = Integer.parseInt(Long.toString(childIdLong));
+        if (extras.getBoolean("insertSequence")) {
+            setupNestedMode();
+        }
+        //TODO: find out what the guardianId is if its in childmode.
+        else if (guardianId != 100) {
+            setupGuardianMode();
+        } else {
+            setupChildMode();
+        }
+    }
 
     private List<Sequence> createFakeSequences() {
 
@@ -153,69 +159,14 @@ public class MainActivity extends Activity {
         s.addPictogramAtEnd(b);
         s.addPictogramAtEnd(c);
 
-        List <Sequence> list = sequences;
+        List<Sequence> list = sequences;
         for (int i = 0; i < 12; i++) {
             list.add(s);
         }
         return list;
     }
 
-	public void refreshSelectedChild() {
-		((TextView)findViewById(R.id.child_name)).setText(selectedChild.getName());
-		sequences.clear();
-		sequences.addAll(selectedChild.getSequences());
-        loadSequences();
-		sequenceAdapter.notifyDataSetChanged();
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		refreshSelectedChild();
-
-		// Remove highlighting from all images
-		for (int i = 0; i < sequenceGrid.getChildCount(); i++) {
-			View view = sequenceGrid.getChildAt(i);
-
-			if (view instanceof PictogramView) {
-				((PictogramView)view).placeDown();
-			}
-		}
-    }
-
-    private void setupGuardianMode() {
-
-        isInEditMode = true;
-        sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-                ((PictogramView)arg1).liftUp();
-                Sequence sequence = sequenceAdapter.getItem(arg2);
-                enterSequence(sequence, false);
-            }
-        });
-
-        final GButton addButton = (GButton)findViewById(R.id.add_button);
-        final GButton deleteButton = (GButton)findViewById(R.id.delete_button);
-        final GButton copyButton = (GButton)findViewById(R.id.copy_button);
-        final GButton settingsButton = (GButton)findViewById(R.id.settings_button);
-        final GButton logoutButton = (GButton) findViewById(R.id.relog_button);
-        final GButton exitButton = (GButton) findViewById(R.id.exit_button);
-
-        addButton.setVisibility(View.VISIBLE);
-        deleteButton.setVisibility(View.VISIBLE);
-        copyButton.setVisibility(View.VISIBLE);
-        settingsButton.setVisibility(View.VISIBLE);
-        logoutButton.setVisibility(View.VISIBLE);
-        exitButton.setVisibility(View.VISIBLE);
-
-
-    }
-
-
     void showMainDeleteDialog(View v) {
-
         //TODO: Call the deletesequence method here
         GDialogMessage deleteDialog = new GDialogMessage(v.getContext(),
                 R.drawable.ic_launcher,
@@ -226,35 +177,32 @@ public class MainActivity extends Activity {
                     public void onClick(View v) {
                         finish();
                     }
-                });
+                }
+        );
 
         deleteDialog.show();
     }
 
-    private void setupChildMode() {
-    }
-
-    private void setupNestedMode() {
-        sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-                ((PictogramView)arg1).liftUp();
-                Sequence sequence = sequenceAdapter.getItem(arg2);
-                nestedSequenceId = sequence.getSequenceId();
-                finish();
-            }
-        });
-
+    //TODO: create this functionality when database sync is ready.
+    private boolean deleteSequenceDialog(final int position) {
+        return true;
 
     }
 
-    private void Buttons() {
+    public void updateSequences() {
+        //Updates the sequences of the child
+        sequences.clear();
+        sequences.addAll(selectedChild.getSequences());
+        loadSequences();
+        sequenceAdapter.notifyDataSetChanged();
+    }
 
-        GButton addButton = (GButton)findViewById(R.id.add_button);
-        GButton deleteButton = (GButton)findViewById(R.id.delete_button);
-        GButton copyButton = (GButton)findViewById(R.id.copy_button);
-        GButton settingsButton = (GButton)findViewById(R.id.settings_button);
+    private void setButtons() {
+
+        GButton addButton = (GButton) findViewById(R.id.add_button);
+        GButton deleteButton = (GButton) findViewById(R.id.delete_button);
+        GButton copyButton = (GButton) findViewById(R.id.copy_button);
+        GButton settingsButton = (GButton) findViewById(R.id.settings_button);
         GButton logoutButton = (GButton) findViewById(R.id.relog_button);
         GButton exitButton = (GButton) findViewById(R.id.exit_button);
 
@@ -265,7 +213,6 @@ public class MainActivity extends Activity {
         settingsButton.setVisibility(View.INVISIBLE);
         logoutButton.setVisibility(View.INVISIBLE);
         exitButton.setVisibility(View.INVISIBLE);
-
 
 
         addButton.setOnClickListener(new OnClickListener() {
@@ -307,15 +254,83 @@ public class MainActivity extends Activity {
         });
     }
 
-	private void enterSequence(Sequence sequence, boolean isNew) {
-		Intent intent = new Intent(getApplication(), SequenceActivity.class);
-		intent.putExtra("profileId", selectedChild.getProfileId());
-		intent.putExtra("sequenceId", sequence.getSequenceId());
-		intent.putExtra("guardianId", guardianId);
-		intent.putExtra("editMode", isInEditMode);
-		intent.putExtra("new", isNew);
-        intent.putExtra("applicationColor",applicationColor);
+    private void setupGuardianMode() {
 
-		startActivity(intent);
-	}
+        isInEditMode = true;
+
+        //OnClickListener leads to SequenceActivity so Guardian can edit Sequence
+        sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                ((PictogramView) arg1).liftUp();
+                Sequence sequence = sequenceAdapter.getItem(arg2);
+                enterSequence(sequence, false);
+            }
+        });
+
+        final GButton addButton = (GButton) findViewById(R.id.add_button);
+        final GButton deleteButton = (GButton) findViewById(R.id.delete_button);
+        final GButton copyButton = (GButton) findViewById(R.id.copy_button);
+        final GButton settingsButton = (GButton) findViewById(R.id.settings_button);
+        final GButton logoutButton = (GButton) findViewById(R.id.relog_button);
+        final GButton exitButton = (GButton) findViewById(R.id.exit_button);
+
+        addButton.setVisibility(View.VISIBLE);
+        deleteButton.setVisibility(View.VISIBLE);
+        copyButton.setVisibility(View.VISIBLE);
+        settingsButton.setVisibility(View.VISIBLE);
+        logoutButton.setVisibility(View.VISIBLE);
+        exitButton.setVisibility(View.VISIBLE);
+
+
+    }
+
+    private void setupChildMode() {
+    }
+
+    private void setupNestedMode() {
+
+        //OnClickListener saves ID of selected Sequence so it can be picked up and finishes activity.
+        sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                ((PictogramView) arg1).liftUp();
+                Sequence sequence = sequenceAdapter.getItem(arg2);
+                nestedSequenceId = sequence.getSequenceId();
+                finish();
+            }
+        });
+
+
+    }
+
+    private void enterSequence(Sequence sequence, boolean isNew) {
+        Intent intent = new Intent(getApplication(), SequenceActivity.class);
+        intent.putExtra("profileId", selectedChild.getProfileId());
+        intent.putExtra("sequenceId", sequence.getSequenceId());
+        intent.putExtra("guardianId", guardianId);
+        intent.putExtra("editMode", isInEditMode);
+        intent.putExtra("new", isNew);
+        intent.putExtra("applicationColor", applicationColor);
+
+        startActivity(intent);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //TODO: Is this still needed?
+        updateSequences();
+
+        // Removes highlighting from all images
+        for (int i = 0; i < sequenceGrid.getChildCount(); i++) {
+            View view = sequenceGrid.getChildAt(i);
+
+            if (view instanceof PictogramView) {
+                ((PictogramView) view).placeDown();
+            }
+        }
+    }
 }

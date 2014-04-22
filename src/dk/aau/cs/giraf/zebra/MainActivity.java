@@ -17,6 +17,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import dk.aau.cs.giraf.gui.GButton;
+import dk.aau.cs.giraf.gui.GButtonSettings;
+import dk.aau.cs.giraf.gui.GButtonTrash;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
@@ -200,9 +202,9 @@ public class MainActivity extends Activity {
     private void setButtons() {
 
         GButton addButton = (GButton) findViewById(R.id.add_button);
-        GButton deleteButton = (GButton) findViewById(R.id.delete_button);
+        GButtonTrash deleteButton = (GButtonTrash)findViewById(R.id.delete_button);
         GButton copyButton = (GButton) findViewById(R.id.copy_button);
-        GButton settingsButton = (GButton) findViewById(R.id.settings_button);
+        GButtonSettings settingsButton = (GButtonSettings)findViewById(R.id.settings_button);
         GButton logoutButton = (GButton) findViewById(R.id.relog_button);
         GButton exitButton = (GButton) findViewById(R.id.exit_button);
 

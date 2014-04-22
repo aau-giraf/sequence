@@ -49,7 +49,7 @@ public class SequenceActivity extends Activity {
 	private GButton cancelButton;
     private GButton saveButton;
     private GButton addButton;
-//    private GButton returnButton;
+    private GButton previewButton;
 
 	private SequenceViewGroup sequenceViewGroup;
 	private EditText sequenceTitleView;
@@ -96,10 +96,6 @@ public class SequenceActivity extends Activity {
 		// Create Sequence Group
 		sequenceViewGroup = setupSequenceViewGroup(adapter);
 		sequenceTitleView = (EditText) findViewById(R.id.sequence_title);
-
-		cancelButton = (GButton) findViewById(R.id.cancel_button);
-        saveButton = (GButton) findViewById(R.id.save_button);
-        addButton = (GButton) findViewById(R.id.add_button);
 
         LinearLayout backgroundLayout = (LinearLayout) findViewById(R.id.parent_container);
         RelativeLayout topbarLayout = (RelativeLayout) findViewById(R.id.sequence_bar);
@@ -181,22 +177,6 @@ public class SequenceActivity extends Activity {
         finish();
 	}
 
-    /* TODO:Dette er koden til knappen der skal bruges i sequenceViewer
-    public void showReturnDialog(View v) {
-        GDialogMessage returnDialog = new GDialogMessage(v.getContext(),
-                R.drawable.ic_launcher,
-                "Afslut Sekvens",
-                "Du er ved at afslutte sekvensen",
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        finish();
-                    }
-                });
-
-        returnDialog.show();
-    }
-*/
     public void showSaveDialog(View v) {
         GDialogMessage saveDialog = new GDialogMessage(v.getContext(),
                 R.drawable.ic_launcher,
@@ -216,14 +196,15 @@ public class SequenceActivity extends Activity {
         exitEditting.show();
     }
 
-    public void showChoiceDialog(View v) {
-        choiceDialog ChoiceDialog = new choiceDialog(v.getContext());
-        ChoiceDialog.show();
-    }
 
     public void showAddDialog(View v) {
         addDialog addFrame = new addDialog(v.getContext());
         addFrame.show();
+    }
+
+    public void showChoiceDialog(View v) {
+        choiceDialog ChoiceDialog = new choiceDialog(v.getContext());
+        ChoiceDialog.show();
     }
 
     public void showNestedSequenceDialog(View v) {
@@ -248,15 +229,6 @@ public class SequenceActivity extends Activity {
 
         nestedDialog.show();
     }
-
-	@Override
-	public void onBackPressed() {
-		if (isInEditMode) {
-			cancelButton.performClick();
-		} else {
-			super.onBackPressed();
-		}
-	}
 
     public class backDialog extends GDialog {
 
@@ -406,8 +378,7 @@ public class SequenceActivity extends Activity {
         }
     }
 
-	private SequenceViewGroup setupSequenceViewGroup(
-			final SequenceAdapter adapter) {
+	private SequenceViewGroup setupSequenceViewGroup(final SequenceAdapter adapter) {
 		final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup);
 		sequenceGroup.setEditModeEnabled(isInEditMode);
 		sequenceGroup.setAdapter(adapter);
@@ -579,6 +550,8 @@ public class SequenceActivity extends Activity {
 
 	private void initializeTopBar() {
 
+        Buttons();
+
 		sequenceTitleView.setEnabled(isInEditMode);
 		sequenceTitleView.setText(sequence.getTitle());
 
@@ -611,30 +584,6 @@ public class SequenceActivity extends Activity {
 
 		TextView childName = (TextView) findViewById(R.id.child_name);
 		childName.setText(MainActivity.selectedChild.getName());
-
-		saveButton.setOnClickListener(new ImageButton.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				showSaveDialog(v);
-			}
-		});
-
-        cancelButton.setOnClickListener(new ImageButton.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                showExitDialog(v);
-            }
-        });
-
-        addButton.setOnClickListener(new ImageButton.OnClickListener(){
-
-            @Override
-            public void onClick(View v) {
-                showAddDialog(v);
-            }
-        });
 
 /*
         returnButton.setOnClickListener(new ImageButton.OnClickListener() {
@@ -697,5 +646,53 @@ public class SequenceActivity extends Activity {
 		
 		startActivityForResult(intent, modeId);
 	}
+
+    private void Buttons() {
+
+        cancelButton = (GButton) findViewById(R.id.cancel_button);
+        saveButton = (GButton) findViewById(R.id.save_button);
+        addButton = (GButton) findViewById(R.id.add_button);
+        previewButton = (GButton) findViewById(R.id.preview_button);
+
+        saveButton.setOnClickListener(new ImageButton.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                showSaveDialog(v);
+            }
+        });
+        cancelButton.setOnClickListener(new ImageButton.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                showExitDialog(v);
+            }
+        });
+        addButton.setOnClickListener(new ImageButton.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                showAddDialog(v);
+            }
+        });
+        previewButton.setOnClickListener(new ImageButton.OnClickListener()
+        {
+            //TODO: CREATE FUNCTIONALITY HERE (CALL SEQUENCEVIEWER)
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (isInEditMode) {
+            cancelButton.performClick();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
 
 }

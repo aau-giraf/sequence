@@ -11,10 +11,7 @@ import android.widget.BaseAdapter;
 import dk.aau.cs.giraf.zebra.models.Child;
 import dk.aau.cs.giraf.zebra.models.Sequence;
 
-/**
- * Adapter for a List of Sequences typically associated with a {@link Child}.
- *
- */
+//Adapter for a List of Sequences typically associated with a {@link Child}
 public class SequenceListAdapter extends BaseAdapter {
 
 	

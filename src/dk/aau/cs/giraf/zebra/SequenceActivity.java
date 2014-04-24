@@ -510,6 +510,10 @@ public class SequenceActivity extends Activity {
 		int[] checkoutIds = data.getExtras().getIntArray(
 				PICTO_INTENT_CHECKOUT_ID);
 
+        //If no pictures are returned, assume user canceled and nothing is supposed to change.
+        if (checkoutIds == null) {
+            return;
+        }
 		for (int id : checkoutIds) {
 			Pictogram pictogram = new Pictogram();
 			pictogram.setPictogramId(id);

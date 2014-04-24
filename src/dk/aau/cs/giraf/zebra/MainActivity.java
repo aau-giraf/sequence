@@ -63,13 +63,9 @@ public class MainActivity extends Activity {
         topbarLayout.setBackgroundColor(applicationColor);
     }
 
-    //TODO: This can possibly be done better if we can get the (from launcher) selected child using context
     //Finds the child we want to work with. This is given through the extra, "currentChildID".
     private void setChild() {
-        //TODO: Is it still needed to clear sequences?
-        sequences.clear();
-
-        //Creates helper to get the relevant profiles from their ID's. When the correct child is found it is created using a local child class
+        //Creates helper to get the relevant profiles from their ID's
         try {
             helper = new Helper(this);
         } catch (Exception e) {
@@ -79,10 +75,9 @@ public class MainActivity extends Activity {
         List<Profile> childProfiles = helper.profilesHelper.getChildrenByGuardian(guardian);
 
         for (Profile p : childProfiles) {
+            //When the correct child is found it is created using a local child class
             if (p.getId() == childId) {
                 Child c = new Child(childId, p.getName(), p.getImage());
-                String name = p.getName();
-                Bitmap picture = p.getImage();
                 selectedChild = c;
                 ((TextView) findViewById(R.id.child_name)).setText(selectedChild.getName());
             }
@@ -192,7 +187,6 @@ public class MainActivity extends Activity {
     }
 
     public void updateSequences() {
-        //Updates the sequences of the child
         sequences.clear();
         sequences.addAll(selectedChild.getSequences());
         loadSequences();
@@ -323,7 +317,6 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        //TODO: Is this still needed?
         updateSequences();
 
         // Removes highlighting from all images

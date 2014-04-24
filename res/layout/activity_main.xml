@@ -103,7 +103,7 @@
         android:layout_marginTop="-6dp"
         android:baselineAligned="false" >
 
-<dk.aau.cs.giraf.gui.GGridView
+        <dk.aau.cs.giraf.gui.GGridView
             android:id="@+id/sequence_grid"
             android:layout_width="0dip"
             android:layout_height="match_parent"

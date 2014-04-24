@@ -39,7 +39,7 @@ public class MainActivity extends Activity {
     public static Long nestedSequenceId;
     private int guardianId;
     private int childId;
-    Helper helper;
+    private Helper helper;
     private int applicationColor = Color.parseColor("#8ba4bd");
 
     @Override
@@ -194,7 +194,6 @@ public class MainActivity extends Activity {
     }
 
     private void setButtons() {
-
         GButton addButton = (GButton) findViewById(R.id.add_button);
         GButtonTrash deleteButton = (GButtonTrash)findViewById(R.id.delete_button);
         GButton copyButton = (GButton) findViewById(R.id.copy_button);
@@ -202,14 +201,12 @@ public class MainActivity extends Activity {
         GButton logoutButton = (GButton) findViewById(R.id.relog_button);
         GButton exitButton = (GButton) findViewById(R.id.exit_button);
 
-
         addButton.setVisibility(View.INVISIBLE);
         deleteButton.setVisibility(View.INVISIBLE);
         copyButton.setVisibility(View.INVISIBLE);
         settingsButton.setVisibility(View.INVISIBLE);
         logoutButton.setVisibility(View.INVISIBLE);
         exitButton.setVisibility(View.INVISIBLE);
-
 
         addButton.setOnClickListener(new OnClickListener() {
 

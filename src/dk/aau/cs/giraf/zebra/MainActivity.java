@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -19,6 +21,7 @@ import android.widget.TextView;
 import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GButtonSettings;
 import dk.aau.cs.giraf.gui.GButtonTrash;
+import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
@@ -163,27 +166,99 @@ public class MainActivity extends Activity {
         return list;
     }
 
-    void showMainDeleteDialog(View v) {
-        //TODO: Call the deletesequence method here
-        GDialogMessage deleteDialog = new GDialogMessage(v.getContext(),
-                R.drawable.ic_launcher,
-                "Slet Sekvens",
-                "Du er ved at slette et antal sekvenser",
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        finish();
-                    }
-                }
-        );
-
-        deleteDialog.show();
-    }
-
-    //TODO: create this functionality when database sync is ready.
     private boolean deleteSequenceDialog(final int position) {
         return true;
 
+    }
+
+    public void showDeleteDialog(View v) {
+        deletingSequencesDialog deleteDialog = new deletingSequencesDialog(v.getContext());
+        deleteDialog.show();
+    }
+
+    public void showCopyDialog(View v) {
+        CopyingDialog copyDialog = new CopyingDialog(v.getContext());
+        copyDialog.show();
+    }
+
+    public class deletingSequencesDialog extends GDialog {
+
+        public deletingSequencesDialog(Context context) {
+
+            super(context);
+
+            this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.deleting_sequences,null));
+
+            GButton popupDelete = (GButton) findViewById(R.id.popup_accept);
+            GButton popupDiscard = (GButton) findViewById(R.id.popup_back);
+            GButton popupExit = (GButton) findViewById(R.id.popup_exit_button);
+
+            popupDelete.setOnClickListener(new GButton.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    //TODO: Make this functionality
+                    //  deleteSequences();
+                }
+            });
+
+            popupDiscard.setOnClickListener(new GButton.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    dismiss();
+                }
+            });
+
+            popupExit.setOnClickListener(new GButton.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    dismiss();
+                }
+            });
+
+        }
+    }
+
+    public class CopyingDialog extends GDialog {
+
+        public CopyingDialog(Context context) {
+
+            super(context);
+
+            this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.copying_sequences,null));
+
+            GButton popupCopy = (GButton) findViewById(R.id.popup_copy_accept);
+            GButton popupCopyDiscard = (GButton) findViewById(R.id.popup_copy_back);
+            GButton popupExit = (GButton) findViewById(R.id.popup_exit_button);
+
+            popupCopy.setOnClickListener(new GButton.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    //TODO: Make this functionality
+                    //  CopySequences();
+                }
+            });
+
+            popupCopyDiscard.setOnClickListener(new GButton.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    dismiss();
+                }
+            });
+
+            popupExit.setOnClickListener(new GButton.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    dismiss();
+                }
+            });
+
+        }
     }
 
     public void updateSequences() {
@@ -225,7 +300,7 @@ public class MainActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                showMainDeleteDialog(v);
+                showDeleteDialog(v);
             }
         });
 
@@ -233,8 +308,7 @@ public class MainActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-
-
+                showCopyDialog(v);
             }
         });
 

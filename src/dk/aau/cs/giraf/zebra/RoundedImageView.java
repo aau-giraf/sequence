@@ -111,7 +111,8 @@ public class RoundedImageView extends ImageView {
 
             	
             	paint = ((BitmapDrawable)maiDrawable).getPaint();
-            	final int color = 0xfffde18d; //0xfffed86d; // Bagground color
+                //Color is: transparency/red/green/blue. ff is no transparency
+            	final int color = 0xff000000; //Old background color: 0xfffde18d
             	
             	
             	maiDrawable.setColorFilter(Color.rgb(253, 225, 141), Mode.DST_OVER);
@@ -128,6 +129,8 @@ public class RoundedImageView extends ImageView {
             	
             	paint.setAntiAlias(true);
                 bitmapCanvas.drawARGB(0, 0, 0, 0);
+
+                //Set background color of application
                 paint.setColor(color);
 
                 bitmapCanvas.drawRoundRect(imageRect, fCornerRadius, fCornerRadius, paint);

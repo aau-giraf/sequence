@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -60,6 +59,7 @@ public class SequenceActivity extends Activity {
 
 	private boolean isInEditMode;
 	private boolean isNew;
+    private boolean assumeMinimize = true;
 
 	private final String PICTO_ADMIN_PACKAGE = "dk.aau.cs.giraf.pictosearch";
 	private final String PICTO_ADMIN_CLASS = PICTO_ADMIN_PACKAGE + "." + "PictoAdminMain";
@@ -72,10 +72,14 @@ public class SequenceActivity extends Activity {
 
 	private int pictogramEditPos = -1;
 
+    public static Activity activityToKill;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_sequence);
+
+        activityToKill = this;
 
 		Bundle extras = getIntent().getExtras();
 		profileId = extras.getInt("profileId");
@@ -174,7 +178,7 @@ public class SequenceActivity extends Activity {
 
 	private void saveChanges() {
         //TODO: SAVE IN THE NEW DATABASE
-        finish();
+        finishActivity();
 	}
 
     public void showSaveDialog(View v) {
@@ -185,7 +189,7 @@ public class SequenceActivity extends Activity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        finish();
+                        finishActivity();
                     }
                 });
         saveDialog.show();
@@ -216,6 +220,7 @@ public class SequenceActivity extends Activity {
                     @Override
                     public void onClick(View v) {
                         isInEditMode = false;
+                        assumeMinimize = false;
                         Intent intent = new Intent(getApplication(), MainActivity.class);
                         intent.putExtra("insertSequence", true);
                         intent.putExtra("currentGuardianID", guardianId);
@@ -255,7 +260,7 @@ public class SequenceActivity extends Activity {
                 @Override
                 public void onClick(View v) {
                     //TODO: This needs to be done properly. This method leaks memory.
-                    finish();
+                    finishActivity();
                 }
             });
 
@@ -291,6 +296,7 @@ public class SequenceActivity extends Activity {
 
                 @Override
                 public void onClick(View v) {
+                    callPictoAdmin(PICTO_NEW_PICTOGRAM_CALL);
                     dismiss();
                 }
             });
@@ -637,6 +643,7 @@ public class SequenceActivity extends Activity {
 	}
 
 	private void callPictoAdmin(int modeId) {
+        assumeMinimize = false;
 		Intent intent = new Intent();
 		intent.setComponent(new ComponentName(PICTO_ADMIN_PACKAGE, PICTO_ADMIN_CLASS));
         //TODO: Pictosearch currently still eats a long for currentChildId. Casting profileId below to long fixes it.
@@ -684,9 +691,14 @@ public class SequenceActivity extends Activity {
             //TODO: CREATE FUNCTIONALITY HERE (CALL SEQUENCEVIEWER)
             @Override
             public void onClick(View v) {
-                finish();
+                finishActivity();
             }
         });
+    }
+
+    private void finishActivity(){
+        assumeMinimize = false;
+        finish();
     }
 
     @Override
@@ -696,6 +708,20 @@ public class SequenceActivity extends Activity {
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    protected void onStop() {
+        //assumeMinimize kills the entire application if minimized
+        // in any other ways than opening Pictosearch or inserting a nested Sequence
+        if (assumeMinimize) {
+            MainActivity.activityToKill.finish();
+            finishActivity();
+        }
+        else {
+            assumeMinimize = true;
+        }
+        super.onStop();
     }
 
 

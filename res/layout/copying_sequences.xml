@@ -61,7 +61,7 @@
             />
 
         <dk.aau.cs.giraf.gui.GGridView
-            android:id="@+id/copied_sequnces"
+            android:id="@+id/copied_sequences"
             android:layout_width="0dip"
             android:layout_height="match_parent"
             android:layout_weight="1"

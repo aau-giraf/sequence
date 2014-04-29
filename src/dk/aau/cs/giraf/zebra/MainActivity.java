@@ -122,19 +122,17 @@ public class MainActivity extends Activity {
     }
 
     private void loadIntents() {
-        //Fetches intents from launcher or SequenceActivity and sets up mode accordingly
+        //Fetches intents from launcher or SequenceActivity
         Bundle extras = getIntent().getExtras();
         guardianId = extras.getInt("currentGuardianID");
-        //TODO: childId from launcher is currently long, but we expect it to be int soon. This is why we parse it here.
-        long childIdLong = extras.getLong("currentChildID");
-        childId = Integer.parseInt(Long.toString(childIdLong));
+        childId = extras.getInt("currentChildID");
 
         //Makes the activity killable from SequenceActivity and (Nested) MainActivity
         if (extras.getBoolean("insertSequence") == false) {
             activityToKill = this;
         }
 
-        //Set up usermode depending on information
+        //Set up user mode depending on extras
         if (extras.getBoolean("insertSequence")) {
             nestedMode = true;
             setupNestedMode();

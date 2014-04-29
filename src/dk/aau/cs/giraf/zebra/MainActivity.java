@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -32,19 +33,21 @@ import dk.aau.cs.giraf.zebra.serialization.SequenceFileStore;
 
 public class MainActivity extends Activity {
     private boolean isInEditMode = false;
+    private boolean assumeMinimize = true;
     private GridView sequenceGrid;
     private SequenceListAdapter sequenceAdapter;
     private List<Sequence> sequences = new ArrayList<Sequence>();
     public static Child selectedChild;
     public static Long nestedSequenceId;
+    private boolean nestedMode;
     private int guardianId;
     private int childId;
     private Helper helper;
     private int applicationColor = Color.parseColor("#8ba4bd");
+    public static Activity activityToKill;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -125,7 +128,15 @@ public class MainActivity extends Activity {
         //TODO: childId from launcher is currently long, but we expect it to be int soon. This is why we parse it here.
         long childIdLong = extras.getLong("currentChildID");
         childId = Integer.parseInt(Long.toString(childIdLong));
+
+        //Makes the activity killable from SequenceActivity and (Nested) MainActivity
+        if (extras.getBoolean("insertSequence") == false) {
+            activityToKill = this;
+        }
+
+        //Set up usermode depending on information
         if (extras.getBoolean("insertSequence")) {
+            nestedMode = true;
             setupNestedMode();
         }
         //TODO: find out what the guardianId is if its in childmode.
@@ -172,7 +183,7 @@ public class MainActivity extends Activity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        finish();
+                        finishActivity();
                     }
                 }
         );
@@ -242,7 +253,7 @@ public class MainActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                finish();
+                finishActivity();
             }
         });
     }
@@ -292,7 +303,7 @@ public class MainActivity extends Activity {
                 ((PictogramView) arg1).liftUp();
                 Sequence sequence = sequenceAdapter.getItem(arg2);
                 nestedSequenceId = sequence.getSequenceId();
-                finish();
+                finishActivity();
             }
         });
 
@@ -300,6 +311,7 @@ public class MainActivity extends Activity {
     }
 
     private void enterSequence(Sequence sequence, boolean isNew) {
+        assumeMinimize = false;
         Intent intent = new Intent(getApplication(), SequenceActivity.class);
         intent.putExtra("profileId", selectedChild.getProfileId());
         intent.putExtra("sequenceId", sequence.getSequenceId());
@@ -309,6 +321,11 @@ public class MainActivity extends Activity {
         intent.putExtra("applicationColor", applicationColor);
 
         startActivity(intent);
+    }
+
+    private void finishActivity() {
+        assumeMinimize = false;
+        finish();
     }
 
     @Override
@@ -324,5 +341,22 @@ public class MainActivity extends Activity {
                 ((PictogramView) view).placeDown();
             }
         }
+    }
+
+    @Override
+    //assumeMinimize kills the entire application if minimized
+    // in any other ways than opening SequenceActivity or inserting a nested Sequence
+    protected void onStop() {
+        if (assumeMinimize) {
+            if (nestedMode) {
+                SequenceActivity.activityToKill.finish();
+                MainActivity.activityToKill.finish();
+            }
+            finishActivity();
+        }
+        else {
+            assumeMinimize = true;
+        }
+        super.onStop();
     }
 }

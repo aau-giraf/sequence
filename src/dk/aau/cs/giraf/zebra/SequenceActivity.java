@@ -296,6 +296,7 @@ public class SequenceActivity extends Activity {
 
                 @Override
                 public void onClick(View v) {
+                    callPictoAdmin(PICTO_NEW_PICTOGRAM_CALL);
                     dismiss();
                 }
             });

@@ -36,22 +36,42 @@
             android:layout_alignParentRight="true"
             />
     </RelativeLayout>
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/lists_copy"
         android:layout_width="match_parent"
         android:layout_height="450dp"
         android:orientation="horizontal">
 
+        <dk.aau.cs.giraf.gui.GGridView
+            android:id="@+id/existing_sequences"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:numColumns="2"
+            android:listSelector="#00000000"
+            android:fadeScrollbars="false">
+        </dk.aau.cs.giraf.gui.GGridView>
 
+        <ImageView
+            android:layout_width="85dp"
+            android:layout_height="85dp"
+            android:src="@drawable/epic_arrow"
+            android:layout_gravity="center_vertical"
+            />
 
+        <dk.aau.cs.giraf.gui.GGridView
+            android:id="@+id/copied_sequnces"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:numColumns="2"
+            android:listSelector="#00000000"
+            android:fadeScrollbars="false">
+        </dk.aau.cs.giraf.gui.GGridView>
 
-
-
-
-
-
-
-    </RelativeLayout>
+    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/buttons_copy"
@@ -70,9 +90,10 @@
             android:id="@+id/popup_copy_accept"
             android:layout_width="150dp"
             android:layout_height="50dp"
-            android:text="Kopier sekvenser"
+            android:text="Kopier til"
             android:layout_alignRight="@id/white_thingy_two"
             android:layout_marginRight="25dp"
+            android:layout_marginTop="15dp"
             />
 
         <dk.aau.cs.giraf.gui.GButton
@@ -82,6 +103,7 @@
             android:text="Afslut"
             android:layout_alignLeft="@+id/white_thingy_two"
             android:layout_marginLeft="25dp"
+            android:layout_marginTop="15dp"
             />
 
     </RelativeLayout>

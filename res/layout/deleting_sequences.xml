@@ -48,7 +48,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:numColumns="2"
+            android:numColumns="3"
             android:listSelector="#00000000"
             android:fadeScrollbars="false">
         </dk.aau.cs.giraf.gui.GGridView>
@@ -61,12 +61,12 @@
             />
 
         <dk.aau.cs.giraf.gui.GGridView
-            android:id="@+id/deleted_sequences"
+            android:id="@+id/empty_sequences"
             android:layout_width="0dip"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:numColumns="2"
+            android:numColumns="3"
             android:listSelector="#00000000"
             android:fadeScrollbars="false">
         </dk.aau.cs.giraf.gui.GGridView>

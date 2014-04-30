@@ -39,7 +39,12 @@ public class MainActivity extends Activity {
     private boolean assumeMinimize = true;
     private GridView sequenceGrid;
     private SequenceListAdapter sequenceAdapter;
+    private SequenceListAdapter copyAdapter;
+    private SequenceListAdapter pasteAdapter;
+    private GridView copyGrid;
+    private GridView pasteGrid;
     private List<Sequence> sequences = new ArrayList<Sequence>();
+    private List<Sequence> templist = new ArrayList<Sequence>();
     public static Child selectedChild;
     public static Long nestedSequenceId;
     private boolean nestedMode;
@@ -151,7 +156,7 @@ public class MainActivity extends Activity {
     private List<Sequence> createFakeSequences() {
 
         Sequence s = new Sequence();
-        s.setTitle("Testsekvens");
+        s.setTitle("TæstSækvæns");
         s.setImageId(10);
         s.setSequenceId(5);
 
@@ -206,6 +211,14 @@ public class MainActivity extends Activity {
 
             this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.deleting_sequences,null));
 
+            copyAdapter = setupAdapter();
+            copyGrid = (GridView) findViewById(R.id.existing_sequences);
+            copyGrid.setAdapter(copyAdapter);
+
+            pasteAdapter = new SequenceListAdapter(this.getContext(), templist);
+            pasteGrid = (GridView) findViewById(R.id.empty_sequences);
+            pasteGrid.setAdapter(pasteAdapter);
+
             GButton popupDelete = (GButton) findViewById(R.id.popup_accept);
             GButton popupDiscard = (GButton) findViewById(R.id.popup_back);
             GButton popupExit = (GButton) findViewById(R.id.popup_exit_button);
@@ -244,7 +257,15 @@ public class MainActivity extends Activity {
 
             super(context);
 
-            this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.copying_sequences,null));
+            this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.copying_sequences, null));
+
+            copyAdapter = setupAdapter();
+            copyGrid = (GridView) findViewById(R.id.existing_sequences);
+            copyGrid.setAdapter(copyAdapter);
+
+            pasteAdapter = new SequenceListAdapter(this.getContext(), templist);
+            pasteGrid = (GridView) findViewById(R.id.empty_sequences);
+            pasteGrid.setAdapter(pasteAdapter);
 
             GButton popupCopy = (GButton) findViewById(R.id.popup_copy_accept);
             GButton popupCopyDiscard = (GButton) findViewById(R.id.popup_copy_back);

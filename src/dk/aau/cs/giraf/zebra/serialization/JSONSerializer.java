@@ -83,7 +83,7 @@ public class JSONSerializer {
 	}
 
 	private Sequence readSequence(JSONObject jsonSequence) throws JSONException {
-		long sequenceId = jsonSequence.getLong(KEY_SEQUENCE_ID);
+		int sequenceId = jsonSequence.getInt(KEY_SEQUENCE_ID);
 		String title = jsonSequence.getString(KEY_SEQUENCE_TITLE);
 		int imageId = jsonSequence.getInt(KEY_SEQUENCE_IMAGE_ID);
 		

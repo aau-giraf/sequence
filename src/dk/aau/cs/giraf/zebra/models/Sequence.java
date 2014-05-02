@@ -16,7 +16,7 @@ import dk.aau.cs.giraf.pictogram.PictoFactory;
  */
 public class Sequence {
 
-	private long sequenceId;
+	private int sequenceId;
 	private String title;
 	private int imageId;
 	private String imagePath;
@@ -27,11 +27,11 @@ public class Sequence {
 	// Ordered list of pictograms
 	private List<Pictogram> pictograms = new ArrayList<Pictogram>();
 	
-	public long getSequenceId() {
+	public int getSequenceId() {
 		return sequenceId;
 	}
 	
-	public void setSequenceId(long sequenceId) {
+	public void setSequenceId(int sequenceId) {
 		this.sequenceId = sequenceId;
 	}
 	

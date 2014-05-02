@@ -37,7 +37,7 @@ import dk.aau.cs.giraf.zebra.serialization.SequenceFileStore;
 public class SequenceActivity extends Activity {
 
 	private int guardianId;
-    private long profileId;
+    private int profileId;
 	
 	private Sequence originalSequence;
 	private Sequence sequence;
@@ -83,7 +83,7 @@ public class SequenceActivity extends Activity {
 
 		Bundle extras = getIntent().getExtras();
 		profileId = extras.getInt("profileId");
-		long sequenceId = extras.getLong("sequenceId");
+		int sequenceId = extras.getInt("sequenceId");
 		guardianId = extras.getInt("guardianId");
 		isNew = extras.getBoolean("new");
 		isInEditMode = extras.getBoolean("editMode");
@@ -228,7 +228,7 @@ public class SequenceActivity extends Activity {
                         startActivity(intent);
                         isInEditMode = true;
                         //TODO: Get chosen sequence from MainActivity.nestedSequenceId
-                        // Log.d("Debug", "Ran this. Also, nestedSequenceId is: " + Long.toString(MainActivity.nestedSequenceId));
+                        // Log.d("Debug", "Ran this. Also, nestedSequenceId is: " + Integer.toString(MainActivity.nestedSequenceId));
                     }
                 });
 
@@ -646,7 +646,6 @@ public class SequenceActivity extends Activity {
         assumeMinimize = false;
 		Intent intent = new Intent();
 		intent.setComponent(new ComponentName(PICTO_ADMIN_PACKAGE, PICTO_ADMIN_CLASS));
-        //TODO: Pictosearch currently still eats a long for currentChildId. Casting profileId below to long fixes it.
 		intent.putExtra("currentChildID", MainActivity.selectedChild.getProfileId());
 		intent.putExtra("currentGuardianID", guardianId);
 		

@@ -11,8 +11,8 @@ public class SequenceAdapter extends BaseAdapter {
 
     // Adapter for list of sequences in the context of the given child
 
+    private Context context;
 	private Sequence sequence;
-	private Context context;
 	
 	private OnAdapterGetViewListener onAdapterGetViewListener;
 
@@ -51,7 +51,7 @@ public class SequenceAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		
+
 		PictogramView view;
 		Pictogram pictogram = getItem(position);
 		

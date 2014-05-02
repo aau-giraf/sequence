@@ -6,10 +6,8 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -23,7 +21,6 @@ import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GButtonSettings;
 import dk.aau.cs.giraf.gui.GButtonTrash;
 import dk.aau.cs.giraf.gui.GDialog;
-import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.zebra.PictogramView.OnDeleteClickListener;
@@ -44,9 +41,10 @@ public class MainActivity extends Activity {
     private GridView copyGrid;
     private GridView pasteGrid;
     private List<Sequence> sequences = new ArrayList<Sequence>();
-    private List<Sequence> templist = new ArrayList<Sequence>();
+    private List<Sequence> tempSequenceList = new ArrayList<Sequence>();
+    private List<View> tempViewList = new ArrayList<View>();
     public static Child selectedChild;
-    public static Long nestedSequenceId;
+    public static int nestedSequenceId;
     private boolean nestedMode;
     private int guardianId;
     private int childId;
@@ -66,237 +64,11 @@ public class MainActivity extends Activity {
         setColors();
     }
 
-    private void setColors() {
-
-        LinearLayout backgroundLayout = (LinearLayout) findViewById(R.id.parent_container);
-        RelativeLayout topbarLayout = (RelativeLayout) findViewById(R.id.sequence_bar);
-        backgroundLayout.setBackgroundColor(applicationColor);
-        topbarLayout.setBackgroundColor(applicationColor);
-    }
-
-    //Finds the child we want to work with. This is given through the extra, "currentChildID".
-    private void setChild() {
-        //Creates helper to get the relevant profiles from their ID's
-        try {
-            helper = new Helper(this);
-        } catch (Exception e) {
-        }
-
-        Profile guardian = helper.profilesHelper.getProfileById(guardianId);
-        List<Profile> childProfiles = helper.profilesHelper.getChildrenByGuardian(guardian);
-
-        for (Profile p : childProfiles) {
-            //When the correct child is found it is created using a local child class
-            if (p.getId() == childId) {
-                Child c = new Child(childId, p.getName(), p.getImage());
-                selectedChild = c;
-                ((TextView) findViewById(R.id.child_name)).setText(selectedChild.getName());
-            }
-        }
-        updateSequences();
-    }
-
-    private SequenceListAdapter setupAdapter() {
-        final SequenceListAdapter adapter = new SequenceListAdapter(this, sequences);
-        adapter.setOnAdapterGetViewListener(new OnAdapterGetViewListener() {
-            @Override
-            public void onAdapterGetView(final int position, View view) {
-                if (view instanceof PictogramView) {
-                    PictogramView pictoView = (PictogramView) view;
-                    pictoView.setOnDeleteClickListener(new OnDeleteClickListener() {
-                        @Override
-                        public void onDeleteClick() {
-                            deleteSequenceDialog(position);
-                        }
-                    });
-                }
-            }
-        });
-        return adapter;
-    }
-
     private void setupGridView() {
         //Sets the GridView and adapter to display Sequences
         sequenceAdapter = setupAdapter();
         sequenceGrid = (GridView) findViewById(R.id.sequence_grid);
         sequenceGrid.setAdapter(sequenceAdapter);
-    }
-
-    private void loadSequences() {
-        //TODO createFakeSequences is a temporary fix to generate some Sequences. Delete when done.
-        List<Sequence> list; // = SequenceFileStore.getSequences(this, selectedChild);
-        list = createFakeSequences();
-        selectedChild.setSequences(list);
-    }
-
-    private void loadIntents() {
-        //Fetches intents from launcher or SequenceActivity
-        Bundle extras = getIntent().getExtras();
-        guardianId = extras.getInt("currentGuardianID");
-        childId = extras.getInt("currentChildID");
-
-        //Makes the activity killable from SequenceActivity and (Nested) MainActivity
-        if (extras.getBoolean("insertSequence") == false) {
-            activityToKill = this;
-        }
-
-        //Set up user mode depending on extras
-        if (extras.getBoolean("insertSequence")) {
-            nestedMode = true;
-            setupNestedMode();
-        }
-        //TODO: find out what the guardianId is if its in childmode.
-        else if (guardianId != 100) {
-            setupGuardianMode();
-        } else {
-            setupChildMode();
-        }
-    }
-
-    private List<Sequence> createFakeSequences() {
-
-        Sequence s = new Sequence();
-        s.setTitle("TæstSækvæns");
-        s.setImageId(10);
-        s.setSequenceId(5);
-
-        Pictogram a = new Pictogram();
-        Pictogram b = new Pictogram();
-        Pictogram c = new Pictogram();
-        a.setPictogramId(0);
-        b.setPictogramId(1);
-        c.setPictogramId(2);
-        a.setType("pictogram");
-        b.setType("choice");
-        c.setType("sequence");
-        s.addPictogramAtEnd(a);
-        s.addPictogramAtEnd(b);
-        s.addPictogramAtEnd(c);
-
-        List<Sequence> list = sequences;
-        for (int i = 0; i < 12; i++) {
-            list.add(s);
-        }
-        return list;
-    }
-
-    //TODO: create this functionality when database sync is ready.
-    private boolean deleteSequenceDialog(final int position) {
-        return true;
-
-    }
-
-    public void updateSequences() {
-        sequences.clear();
-        sequences.addAll(selectedChild.getSequences());
-        loadSequences();
-        sequenceAdapter.notifyDataSetChanged();
-    }
-
-    public void showDeleteDialog(View v) {
-        deletingSequencesDialog deleteDialog = new deletingSequencesDialog(v.getContext());
-        deleteDialog.show();
-    }
-
-    public void showCopyDialog(View v) {
-        CopyingDialog copyDialog = new CopyingDialog(v.getContext());
-        copyDialog.show();
-    }
-
-    public class deletingSequencesDialog extends GDialog {
-
-        public deletingSequencesDialog(Context context) {
-
-            super(context);
-
-            this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.deleting_sequences,null));
-
-            copyAdapter = setupAdapter();
-            copyGrid = (GridView) findViewById(R.id.existing_sequences);
-            copyGrid.setAdapter(copyAdapter);
-
-            pasteAdapter = new SequenceListAdapter(this.getContext(), templist);
-            pasteGrid = (GridView) findViewById(R.id.empty_sequences);
-            pasteGrid.setAdapter(pasteAdapter);
-
-            GButton popupDelete = (GButton) findViewById(R.id.popup_accept);
-            GButton popupDiscard = (GButton) findViewById(R.id.popup_back);
-            GButton popupExit = (GButton) findViewById(R.id.popup_exit_button);
-
-            popupDelete.setOnClickListener(new GButton.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    //TODO: Make this functionality
-                    //  deleteSequences();
-                }
-            });
-
-            popupDiscard.setOnClickListener(new GButton.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    dismiss();
-                }
-            });
-
-            popupExit.setOnClickListener(new GButton.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    dismiss();
-                }
-            });
-
-        }
-    }
-
-    public class CopyingDialog extends GDialog {
-
-        public CopyingDialog(Context context) {
-
-            super(context);
-
-            this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.copying_sequences, null));
-
-            copyAdapter = setupAdapter();
-            copyGrid = (GridView) findViewById(R.id.existing_sequences);
-            copyGrid.setAdapter(copyAdapter);
-
-            pasteAdapter = new SequenceListAdapter(this.getContext(), templist);
-            pasteGrid = (GridView) findViewById(R.id.empty_sequences);
-            pasteGrid.setAdapter(pasteAdapter);
-
-            GButton popupCopy = (GButton) findViewById(R.id.popup_copy_accept);
-            GButton popupCopyDiscard = (GButton) findViewById(R.id.popup_copy_back);
-            GButton popupExit = (GButton) findViewById(R.id.popup_exit_button);
-
-            popupCopy.setOnClickListener(new GButton.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    //TODO: Make this functionality
-                    //  CopySequences();
-                }
-            });
-
-            popupCopyDiscard.setOnClickListener(new GButton.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    dismiss();
-                }
-            });
-
-            popupExit.setOnClickListener(new GButton.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    dismiss();
-                }
-            });
-
-        }
     }
 
     private void setButtons() {
@@ -350,6 +122,290 @@ public class MainActivity extends Activity {
                 finishActivity();
             }
         });
+    }
+
+    private void loadIntents() {
+        //Fetches intents from launcher or SequenceActivity
+        Bundle extras = getIntent().getExtras();
+        guardianId = extras.getInt("currentGuardianID");
+        childId = extras.getInt("currentChildID");
+
+        //Makes the activity killable from SequenceActivity and (Nested) MainActivity
+        if (extras.getBoolean("insertSequence") == false) {
+            activityToKill = this;
+        }
+
+        //Set up user mode depending on extras
+        if (extras.getBoolean("insertSequence")) {
+            nestedMode = true;
+            setupNestedMode();
+        }
+        //TODO: find out what the guardianId is if its in childmode.
+        else if (guardianId != 100) {
+            setupGuardianMode();
+        } else {
+            setupChildMode();
+        }
+    }
+
+    private void setChild() {
+        //Creates helper to get the relevant profiles from their ID's
+        try {
+            helper = new Helper(this);
+        } catch (Exception e) {
+        }
+
+        Profile guardian = helper.profilesHelper.getProfileById(guardianId);
+        List<Profile> childProfiles = helper.profilesHelper.getChildrenByGuardian(guardian);
+
+        for (Profile p : childProfiles) {
+            //When the correct child is found it is created using a local child class
+            if (p.getId() == childId) {
+                Child c = new Child(childId, p.getName(), p.getImage());
+                selectedChild = c;
+                ((TextView) findViewById(R.id.child_name)).setText(selectedChild.getName());
+            }
+        }
+        updateSequences();
+    }
+
+    private void setColors() {
+
+        LinearLayout backgroundLayout = (LinearLayout) findViewById(R.id.parent_container);
+        RelativeLayout topbarLayout = (RelativeLayout) findViewById(R.id.sequence_bar);
+        backgroundLayout.setBackgroundColor(applicationColor);
+        topbarLayout.setBackgroundColor(applicationColor);
+    }
+
+    private SequenceListAdapter setupAdapter() {
+        final SequenceListAdapter adapter = new SequenceListAdapter(this, sequences);
+        adapter.setOnAdapterGetViewListener(new OnAdapterGetViewListener() {
+            @Override
+            public void onAdapterGetView(final int position, View view) {
+                if (view instanceof PictogramView) {
+                    PictogramView pictoView = (PictogramView) view;
+                    pictoView.setOnDeleteClickListener(new OnDeleteClickListener() {
+                        @Override
+                        public void onDeleteClick() {
+                            deleteSequenceDialog(position);
+                        }
+                    });
+                }
+            }
+        });
+        return adapter;
+    }
+
+    private void loadSequences() {
+        //TODO createFakeSequences is a temporary fix to generate some Sequences. Delete when done.
+        List<Sequence> list; // = SequenceFileStore.getSequences(this, selectedChild);
+        list = createFakeSequences();
+        selectedChild.setSequences(list);
+    }
+
+    private List<Sequence> createFakeSequences() {
+
+        Sequence s = new Sequence();
+        s.setTitle("TæstSækvæns");
+        s.setImageId(10);
+        s.setSequenceId(5);
+
+        Pictogram a = new Pictogram();
+        Pictogram b = new Pictogram();
+        Pictogram c = new Pictogram();
+        a.setPictogramId(0);
+        b.setPictogramId(1);
+        c.setPictogramId(2);
+        a.setType("pictogram");
+        b.setType("choice");
+        c.setType("sequence");
+        s.addPictogramAtEnd(a);
+        s.addPictogramAtEnd(b);
+        s.addPictogramAtEnd(c);
+
+        List<Sequence> list = sequences;
+        for (int i = 0; i < 12; i++) {
+            list.add(s);
+        }
+        return list;
+    }
+
+    //TODO: create this functionality when database sync is ready.
+    private boolean deleteSequenceDialog(final int position) {
+        return true;
+
+    }
+
+    public void updateSequences() {
+        sequences.clear();
+        sequences.addAll(selectedChild.getSequences());
+        loadSequences();
+        sequenceAdapter.notifyDataSetChanged();
+    }
+
+    public void showDeleteDialog(View v) {
+        deletingSequencesDialog deleteDialog = new deletingSequencesDialog(v.getContext());
+        deleteDialog.show();
+    }
+
+    public void showCopyDialog(View v) {
+        copyingSequencesDialog copyDialog = new copyingSequencesDialog(v.getContext());
+        copyDialog.show();
+    }
+
+    public class deletingSequencesDialog extends GDialog {
+
+        public deletingSequencesDialog(Context context) {
+
+            super(context);
+
+            this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.deleting_sequences,null));
+
+            copyAdapter = setupAdapter();
+            copyGrid = (GridView) findViewById(R.id.existing_sequences);
+            copyGrid.setAdapter(copyAdapter);
+            setCopyGridItemClickListener(copyGrid);
+
+            pasteAdapter = new SequenceListAdapter(this.getContext(), tempSequenceList);
+            pasteGrid = (GridView) findViewById(R.id.empty_sequences);
+            pasteGrid.setAdapter(pasteAdapter);
+            setPasteGridItemClickListener(pasteGrid);
+
+            GButton popupDelete = (GButton) findViewById(R.id.popup_accept);
+            GButton popupDiscard = (GButton) findViewById(R.id.popup_back);
+            GButton popupExit = (GButton) findViewById(R.id.popup_exit_button);
+
+            popupDelete.setOnClickListener(new GButton.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    //TODO: Make this functionality
+                    //  deleteSequences();
+                }
+            });
+
+            popupDiscard.setOnClickListener(new GButton.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    dismiss();
+                }
+            });
+
+            popupExit.setOnClickListener(new GButton.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    dismiss();
+                }
+            });
+
+        }
+    }
+
+    public class copyingSequencesDialog extends GDialog {
+
+        public copyingSequencesDialog(Context context) {
+
+            super(context);
+
+            this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.copying_sequences, null));
+
+            copyAdapter = setupAdapter();
+            copyGrid = (GridView) findViewById(R.id.existing_sequences);
+            copyGrid.setAdapter(copyAdapter);
+            setCopyGridItemClickListener(copyGrid);
+
+            pasteAdapter = new SequenceListAdapter(this.getContext(), tempSequenceList);
+            pasteGrid = (GridView) findViewById(R.id.empty_sequences);
+            pasteGrid.setAdapter(pasteAdapter);
+            setPasteGridItemClickListener(pasteGrid);
+
+            GButton popupCopy = (GButton) findViewById(R.id.popup_copy_accept);
+            GButton popupCopyDiscard = (GButton) findViewById(R.id.popup_copy_back);
+            GButton popupExit = (GButton) findViewById(R.id.popup_exit_button);
+
+            popupCopy.setOnClickListener(new GButton.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    //TODO: Make this functionality
+                    //  CopySequences();
+                }
+            });
+
+            popupCopyDiscard.setOnClickListener(new GButton.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    dismiss();
+                }
+            });
+
+            popupExit.setOnClickListener(new GButton.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    dismiss();
+                }
+            });
+
+        }
+    }
+
+    private void setCopyGridItemClickListener(GridView copyGrid) {
+        clearTempLists();
+        copyGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                for (int i = 0; i < tempSequenceList.size(); i++) {
+                    if (copyAdapter.getItem(position).getSequenceId() == tempSequenceList.get(i).getSequenceId()) {
+                        return;
+                    }
+                }
+
+                tempSequenceList.add(copyAdapter.getItem(position));
+                tempViewList.add(copyAdapter.getView(position, view, parent));
+
+                View v = copyAdapter.getView(position, view, parent);
+                v.setAlpha(0.2f);
+                v.setScaleY(0.85f);
+                v.setScaleX(0.85f);
+
+                pasteAdapter.notifyDataSetChanged();
+            }
+        });
+
+    }
+
+    private void setPasteGridItemClickListener(GridView pasteGrid) {
+        clearTempLists();
+        pasteGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                for (int i = 0; i < tempSequenceList.size(); i++) {
+                    if (pasteAdapter.getItem(position).getSequenceId() == tempSequenceList.get(i).getSequenceId()) {
+
+                        View v = tempViewList.get(i);
+                        v.setAlpha(0.99f);
+                        v.setScaleX(0.99f);
+                        v.setScaleY(0.99f);
+
+                        tempSequenceList.remove(i);
+                        tempViewList.remove(i);
+
+                        pasteAdapter.notifyDataSetChanged();
+                    }
+                }
+            }
+        });
+    }
+
+    private void clearTempLists() {
+        tempViewList.clear();
+        tempSequenceList.clear();
     }
 
     private void setupGuardianMode() {
@@ -438,9 +494,9 @@ public class MainActivity extends Activity {
     }
 
     @Override
-    //assumeMinimize kills the entire application if minimized
-    // in any other ways than opening SequenceActivity or inserting a nested Sequence
     protected void onStop() {
+        //assumeMinimize kills the entire application if minimized
+        // in any other ways than opening SequenceActivity or inserting a nested Sequence
         if (assumeMinimize) {
             if (nestedMode) {
                 SequenceActivity.activityToKill.finish();

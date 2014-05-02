@@ -40,7 +40,7 @@ public class Child {
 		return sequences.size();
 	}
 	
-	public long getNextSequenceId() {
+	public int getNextSequenceId() {
 		if (sequences.size() != 0)
 			return sequences.get(sequences.size() - 1).getSequenceId() + 1;
 

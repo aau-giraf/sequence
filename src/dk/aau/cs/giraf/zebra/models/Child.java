@@ -47,7 +47,7 @@ public class Child {
 		return 1;
 	}
 	
-	public Sequence getSequenceFromId(long sequenceId) {
+	public Sequence getSequenceFromId(int sequenceId) {
 		for (Sequence sequence : sequences) {
 			if (sequence.getSequenceId() == sequenceId)
 				return sequence;

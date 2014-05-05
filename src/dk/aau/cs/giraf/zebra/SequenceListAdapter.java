@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import dk.aau.cs.giraf.zebra.models.Child;
-import dk.aau.cs.giraf.zebra.models.Sequence;
+import dk.aau.cs.giraf.oasis.lib.models.Sequence;
 
 //Adapter for a List of Sequences typically associated with a {@link Child}
 public class SequenceListAdapter extends BaseAdapter {
@@ -35,11 +35,9 @@ public class SequenceListAdapter extends BaseAdapter {
 		
         Sequence sequence = items.get(position);
         
-        v.setTitle(sequence.getTitle());
+        v.setTitle(sequence.getName());
         v.setEditModeEnabled(isInEditMode);
-        //TODO: This is a temporary fix to get a blank yellow picture on any Sequence.
-        //v.setImage(sequence.getImage(context));
-        v.setImage(BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.nice));
+        v.setImageFromId(sequence.getPictogramId());
 
         if (onAdapterGetViewListener != null)
 			onAdapterGetViewListener.onAdapterGetView(position, v);

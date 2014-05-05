@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -23,11 +24,11 @@ import dk.aau.cs.giraf.gui.GButtonTrash;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
+import dk.aau.cs.giraf.oasis.lib.models.Sequence;
+import dk.aau.cs.giraf.oasis.lib.models.Frame;
+import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.zebra.PictogramView.OnDeleteClickListener;
 import dk.aau.cs.giraf.zebra.SequenceListAdapter.OnAdapterGetViewListener;
-import dk.aau.cs.giraf.zebra.models.Child;
-import dk.aau.cs.giraf.zebra.models.Pictogram;
-import dk.aau.cs.giraf.zebra.models.Sequence;
 import dk.aau.cs.giraf.zebra.serialization.SequenceFileStore;
 
 
@@ -43,7 +44,7 @@ public class MainActivity extends Activity {
     private List<Sequence> sequences = new ArrayList<Sequence>();
     private List<Sequence> tempSequenceList = new ArrayList<Sequence>();
     private List<View> tempViewList = new ArrayList<View>();
-    public static Child selectedChild;
+    public static Profile selectedChild;
     public static int nestedSequenceId;
     private boolean nestedMode;
     private int guardianId;
@@ -90,11 +91,7 @@ public class MainActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-
                 Sequence sequence = new Sequence();
-                sequence.setSequenceId(selectedChild.getNextSequenceId());
-                selectedChild.getSequences().add(sequence);
-
                 enterSequence(sequence, true);
             }
         });
@@ -128,7 +125,11 @@ public class MainActivity extends Activity {
         //Fetches intents from launcher or SequenceActivity
         Bundle extras = getIntent().getExtras();
         guardianId = extras.getInt("currentGuardianID");
-        childId = extras.getInt("currentChildID");
+        //TODO: Revert after sprint end
+        //childId = extras.getInt("currentChildID");
+        long childIdLong = extras.getLong("currentChildID");
+        childId = (int) (long) childIdLong;
+        Log.d("DebugYeah", Integer.toString(childId));
 
         //Makes the activity killable from SequenceActivity and (Nested) MainActivity
         if (extras.getBoolean("insertSequence") == false) {
@@ -161,8 +162,7 @@ public class MainActivity extends Activity {
         for (Profile p : childProfiles) {
             //When the correct child is found it is created using a local child class
             if (p.getId() == childId) {
-                Child c = new Child(childId, p.getName(), p.getImage());
-                selectedChild = c;
+                selectedChild = p;
                 ((TextView) findViewById(R.id.child_name)).setText(selectedChild.getName());
             }
         }
@@ -196,9 +196,9 @@ public class MainActivity extends Activity {
         return adapter;
     }
 
-    private void loadSequences() {
+    /*private void loadFakeSequences() {
         //TODO createFakeSequences is a temporary fix to generate some Sequences. Delete when done.
-        List<Sequence> list; // = SequenceFileStore.getSequences(this, selectedChild);
+        List<Sequence> list = selectedChild.getSequences();
         list = createFakeSequences();
         selectedChild.setSequences(list);
     }
@@ -206,29 +206,26 @@ public class MainActivity extends Activity {
     private List<Sequence> createFakeSequences() {
 
         Sequence s = new Sequence();
-        s.setTitle("TæstSækvæns");
-        s.setImageId(10);
-        s.setSequenceId(5);
+        s.setName("TæstSækvæns");
+        s.setPictogramId(10);
+        s.setId(5);
 
-        Pictogram a = new Pictogram();
-        Pictogram b = new Pictogram();
-        Pictogram c = new Pictogram();
+        Frame a = new Frame();
+        Frame b = new Frame();
+        Frame c = new Frame();
         a.setPictogramId(0);
         b.setPictogramId(1);
         c.setPictogramId(2);
-        a.setType("pictogram");
-        b.setType("choice");
-        c.setType("sequence");
-        s.addPictogramAtEnd(a);
-        s.addPictogramAtEnd(b);
-        s.addPictogramAtEnd(c);
+        s.addFrame(a);
+        s.addFrame(b);
+        s.addFrame(c);
 
         List<Sequence> list = sequences;
         for (int i = 0; i < 12; i++) {
             list.add(s);
         }
         return list;
-    }
+    }*/
 
     //TODO: create this functionality when database sync is ready.
     private boolean deleteSequenceDialog(final int position) {
@@ -237,9 +234,13 @@ public class MainActivity extends Activity {
     }
 
     public void updateSequences() {
+        try {
+            helper = new Helper(this);
+        } catch (Exception e) {
+        }
+
         sequences.clear();
-        sequences.addAll(selectedChild.getSequences());
-        loadSequences();
+        sequences = helper.sequenceController.getSequenceByProfileIdAndType(selectedChild.getId(), Sequence.SequenceType.SEQUENCE);
         sequenceAdapter.notifyDataSetChanged();
     }
 
@@ -360,7 +361,7 @@ public class MainActivity extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 for (int i = 0; i < tempSequenceList.size(); i++) {
-                    if (copyAdapter.getItem(position).getSequenceId() == tempSequenceList.get(i).getSequenceId()) {
+                    if (copyAdapter.getItem(position).getId() == tempSequenceList.get(i).getId()) {
                         return;
                     }
                 }
@@ -386,7 +387,7 @@ public class MainActivity extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 for (int i = 0; i < tempSequenceList.size(); i++) {
-                    if (pasteAdapter.getItem(position).getSequenceId() == tempSequenceList.get(i).getSequenceId()) {
+                    if (pasteAdapter.getItem(position).getId() == tempSequenceList.get(i).getId()) {
 
                         View v = tempViewList.get(i);
                         v.setAlpha(0.99f);
@@ -452,7 +453,7 @@ public class MainActivity extends Activity {
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 ((PictogramView) arg1).liftUp();
                 Sequence sequence = sequenceAdapter.getItem(arg2);
-                nestedSequenceId = sequence.getSequenceId();
+                nestedSequenceId = sequence.getId();
                 finishActivity();
             }
         });
@@ -463,12 +464,14 @@ public class MainActivity extends Activity {
     private void enterSequence(Sequence sequence, boolean isNew) {
         assumeMinimize = false;
         Intent intent = new Intent(getApplication(), SequenceActivity.class);
-        intent.putExtra("profileId", selectedChild.getProfileId());
-        intent.putExtra("sequenceId", sequence.getSequenceId());
+        intent.putExtra("profileId", selectedChild.getId());
         intent.putExtra("guardianId", guardianId);
         intent.putExtra("editMode", isInEditMode);
         intent.putExtra("new", isNew);
         intent.putExtra("applicationColor", applicationColor);
+        if (isNew = false) {
+            intent.putExtra("sequenceId", sequence.getId());
+        }
 
         startActivity(intent);
     }
@@ -481,7 +484,6 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        updateSequences();
 
         // Removes highlighting from all images
         for (int i = 0; i < sequenceGrid.getChildCount(); i++) {
@@ -491,6 +493,12 @@ public class MainActivity extends Activity {
                 ((PictogramView) view).placeDown();
             }
         }
+        try {
+            helper = new Helper(this);
+        } catch (Exception e) {
+        }
+        sequences = helper.sequenceController.getSequenceByProfileIdAndType(selectedChild.getId(), Sequence.SequenceType.SEQUENCE);
+        setupGridView();
     }
 
     @Override

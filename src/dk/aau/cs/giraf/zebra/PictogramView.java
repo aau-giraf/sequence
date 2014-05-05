@@ -10,6 +10,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import dk.aau.cs.giraf.oasis.lib.Helper;
+
 
 /**
  * Contains a pictogram and a title.
@@ -22,6 +24,8 @@ public class PictogramView extends LinearLayout {
 	public final static float HIGHLIGHT_SCALE = 0.9f;
 	public final static float LOWLIGHT_SCALE = 0.7f;
 	private final static float DEFAULT_TEXT_SIZE = 18f;
+
+    private Helper helper;
 	
 	private RoundedImageView pictogram;
 	private TextView title;
@@ -149,8 +153,12 @@ public class PictogramView extends LinearLayout {
 		return isInEditMode;
 	}
 
-	public void setImage(Bitmap bitmap) {
-		pictogram.setImageBitmap(bitmap);
+	public void setImageFromId(int id) {
+        try {
+            helper = new Helper(getContext());
+        } catch (Exception e) {
+        }
+		pictogram.setImageBitmap(helper.pictogramHelper.getPictogramById(id).getImage());
 	}
 	
 	public void setTitle(String newTitle)

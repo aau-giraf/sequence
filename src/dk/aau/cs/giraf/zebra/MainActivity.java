@@ -22,6 +22,7 @@ import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GButtonSettings;
 import dk.aau.cs.giraf.gui.GButtonTrash;
 import dk.aau.cs.giraf.gui.GDialog;
+import dk.aau.cs.giraf.gui.GGridView;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.oasis.lib.models.Sequence;
@@ -67,8 +68,8 @@ public class MainActivity extends Activity {
 
     private void setupGridView() {
         //Sets the GridView and adapter to display Sequences
-        sequenceAdapter = setupAdapter();
-        sequenceGrid = (GridView) findViewById(R.id.sequence_grid);
+        sequenceGrid = (GGridView) findViewById(R.id.sequence_grid);
+        sequenceAdapter = new SequenceListAdapter(this, sequences);
         sequenceGrid.setAdapter(sequenceAdapter);
     }
 
@@ -177,25 +178,6 @@ public class MainActivity extends Activity {
         topbarLayout.setBackgroundColor(applicationColor);
     }
 
-    private SequenceListAdapter setupAdapter() {
-        final SequenceListAdapter adapter = new SequenceListAdapter(this, sequences);
-        adapter.setOnAdapterGetViewListener(new OnAdapterGetViewListener() {
-            @Override
-            public void onAdapterGetView(final int position, View view) {
-                if (view instanceof PictogramView) {
-                    PictogramView pictoView = (PictogramView) view;
-                    pictoView.setOnDeleteClickListener(new OnDeleteClickListener() {
-                        @Override
-                        public void onDeleteClick() {
-                            deleteSequenceDialog(position);
-                        }
-                    });
-                }
-            }
-        });
-        return adapter;
-    }
-
     /*private void loadFakeSequences() {
         //TODO createFakeSequences is a temporary fix to generate some Sequences. Delete when done.
         List<Sequence> list = selectedChild.getSequences();
@@ -239,9 +221,9 @@ public class MainActivity extends Activity {
         } catch (Exception e) {
         }
 
-        sequences.clear();
         sequences = helper.sequenceController.getSequenceByProfileIdAndType(selectedChild.getId(), Sequence.SequenceType.SEQUENCE);
-        sequenceAdapter.notifyDataSetChanged();
+        sequenceAdapter = new SequenceListAdapter(this, sequences);
+        sequenceGrid.setAdapter(sequenceAdapter);
     }
 
     public void showDeleteDialog(View v) {
@@ -256,19 +238,19 @@ public class MainActivity extends Activity {
 
     public class deletingSequencesDialog extends GDialog {
 
-        public deletingSequencesDialog(Context context) {
+        public deletingSequencesDialog(final Context context) {
 
             super(context);
 
             this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.deleting_sequences,null));
 
-            copyAdapter = setupAdapter();
-            copyGrid = (GridView) findViewById(R.id.existing_sequences);
+            copyAdapter = new SequenceListAdapter(this.getContext(), sequences);
+            copyGrid = (GGridView) findViewById(R.id.existing_sequences);
             copyGrid.setAdapter(copyAdapter);
             setCopyGridItemClickListener(copyGrid);
 
             pasteAdapter = new SequenceListAdapter(this.getContext(), tempSequenceList);
-            pasteGrid = (GridView) findViewById(R.id.empty_sequences);
+            pasteGrid = (GGridView) findViewById(R.id.empty_sequences);
             pasteGrid.setAdapter(pasteAdapter);
             setPasteGridItemClickListener(pasteGrid);
 
@@ -280,8 +262,15 @@ public class MainActivity extends Activity {
 
                 @Override
                 public void onClick(View v) {
-                    //TODO: Make this functionality
-                    //  deleteSequences();
+                    for (Sequence seq : tempSequenceList) {
+                        try {
+                            helper = new Helper(context);
+                        } catch (Exception e) {
+                        }
+                        helper.sequenceController.removeSequence(seq);
+                    }
+                    updateSequences();
+                    dismiss();
                 }
             });
 
@@ -312,13 +301,13 @@ public class MainActivity extends Activity {
 
             this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.copying_sequences, null));
 
-            copyAdapter = setupAdapter();
-            copyGrid = (GridView) findViewById(R.id.existing_sequences);
+            copyAdapter = new SequenceListAdapter(this.getContext(), sequences);
+            copyGrid = (GGridView) findViewById(R.id.existing_sequences);
             copyGrid.setAdapter(copyAdapter);
             setCopyGridItemClickListener(copyGrid);
 
             pasteAdapter = new SequenceListAdapter(this.getContext(), tempSequenceList);
-            pasteGrid = (GridView) findViewById(R.id.empty_sequences);
+            pasteGrid = (GGridView) findViewById(R.id.empty_sequences);
             pasteGrid.setAdapter(pasteAdapter);
             setPasteGridItemClickListener(pasteGrid);
 
@@ -420,6 +409,7 @@ public class MainActivity extends Activity {
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 ((PictogramView) arg1).liftUp();
                 Sequence sequence = sequenceAdapter.getItem(arg2);
+                Log.d("DebugYeah", "FrameNo. (Main) = " + Integer.toString(sequenceAdapter.getItem(arg2).getFramesList().size()));
                 enterSequence(sequence, false);
             }
         });
@@ -469,9 +459,8 @@ public class MainActivity extends Activity {
         intent.putExtra("editMode", isInEditMode);
         intent.putExtra("new", isNew);
         intent.putExtra("applicationColor", applicationColor);
-        if (isNew = false) {
-            intent.putExtra("sequenceId", sequence.getId());
-        }
+        intent.putExtra("sequenceId", sequence.getId());
+        Log.d("DebugYeah", "SeqId before launch: " + Integer.toString(sequence.getId()));
 
         startActivity(intent);
     }
@@ -493,12 +482,7 @@ public class MainActivity extends Activity {
                 ((PictogramView) view).placeDown();
             }
         }
-        try {
-            helper = new Helper(this);
-        } catch (Exception e) {
-        }
-        sequences = helper.sequenceController.getSequenceByProfileIdAndType(selectedChild.getId(), Sequence.SequenceType.SEQUENCE);
-        setupGridView();
+        updateSequences();
     }
 
     @Override

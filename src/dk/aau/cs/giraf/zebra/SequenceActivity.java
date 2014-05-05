@@ -65,7 +65,7 @@ public class SequenceActivity extends Activity {
 	private ImageView sequenceImageView;
 
     private int applicationColor;
-    private int sequenceId = 0;
+    private int sequenceId;
 
 	private boolean isInEditMode;
 	private boolean isNew;
@@ -96,9 +96,8 @@ public class SequenceActivity extends Activity {
 
 		Bundle extras = getIntent().getExtras();
 		profileId = extras.getInt("profileId");
-        if (extras.getInt("sequenceId") != 0) {
-            sequenceId = extras.getInt("sequenceId");
-        }
+        sequenceId = extras.getInt("sequenceId");
+        Log.d("DebugYeah", "SeqID: " + Integer.toString(sequenceId));
 		guardianId = extras.getInt("guardianId");
 		isNew = extras.getBoolean("new");
 		isInEditMode = extras.getBoolean("editMode");
@@ -108,12 +107,14 @@ public class SequenceActivity extends Activity {
             helper = new Helper(this);
         } catch (Exception e) {
         }
+
         if (sequenceId != 0) {
             originalSequence = helper.sequenceController.getSequenceById(sequenceId);
         }
 
 		// Get a clone of the sequence so the original sequence is not modified
 		sequence = originalSequence;
+        Log.d("DebugYeah", "Frames after launch: " + Integer.toString(sequence.getFramesList().size()));
 
 		// Create Adapter
 		adapter = setupAdapter();
@@ -192,13 +193,15 @@ public class SequenceActivity extends Activity {
             //TODO: Display message that user is about to try saving an empty sequence.
             return;
         }
-        tempSequenceList = helper.sequenceController.getSequenceByProfileIdAndType(MainActivity.selectedChild.getId(), Sequence.SequenceType.SEQUENCE);
         sequence.setName(sequenceTitleView.getText().toString());
 
         if (isNew == true) {
             sequence.setProfileId(MainActivity.selectedChild.getId());
             sequence.setSequenceType(Sequence.SequenceType.SEQUENCE);
-            helper.sequenceController.insertSequence(sequence);
+            Log.d("DebugYeah", "FrameNo. = " + Integer.toString(sequence.getFramesList().size()));
+            helper.sequenceController.insertSequenceAndFrames(sequence);
+            Log.d("DebugYeah", "ID 17 has " + Integer.toString(helper.sequenceController.getSequenceById(17).getFramesList().size()) + " frames");
+
         } else {
             helper.sequenceController.modifySequenceAndFrames(sequence);
         }
@@ -555,12 +558,14 @@ public class SequenceActivity extends Activity {
         if (checkoutIds == null) {
             return;
         }
-
+        Log.d("DebugYeah", "choiceMode is friggin " + Boolean.toString(choiceMode));
         if (choiceMode) {
+
             for (int id : checkoutIds) {
                 Pictogram pictogram = new Pictogram();
                 pictogram.setId(id);
                 tempPictogramList.add(pictogram);
+
 
                 Frame frame = new Frame();
                 frame.setPictogramId(id);
@@ -621,7 +626,7 @@ public class SequenceActivity extends Activity {
         Buttons();
 
 		sequenceTitleView.setEnabled(isInEditMode);
-		sequenceTitleView.setText(sequence.getName());
+            sequenceTitleView.setText(sequence.getName());
 
 		// Create listener to remove focus when "Done" is pressed on the keyboard
 		sequenceTitleView

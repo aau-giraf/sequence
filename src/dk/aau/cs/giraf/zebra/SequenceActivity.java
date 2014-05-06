@@ -27,8 +27,10 @@ import android.widget.TextView.OnEditorActionListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
 
 import dk.aau.cs.giraf.gui.GButton;
+import dk.aau.cs.giraf.gui.GComponent;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.oasis.lib.Helper;
@@ -38,7 +40,6 @@ import dk.aau.cs.giraf.zebra.SequenceAdapter.OnAdapterGetViewListener;
 import dk.aau.cs.giraf.zebra.SequenceViewGroup.OnNewButtonClickedListener;
 import dk.aau.cs.giraf.oasis.lib.models.Sequence;
 import dk.aau.cs.giraf.oasis.lib.models.Pictogram;
-import dk.aau.cs.giraf.zebra.serialization.SequenceFileStore;
 
 public class SequenceActivity extends Activity {
 
@@ -64,7 +65,6 @@ public class SequenceActivity extends Activity {
 
 	private ImageView sequenceImageView;
 
-    private int applicationColor;
     private int sequenceId;
 
 	private boolean isInEditMode;
@@ -101,7 +101,6 @@ public class SequenceActivity extends Activity {
 		guardianId = extras.getInt("guardianId");
 		isNew = extras.getBoolean("new");
 		isInEditMode = extras.getBoolean("editMode");
-        applicationColor = extras.getInt("applicationColor");
 
         try {
             helper = new Helper(this);
@@ -125,8 +124,8 @@ public class SequenceActivity extends Activity {
 
         LinearLayout backgroundLayout = (LinearLayout) findViewById(R.id.parent_container);
         RelativeLayout topbarLayout = (RelativeLayout) findViewById(R.id.sequence_bar);
-        backgroundLayout.setBackgroundColor(applicationColor);
-        topbarLayout.setBackgroundColor(applicationColor);
+        backgroundLayout.setBackgroundColor(GComponent.GetBackgroundColor());
+        topbarLayout.setBackgroundColor(GComponent.GetBackgroundColor());
 
 		initializeTopBar();
 
@@ -198,9 +197,10 @@ public class SequenceActivity extends Activity {
         if (isNew == true) {
             sequence.setProfileId(MainActivity.selectedChild.getId());
             sequence.setSequenceType(Sequence.SequenceType.SEQUENCE);
+            //TODO: Figure out why frames are not saved. Database problem?
             Log.d("DebugYeah", "FrameNo. = " + Integer.toString(sequence.getFramesList().size()));
             helper.sequenceController.insertSequenceAndFrames(sequence);
-            Log.d("DebugYeah", "ID 17 has " + Integer.toString(helper.sequenceController.getSequenceById(17).getFramesList().size()) + " frames");
+            //Log.d("DebugYeah", "ID 17 has " + Integer.toString(helper.sequenceController.getSequenceById(17).getFramesList().size()) + " frames");
 
         } else {
             helper.sequenceController.modifySequenceAndFrames(sequence);
@@ -256,7 +256,19 @@ public class SequenceActivity extends Activity {
                         startActivity(intent);
                         isInEditMode = true;
                         //TODO: Get chosen sequence from MainActivity.nestedSequenceId
-                        // Log.d("Debug", "Ran this. Also, nestedSequenceId is: " + Integer.toString(MainActivity.nestedSequenceId));
+
+                        Frame frame = new Frame();
+                        frame.setNestedSequence(MainActivity.nestedSequenceId);
+
+                        if (pictogramEditPos == -1) {
+                            sequence.addFrame(frame);
+                        }
+                        else {
+                            tempFrameList = sequence.getFramesList();
+                            tempFrameList.set(pictogramEditPos, frame);
+                            sequence.setFramesList(tempFrameList);
+                        }
+
                     }
                 });
 
@@ -401,10 +413,12 @@ public class SequenceActivity extends Activity {
                     .setOnRearrangeListener(new SequenceViewGroup.OnRearrangeListener() {
                         @Override
                         public void onRearrange(int indexFrom, int indexTo) {
-                            rearrangeFrames(choice, indexFrom, indexTo);
+                            choice = rearrangeFrames(choice, indexFrom, indexTo);
                             adapter.notifyDataSetChanged();
                         }
                     });
+
+
 
             // Handle new view
             choiceGroup
@@ -442,7 +456,8 @@ public class SequenceActivity extends Activity {
 				.setOnRearrangeListener(new SequenceViewGroup.OnRearrangeListener() {
 					@Override
 					public void onRearrange(int indexFrom, int indexTo) {
-						rearrangeFrames(sequence, indexFrom, indexTo);
+                        //TODO It seems one can't change views when rearranging. Figure out an alternative.
+						//sequence = rearrangeFrames(sequence, indexFrom, indexTo);
 						adapter.notifyDataSetChanged();
 					}
 				});
@@ -695,13 +710,21 @@ public class SequenceActivity extends Activity {
 		}
 	}
 
-    public void rearrangeFrames(Sequence choice, int oldIndex, int newIndex) {
-        int size = choice.getFramesList().size();
+    public Sequence rearrangeFrames(Sequence seq, int oldIndex, int newIndex) {
+        int size = seq.getFramesList().size();
+        Log.d("DebugYeah", "Number of frames is: " + Integer.toString(seq.getFramesList().size()));
+        Log.d("DebugYeah", "Old index: " + Integer.toString(oldIndex));
+        Log.d("DebugYeah", "New index: " + Integer.toString(newIndex));
         if (oldIndex < 0 || oldIndex >= size) throw new IllegalArgumentException("oldIndex out of range");
         if (newIndex < 0 || newIndex >= size) throw new IllegalArgumentException("newIndex out of range");
         //TODO: Get the code below to work
-        //Pictogram temp = choice.remove(oldIndex);
-        //choice.add(newIndex, temp);
+        tempFrameList = seq.getFramesList();
+        Frame frameX = tempFrameList.get(oldIndex);
+        Frame frameY = tempFrameList.get(newIndex);
+        tempFrameList.set(newIndex, frameX);
+        tempFrameList.set(oldIndex, frameY);
+        seq.setFramesList(tempFrameList);
+        return seq;
     }
 
 	private void callPictoAdmin(int modeId) {

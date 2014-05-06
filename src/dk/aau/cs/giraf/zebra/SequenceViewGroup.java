@@ -5,7 +5,9 @@ import android.content.res.TypedArray;
 import android.database.DataSetObserver;
 import android.graphics.Matrix;
 import android.graphics.Rect;
+import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -390,16 +392,11 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 		float y = event.getY();
 		
 		//End drag if UP, Cancel or multiple pointers or pointer is gone
-		if (event.getActionMasked() == MotionEvent.ACTION_UP || 
-				event.getActionMasked() == MotionEvent.ACTION_CANCEL || 
-				event.getPointerCount() != 1 ||
-				x >= getWidth() || x <= 0) {
-			
+		if (event.getActionMasked() == MotionEvent.ACTION_UP || event.getActionMasked() == MotionEvent.ACTION_CANCEL || event.getPointerCount() != 1 || x >= getWidth() || x <= 0) {
 			//Be careful with coordinates from the event if getPointerCount != 1
 			if (draggingView != null) {
 				if (isDragging) {
 					handled = true;
-					
 					stopAutoScroll();
 					
 					// Remove the highlight of the pictogram
@@ -408,11 +405,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 					//Disallow movement when repositioning dragged view.
 					animatingDragReposition = true;
 					
-					TranslateAnimation move = new TranslateAnimation(
-							0,
-							calcChildLeftPosition(curDragIndexPos) - draggingView.getLeft(), 
-							0, 
-							0);
+					TranslateAnimation move = new TranslateAnimation(0, calcChildLeftPosition(curDragIndexPos) - draggingView.getLeft(), 0, 0);
 					move.setDuration(ANIMATION_TIME);
 					
 					move.setAnimationListener(new AnimationListener() {
@@ -423,10 +416,11 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 								final int childViews = getChildCount();
 								for (int i = 0; i < childViews; i++) {
 									getChildAt(i).clearAnimation();
-								}
+                                }
 								rearrangeListener.onRearrange(startDragIndex, curDragIndexPos);
 								//layout(getLeft(), getTop(), getRight(), getBottom());
 								//This prevents lots of flicker
+
 								onLayout(true, getLeft(), getTop(), getRight(), getBottom());
 							} else {
 								//Must clear animation to prevent flicker - even though it just ended.
@@ -438,7 +432,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 							isDragging = false;
 							curDragIndexPos = -1;
 							animatingDragReposition = false;
-							draggingView = null;
+                            draggingView = null;
 						}
 	
 						@Override

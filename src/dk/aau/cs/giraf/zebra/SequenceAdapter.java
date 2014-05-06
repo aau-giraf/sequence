@@ -6,7 +6,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import dk.aau.cs.giraf.oasis.lib.models.Frame;
-import dk.aau.cs.giraf.zebra.models.Pictogram;
 import dk.aau.cs.giraf.oasis.lib.models.Sequence;
 
 public class SequenceAdapter extends BaseAdapter {

@@ -6,7 +6,6 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -21,16 +20,12 @@ import android.view.LayoutInflater;
 import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GButtonSettings;
 import dk.aau.cs.giraf.gui.GButtonTrash;
+import dk.aau.cs.giraf.gui.GComponent;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GGridView;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.oasis.lib.models.Sequence;
-import dk.aau.cs.giraf.oasis.lib.models.Frame;
-import dk.aau.cs.giraf.oasis.lib.models.Profile;
-import dk.aau.cs.giraf.zebra.PictogramView.OnDeleteClickListener;
-import dk.aau.cs.giraf.zebra.SequenceListAdapter.OnAdapterGetViewListener;
-import dk.aau.cs.giraf.zebra.serialization.SequenceFileStore;
 
 
 public class MainActivity extends Activity {
@@ -51,7 +46,6 @@ public class MainActivity extends Activity {
     private int guardianId;
     private int childId;
     private Helper helper;
-    private int applicationColor = Color.parseColor("#8ba4bd");
     public static Activity activityToKill;
 
     @Override
@@ -132,6 +126,11 @@ public class MainActivity extends Activity {
         childId = (int) (long) childIdLong;
         Log.d("DebugYeah", Integer.toString(childId));
 
+        try {
+            helper = new Helper(this);
+        } catch (Exception e) {
+        }
+
         //Makes the activity killable from SequenceActivity and (Nested) MainActivity
         if (extras.getBoolean("insertSequence") == false) {
             activityToKill = this;
@@ -142,8 +141,8 @@ public class MainActivity extends Activity {
             nestedMode = true;
             setupNestedMode();
         }
-        //TODO: find out what the guardianId is if its in childmode.
-        else if (guardianId != 100) {
+        else if (helper.profilesHelper.getProfileById(guardianId).getRole() == Profile.Roles.GUARDIAN) {
+            Log.d("DebugYeah", "User is Guardian");
             setupGuardianMode();
         } else {
             setupChildMode();
@@ -174,41 +173,9 @@ public class MainActivity extends Activity {
 
         LinearLayout backgroundLayout = (LinearLayout) findViewById(R.id.parent_container);
         RelativeLayout topbarLayout = (RelativeLayout) findViewById(R.id.sequence_bar);
-        backgroundLayout.setBackgroundColor(applicationColor);
-        topbarLayout.setBackgroundColor(applicationColor);
+        backgroundLayout.setBackgroundColor(GComponent.GetBackgroundColor());
+        topbarLayout.setBackgroundColor(GComponent.GetBackgroundColor());
     }
-
-    /*private void loadFakeSequences() {
-        //TODO createFakeSequences is a temporary fix to generate some Sequences. Delete when done.
-        List<Sequence> list = selectedChild.getSequences();
-        list = createFakeSequences();
-        selectedChild.setSequences(list);
-    }
-
-    private List<Sequence> createFakeSequences() {
-
-        Sequence s = new Sequence();
-        s.setName("TæstSækvæns");
-        s.setPictogramId(10);
-        s.setId(5);
-
-        Frame a = new Frame();
-        Frame b = new Frame();
-        Frame c = new Frame();
-        a.setPictogramId(0);
-        b.setPictogramId(1);
-        c.setPictogramId(2);
-        s.addFrame(a);
-        s.addFrame(b);
-        s.addFrame(c);
-
-        List<Sequence> list = sequences;
-        for (int i = 0; i < 12; i++) {
-            list.add(s);
-        }
-        return list;
-    }*/
-
     //TODO: create this functionality when database sync is ready.
     private boolean deleteSequenceDialog(final int position) {
         return true;
@@ -458,7 +425,6 @@ public class MainActivity extends Activity {
         intent.putExtra("guardianId", guardianId);
         intent.putExtra("editMode", isInEditMode);
         intent.putExtra("new", isNew);
-        intent.putExtra("applicationColor", applicationColor);
         intent.putExtra("sequenceId", sequence.getId());
         Log.d("DebugYeah", "SeqId before launch: " + Integer.toString(sequence.getId()));
 

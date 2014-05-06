@@ -237,7 +237,7 @@ public class SequenceActivity extends Activity {
                         intent.putExtra("insertSequence", true);
                         intent.putExtra("currentGuardianID", guardianId);
                         //TODO: Revert to int after sprint end
-                        intent.putExtra("currentChildID", (long) profileId);
+                        intent.putExtra("currentChildID", profileId);
                         startActivity(intent);
                         isInEditMode = true;
                         //TODO: Get chosen sequence from MainActivity.nestedSequenceId

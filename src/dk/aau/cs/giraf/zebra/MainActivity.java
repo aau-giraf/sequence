@@ -121,10 +121,7 @@ public class MainActivity extends Activity {
         //Fetches intents from launcher or SequenceActivity
         Bundle extras = getIntent().getExtras();
         guardianId = extras.getInt("currentGuardianID");
-        //TODO: Revert after sprint end
-        //childId = extras.getInt("currentChildID");
-        long childIdLong = extras.getLong("currentChildID");
-        childId = (int) (long) childIdLong;
+        childId = extras.getInt("currentChildID");
         Log.d("DebugYeah", "[Main] Application launched with ChildId " + Integer.toString(childId));
 
         try {

@@ -8,10 +8,9 @@ import android.graphics.BitmapFactory;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import dk.aau.cs.giraf.zebra.models.Child;
 import dk.aau.cs.giraf.oasis.lib.models.Sequence;
 
-//Adapter for a List of Sequences typically associated with a {@link Child}
+//Adapter for a List of Sequences typically associated with a child
 public class SequenceListAdapter extends BaseAdapter {
 
 	

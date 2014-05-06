@@ -26,11 +26,13 @@ import dk.aau.cs.giraf.gui.GGridView;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.oasis.lib.models.Sequence;
+import dk.aau.cs.giraf.gui.GProfileSelector;
 import dk.aau.cs.giraf.oasis.lib.models.Frame;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.zebra.PictogramView.OnDeleteClickListener;
 import dk.aau.cs.giraf.zebra.SequenceListAdapter.OnAdapterGetViewListener;
 import dk.aau.cs.giraf.zebra.serialization.SequenceFileStore;
+import dk.aau.cs.giraf.oasis.lib.controllers.ProfileController;
 
 
 public class MainActivity extends Activity {
@@ -301,6 +303,11 @@ public class MainActivity extends Activity {
 
             this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.copying_sequences, null));
 
+            try {
+                helper = new Helper(context);
+            } catch (Exception e) {
+            }
+
             copyAdapter = new SequenceListAdapter(this.getContext(), sequences);
             copyGrid = (GGridView) findViewById(R.id.existing_sequences);
             copyGrid.setAdapter(copyAdapter);
@@ -311,6 +318,15 @@ public class MainActivity extends Activity {
             pasteGrid.setAdapter(pasteAdapter);
             setPasteGridItemClickListener(pasteGrid);
 
+            final GProfileSelector copyProfileSelector = new GProfileSelector(context, helper.profilesHelper.getChildrenByGuardian(helper.profilesHelper.getProfileById(guardianId)), helper.profilesHelper.getProfileById(childId));
+
+            copyProfileSelector.setOnListItemClick(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                }
+            });
+
             GButton popupCopy = (GButton) findViewById(R.id.popup_copy_accept);
             GButton popupCopyDiscard = (GButton) findViewById(R.id.popup_copy_back);
             GButton popupExit = (GButton) findViewById(R.id.popup_exit_button);
@@ -320,7 +336,7 @@ public class MainActivity extends Activity {
                 @Override
                 public void onClick(View v) {
                     //TODO: Make this functionality
-                    //  CopySequences();
+                   copyProfileSelector.show();
                 }
             });
 

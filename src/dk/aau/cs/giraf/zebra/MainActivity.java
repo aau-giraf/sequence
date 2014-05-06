@@ -25,30 +25,29 @@ import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GGridView;
 import dk.aau.cs.giraf.gui.GProfileSelector;
 import dk.aau.cs.giraf.oasis.lib.Helper;
-import dk.aau.cs.giraf.oasis.lib.controllers.ProfileController;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.oasis.lib.models.Sequence;
 
 
 public class MainActivity extends Activity {
     private boolean isInEditMode = false;
+    private boolean nestedMode;
     private boolean assumeMinimize = true;
     private GridView sequenceGrid;
+    private GridView copyGrid;
+    private GridView pasteGrid;
     private SequenceListAdapter sequenceAdapter;
     private SequenceListAdapter copyAdapter;
     private SequenceListAdapter pasteAdapter;
-    private GridView copyGrid;
-    private GridView pasteGrid;
     private List<Sequence> sequences = new ArrayList<Sequence>();
     private List<Sequence> tempSequenceList = new ArrayList<Sequence>();
     private List<View> tempViewList = new ArrayList<View>();
     public static Profile selectedChild;
+    public static Activity activityToKill;
     public static int nestedSequenceId;
-    private boolean nestedMode;
     private int guardianId;
     private int childId;
     private Helper helper;
-    public static Activity activityToKill;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,7 +125,7 @@ public class MainActivity extends Activity {
         //childId = extras.getInt("currentChildID");
         long childIdLong = extras.getLong("currentChildID");
         childId = (int) (long) childIdLong;
-        Log.d("DebugYeah", Integer.toString(childId));
+        Log.d("DebugYeah", "[Main] Application launched with ChildId " + Integer.toString(childId));
 
         try {
             helper = new Helper(this);
@@ -141,12 +140,14 @@ public class MainActivity extends Activity {
         //Set up user mode depending on extras
         if (extras.getBoolean("insertSequence")) {
             nestedMode = true;
+            Log.d("DebugYeah", "[Main] NestedMode entered");
             setupNestedMode();
         }
         else if (helper.profilesHelper.getProfileById(guardianId).getRole() == Profile.Roles.GUARDIAN) {
-            Log.d("DebugYeah", "User is Guardian");
+            Log.d("DebugYeah", "[Main] User is Guardian");
             setupGuardianMode();
         } else {
+            Log.d("DebugYeah", "[Main] User is Child");
             setupChildMode();
         }
     }
@@ -392,7 +393,7 @@ public class MainActivity extends Activity {
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 ((PictogramView) arg1).liftUp();
                 Sequence sequence = sequenceAdapter.getItem(arg2);
-                Log.d("DebugYeah", "FrameNo. (Main) = " + Integer.toString(sequenceAdapter.getItem(arg2).getFramesList().size()));
+                Log.d("DebugYeah", "[Main] Selected sequence has " + Integer.toString(sequenceAdapter.getItem(arg2).getFramesList().size()) + " frames");
                 enterSequence(sequence, false);
             }
         });
@@ -442,7 +443,7 @@ public class MainActivity extends Activity {
         intent.putExtra("editMode", isInEditMode);
         intent.putExtra("new", isNew);
         intent.putExtra("sequenceId", sequence.getId());
-        Log.d("DebugYeah", "SeqId before launch: " + Integer.toString(sequence.getId()));
+        Log.d("DebugYeah", "[Main] Entering SequenceActivity for SequenceId " + Integer.toString(sequence.getId()));
 
         startActivity(intent);
     }

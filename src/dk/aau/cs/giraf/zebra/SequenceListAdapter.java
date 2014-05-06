@@ -3,8 +3,6 @@ package dk.aau.cs.giraf.zebra;
 import java.util.List;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.BitmapFactory;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;

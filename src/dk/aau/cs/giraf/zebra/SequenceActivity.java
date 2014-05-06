@@ -27,7 +27,6 @@ import android.widget.TextView.OnEditorActionListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
 
 import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GComponent;
@@ -43,48 +42,34 @@ import dk.aau.cs.giraf.oasis.lib.models.Pictogram;
 
 public class SequenceActivity extends Activity {
 
+    private boolean isInEditMode;
+    private boolean isNew;
+    private boolean assumeMinimize = true;
+    private boolean choiceMode = false;
 	private int guardianId;
     private int profileId;
-	
+    private int sequenceId;
+    private int pictogramEditPos = -1;
 	private Sequence originalSequence = new Sequence();
 	private Sequence sequence;
     private Sequence choice = new Sequence();
-    List<Sequence> tempSequenceList;
-    List<Frame> tempFrameList;
-    List<Pictogram> tempPictogramList = new ArrayList<Pictogram>();
-	private SequenceAdapter adapter;
+    private SequenceAdapter adapter;
     private SequenceAdapter choiceAdapter;
-
+    private List<Frame> tempFrameList;
+    private List<Pictogram> tempPictogramList = new ArrayList<Pictogram>();
 	private GButton cancelButton;
     private GButton saveButton;
     private GButton addButton;
     private GButton previewButton;
-
-	private SequenceViewGroup sequenceViewGroup;
 	private EditText sequenceTitleView;
-
 	private ImageView sequenceImageView;
-
-    private int sequenceId;
-
-	private boolean isInEditMode;
-	private boolean isNew;
-    private boolean assumeMinimize = true;
-    private boolean choiceMode = false;
-
 	private final String PICTO_ADMIN_PACKAGE = "dk.aau.cs.giraf.pictosearch";
 	private final String PICTO_ADMIN_CLASS = PICTO_ADMIN_PACKAGE + "." + "PictoAdminMain";
-
+    private final String PICTO_INTENT_CHECKOUT_ID = "checkoutIds";
 	private final int PICTO_SEQUENCE_IMAGE_CALL = 345;
 	private final int PICTO_EDIT_PICTOGRAM_CALL = 456;
 	private final int PICTO_NEW_PICTOGRAM_CALL = 567;
-
-	private final String PICTO_INTENT_CHECKOUT_ID = "checkoutIds";
-
-	private int pictogramEditPos = -1;
-
     public static Activity activityToKill;
-
     private Helper helper;
 
 	@Override
@@ -97,7 +82,7 @@ public class SequenceActivity extends Activity {
 		Bundle extras = getIntent().getExtras();
 		profileId = extras.getInt("profileId");
         sequenceId = extras.getInt("sequenceId");
-        Log.d("DebugYeah", "SeqID: " + Integer.toString(sequenceId));
+        Log.d("DebugYeah", "[SequenceActivity] Activity launched for SequenceId " + Integer.toString(sequenceId));
 		guardianId = extras.getInt("guardianId");
 		isNew = extras.getBoolean("new");
 		isInEditMode = extras.getBoolean("editMode");
@@ -113,13 +98,13 @@ public class SequenceActivity extends Activity {
 
 		// Get a clone of the sequence so the original sequence is not modified
 		sequence = originalSequence;
-        Log.d("DebugYeah", "Frames after launch: " + Integer.toString(sequence.getFramesList().size()));
+        Log.d("DebugYeah", "[SequenceActivity] Sequence currently has " + Integer.toString(sequence.getFramesList().size()) + " frames");
 
 		// Create Adapter
 		adapter = setupAdapter();
 
 		// Create Sequence Group
-		sequenceViewGroup = setupSequenceViewGroup(adapter);
+		SequenceViewGroup sequenceViewGroup = setupSequenceViewGroup(adapter);
 		sequenceTitleView = (EditText) findViewById(R.id.sequence_title);
 
         LinearLayout backgroundLayout = (LinearLayout) findViewById(R.id.parent_container);
@@ -198,9 +183,9 @@ public class SequenceActivity extends Activity {
             sequence.setProfileId(MainActivity.selectedChild.getId());
             sequence.setSequenceType(Sequence.SequenceType.SEQUENCE);
             //TODO: Figure out why frames are not saved. Database problem?
-            Log.d("DebugYeah", "FrameNo. = " + Integer.toString(sequence.getFramesList().size()));
+            Log.d("DebugYeah", "[SequenceActivity] Sequence  has " + Integer.toString(sequence.getFramesList().size()) + " frames before save");
             helper.sequenceController.insertSequenceAndFrames(sequence);
-            //Log.d("DebugYeah", "ID 17 has " + Integer.toString(helper.sequenceController.getSequenceById(17).getFramesList().size()) + " frames");
+            //Log.d("DebugYeah", "[SequenceActivity] Sequence has " + Integer.toString(helper.sequenceController.getSequenceById(17).getFramesList().size()) + " frames after save");
 
         } else {
             helper.sequenceController.modifySequenceAndFrames(sequence);
@@ -382,11 +367,11 @@ public class SequenceActivity extends Activity {
                         tempFrameList.set(pictogramEditPos, frame);
                     }
 
-                    Log.d("DebugYeah", "Before + " + Integer.toString(tempFrameList.size()));
+                    Log.d("DebugYeah", "[SequenceActivity] tempFrameList has " + Integer.toString(tempFrameList.size()) + " frames before setFramesList");
                     //TODO: Figure out why this does not work setFramesList empties sequence.
                     sequence.setFramesList(tempFrameList);
 
-                    Log.d("DebugYeah", "After + " + Integer.toString(sequence.getFramesList().size()));
+                    Log.d("DebugYeah", "[SequenceActivity] sequence has " + Integer.toString(sequence.getFramesList().size()) + "frames after setFramesList");
                     adapter.notifyDataSetChanged();
                     choiceMode = false;
                     dismiss();
@@ -573,7 +558,6 @@ public class SequenceActivity extends Activity {
         if (checkoutIds == null) {
             return;
         }
-        Log.d("DebugYeah", "choiceMode is friggin " + Boolean.toString(choiceMode));
         if (choiceMode) {
 
             for (int id : checkoutIds) {
@@ -712,9 +696,8 @@ public class SequenceActivity extends Activity {
 
     public Sequence rearrangeFrames(Sequence seq, int oldIndex, int newIndex) {
         int size = seq.getFramesList().size();
-        Log.d("DebugYeah", "Number of frames is: " + Integer.toString(seq.getFramesList().size()));
-        Log.d("DebugYeah", "Old index: " + Integer.toString(oldIndex));
-        Log.d("DebugYeah", "New index: " + Integer.toString(newIndex));
+        Log.d("DebugYeah", "[SequenceActivity] Number of frames before rearrange is: " + Integer.toString(seq.getFramesList().size()));
+        Log.d("DebugYeah", "[SequenceActivity] Swapping from position " + Integer.toString(oldIndex) + " to " + Integer.toString(newIndex));
         if (oldIndex < 0 || oldIndex >= size) throw new IllegalArgumentException("oldIndex out of range");
         if (newIndex < 0 || newIndex >= size) throw new IllegalArgumentException("newIndex out of range");
         //TODO: Get the code below to work

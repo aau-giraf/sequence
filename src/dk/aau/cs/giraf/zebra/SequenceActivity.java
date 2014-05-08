@@ -45,14 +45,14 @@ public class SequenceActivity extends Activity {
     private boolean isInEditMode;
     private boolean isNew;
     private boolean assumeMinimize = true;
-    private boolean choiceMode = false;
+    public static boolean choiceMode = false;
 	private int guardianId;
     private int profileId;
     private int sequenceId;
     private int pictogramEditPos = -1;
 	private Sequence originalSequence = new Sequence();
-	private Sequence sequence;
-    private Sequence choice = new Sequence();
+	public static Sequence sequence;
+    public static Sequence choice = new Sequence();
     private SequenceAdapter adapter;
     private SequenceAdapter choiceAdapter;
     private List<Frame> tempFrameList;
@@ -357,6 +357,10 @@ public class SequenceActivity extends Activity {
                 public void onClick(View v) {
                     tempFrameList = sequence.getFramesList();
                     Frame frame = new Frame();
+                    if(tempPictogramList == null) {
+                        //TODO: Display message that user can not save empty choice.
+                        return;
+                    }
                     frame.setPictogramList(tempPictogramList);
                     frame.setPictogramId(tempPictogramList.get(0).getId());
 
@@ -381,6 +385,7 @@ public class SequenceActivity extends Activity {
 
                 @Override
                 public void onClick(View v) {
+                    choiceMode = false;
                     dismiss();
                 }
             });
@@ -398,7 +403,6 @@ public class SequenceActivity extends Activity {
                     .setOnRearrangeListener(new SequenceViewGroup.OnRearrangeListener() {
                         @Override
                         public void onRearrange(int indexFrom, int indexTo) {
-                            choice = rearrangeFrames(choice, indexFrom, indexTo);
                             adapter.notifyDataSetChanged();
                         }
                     });
@@ -442,7 +446,6 @@ public class SequenceActivity extends Activity {
 					@Override
 					public void onRearrange(int indexFrom, int indexTo) {
                         //TODO It seems one can't change views when rearranging. Figure out an alternative.
-						//sequence = rearrangeFrames(sequence, indexFrom, indexTo);
 						adapter.notifyDataSetChanged();
 					}
 				});
@@ -693,22 +696,6 @@ public class SequenceActivity extends Activity {
 			}
 		}
 	}
-
-    public Sequence rearrangeFrames(Sequence seq, int oldIndex, int newIndex) {
-        int size = seq.getFramesList().size();
-        Log.d("DebugYeah", "[SequenceActivity] Number of frames before rearrange is: " + Integer.toString(seq.getFramesList().size()));
-        Log.d("DebugYeah", "[SequenceActivity] Swapping from position " + Integer.toString(oldIndex) + " to " + Integer.toString(newIndex));
-        if (oldIndex < 0 || oldIndex >= size) throw new IllegalArgumentException("oldIndex out of range");
-        if (newIndex < 0 || newIndex >= size) throw new IllegalArgumentException("newIndex out of range");
-        //TODO: Get the code below to work
-        tempFrameList = seq.getFramesList();
-        Frame frameX = tempFrameList.get(oldIndex);
-        Frame frameY = tempFrameList.get(newIndex);
-        tempFrameList.set(newIndex, frameX);
-        tempFrameList.set(oldIndex, frameY);
-        seq.setFramesList(tempFrameList);
-        return seq;
-    }
 
 	private void callPictoAdmin(int modeId) {
         assumeMinimize = false;

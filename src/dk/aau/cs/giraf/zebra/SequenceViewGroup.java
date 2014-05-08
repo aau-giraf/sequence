@@ -6,6 +6,7 @@ import android.database.DataSetObserver;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,11 @@ import android.view.animation.Transformation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.HorizontalScrollView;
+
+import java.util.List;
+
+import dk.aau.cs.giraf.oasis.lib.models.Frame;
+import dk.aau.cs.giraf.oasis.lib.models.Sequence;
 
 /**
  * Layouts its children with fixed sizes and fixed spacing between each child in
@@ -385,7 +391,6 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 		if (animatingDragReposition) return true;
 		
 		boolean handled = false;
-		
 		float x = event.getX();
 		float y = event.getY();
 		
@@ -415,11 +420,18 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 								for (int i = 0; i < childViews; i++) {
 									getChildAt(i).clearAnimation();
                                 }
+
 								rearrangeListener.onRearrange(startDragIndex, curDragIndexPos);
 								//layout(getLeft(), getTop(), getRight(), getBottom());
 								//This prevents lots of flicker
 
 								onLayout(true, getLeft(), getTop(), getRight(), getBottom());
+
+                                if (SequenceActivity.choiceMode == true) {
+                                    rearrangeFrames(SequenceActivity.choice, startDragIndex, curDragIndexPos);
+                                } else {
+                                    rearrangeFrames(SequenceActivity.sequence, startDragIndex, curDragIndexPos);
+                                }
 							} else {
 								//Must clear animation to prevent flicker - even though it just ended.
 								getChildAt(startDragIndex).clearAnimation();
@@ -521,6 +533,27 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 		return handled;
 	}
 
+    public Sequence rearrangeFrames(Sequence seq, int oldIndex, int newIndex) {
+        List<Frame> tempFrameList;
+        int size = seq.getFramesList().size();
+        Log.d("DebugYeah", "[SequenceActivity] Number of frames before rearrange is: " + Integer.toString(seq.getFramesList().size()));
+        Log.d("DebugYeah", "[SequenceActivity] Swapping from position " + Integer.toString(oldIndex) + " to " + Integer.toString(newIndex));
+        if (oldIndex < 0 || oldIndex >= size) throw new IllegalArgumentException("oldIndex out of range");
+        if (newIndex < 0 || newIndex >= size) throw new IllegalArgumentException("newIndex out of range");
+        //TODO: Get the code below to work
+        tempFrameList = seq.getFramesList();
+        Frame frameX = tempFrameList.get(oldIndex);
+        tempFrameList.remove(oldIndex);
+
+        for (int i = newIndex; i < tempFrameList.size(); i++) {
+            Frame frameY = tempFrameList.get(i);
+            tempFrameList.set(i, frameX);
+            frameX = frameY;
+        }
+
+        seq.setFramesList(tempFrameList);
+        return seq;
+    }
 	private void resetViewPositions() {
 		newPositions = new int[getChildCount()];
 		for (int i = 0; i < newPositions.length; i++) {

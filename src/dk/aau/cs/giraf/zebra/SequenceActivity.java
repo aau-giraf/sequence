@@ -109,8 +109,8 @@ public class SequenceActivity extends Activity {
 
         LinearLayout backgroundLayout = (LinearLayout) findViewById(R.id.parent_container);
         RelativeLayout topbarLayout = (RelativeLayout) findViewById(R.id.sequence_bar);
-        backgroundLayout.setBackgroundColor(GComponent.GetBackgroundColor());
-        topbarLayout.setBackgroundColor(GComponent.GetBackgroundColor());
+        backgroundLayout.setBackgroundDrawable(GComponent.GetBackground(GComponent.Background.SOLID));
+        topbarLayout.setBackgroundDrawable(GComponent.GetBackground(GComponent.Background.SOLID));
 
 		initializeTopBar();
 

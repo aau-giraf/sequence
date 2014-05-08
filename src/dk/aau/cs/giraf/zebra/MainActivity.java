@@ -123,6 +123,10 @@ public class MainActivity extends Activity {
         guardianId = extras.getInt("currentGuardianID");
         childId = extras.getInt("currentChildID");
         Log.d("DebugYeah", "[Main] Application launched with ChildId " + Integer.toString(childId));
+        
+        if (childId == -1) {
+            finish();
+        }
 
         try {
             helper = new Helper(this);

@@ -16,8 +16,8 @@ import dk.aau.cs.giraf.oasis.lib.Helper;
 
 public class SettingsActivity extends Activity {
     private boolean assumeMinimize = true;
-    private int pictogramOption = 500;
-    private boolean landscapeOption;
+    private int pictogramSetting = 500;
+    private boolean landscapeSetting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,9 +25,9 @@ public class SettingsActivity extends Activity {
         setContentView(R.layout.activity_settings);
 
         setColors();
-        getOptions();
-        setupOrientationOption();
-        setupPictogramOption();
+        getSettings();
+        setupOrientationSetting();
+        setupPictogramSetting();
     }
 
     private void setColors() {
@@ -38,14 +38,21 @@ public class SettingsActivity extends Activity {
         topbarLayout.setBackgroundDrawable(GComponent.GetBackground(GComponent.Background.SOLID));
     }
 
-    private void getOptions() {
+    private void getSettings() {
+        Helper helper = new Helper(this);
+
+        try {
+            helper = new Helper(this);
+        } catch (Exception e) {
+        }
+
         //pictogramOption = ;
         //orientationOption = ;
     }
 
-    private void setupOrientationOption() {
+    private void setupOrientationSetting() {
         RadioGroup orientationButtons = (RadioGroup) findViewById(R.id.RadioButtons);
-        if (landscapeOption == true) {
+        if (landscapeSetting == true) {
             orientationButtons.check(R.id.landscapeButton);
         }
         else {
@@ -57,25 +64,25 @@ public class SettingsActivity extends Activity {
     public void onOrientationClick(View v) {
         switch(v.getId()) {
             case R.id.landscapeButton:
-                landscapeOption = true;
+                landscapeSetting = true;
                 break;
             case R.id.portraitButton:
-                landscapeOption = false;
+                landscapeSetting = false;
                 break;
         }
-        Log.d("DebugYeah", "LandscapeOption is " + Boolean.toString(landscapeOption));
+        Log.d("DebugYeah", "LandscapeOption is " + Boolean.toString(landscapeSetting));
     }
 
-    private void setupPictogramOption() {
+    private void setupPictogramSetting() {
         final GSeekBar pictogramSlider = (GSeekBar) findViewById(R.id.pictogram_slider);
         final GTextView pictogramSliderText = (GTextView) findViewById(R.id.pictogram_slider_text);
-        pictogramSliderText.setText(Integer.toString(pictogramOption) + " piktogrammer");
+        pictogramSliderText.setText(Integer.toString(pictogramSetting) + " piktogrammer");
 
         pictogramSlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
-                pictogramOption = (int) Math.round(progress/14.285714285714285714285714285714);
-                pictogramSliderText.setText(pictogramOption + " piktogrammer");
+                pictogramSetting = (int) Math.round(progress/14.285714285714285714285714285714);
+                pictogramSliderText.setText(pictogramSetting + " piktogrammer");
             }
 
             @Override
@@ -98,8 +105,6 @@ public class SettingsActivity extends Activity {
             helper = new Helper(this);
         } catch (Exception e) {
         }
-
-        
 
     }
 

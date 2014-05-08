@@ -108,6 +108,17 @@ public class MainActivity extends Activity {
             }
         });
 
+        settingsButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                assumeMinimize = false;
+                Intent intent = new Intent(getApplication(), SettingsActivity.class);
+                intent.putExtra("childId", childId);
+
+                startActivity(intent);
+            }
+        });
+
         exitButton.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -123,7 +134,7 @@ public class MainActivity extends Activity {
         guardianId = extras.getInt("currentGuardianID");
         childId = extras.getInt("currentChildID");
         Log.d("DebugYeah", "[Main] Application launched with ChildId " + Integer.toString(childId));
-        
+
         if (childId == -1) {
             finish();
         }

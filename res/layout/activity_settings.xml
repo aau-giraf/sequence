@@ -71,7 +71,7 @@
                 <dk.aau.cs.giraf.gui.GRadioButton
                     android:id="@+id/landscapeButton"
                     android:text="Landscape"
-                    android:onClick="onLandscapeButtonClick"
+                    android:onClick="onOrientationClick"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     />
@@ -79,7 +79,7 @@
                 <dk.aau.cs.giraf.gui.GRadioButton
                     android:id="@+id/portraitButton"
                     android:text="Portrait"
-                    android:onClick="onPortraitButtonClick"
+                    android:onClick="onOrientationClick"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     />

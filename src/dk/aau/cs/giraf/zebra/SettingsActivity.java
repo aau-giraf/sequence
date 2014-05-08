@@ -2,18 +2,22 @@ package dk.aau.cs.giraf.zebra;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 
 import dk.aau.cs.giraf.gui.GComponent;
 import dk.aau.cs.giraf.gui.GSeekBar;
 import dk.aau.cs.giraf.gui.GTextView;
+import dk.aau.cs.giraf.oasis.lib.Helper;
 
 public class SettingsActivity extends Activity {
     private boolean assumeMinimize = true;
     private int pictogramOption = 500;
-    private int orientationOption;
+    private boolean landscapeOption;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +44,26 @@ public class SettingsActivity extends Activity {
     }
 
     private void setupOrientationOption() {
+        RadioGroup orientationButtons = (RadioGroup) findViewById(R.id.RadioButtons);
+        if (landscapeOption == true) {
+            orientationButtons.check(R.id.landscapeButton);
+        }
+        else {
+            orientationButtons.check(R.id.portraitButton);
+        }
 
+    }
 
+    public void onOrientationClick(View v) {
+        switch(v.getId()) {
+            case R.id.landscapeButton:
+                landscapeOption = true;
+                break;
+            case R.id.portraitButton:
+                landscapeOption = false;
+                break;
+        }
+        Log.d("DebugYeah", "LandscapeOption is " + Boolean.toString(landscapeOption));
     }
 
     private void setupPictogramOption() {
@@ -69,6 +91,18 @@ public class SettingsActivity extends Activity {
         });
     }
 
+    private void saveSettings() {
+        Helper helper = new Helper(this);
+
+        try {
+            helper = new Helper(this);
+        } catch (Exception e) {
+        }
+
+        
+
+    }
+
     private void finishActivity(){
         assumeMinimize = false;
         finish();
@@ -76,6 +110,8 @@ public class SettingsActivity extends Activity {
 
     @Override
     public void onBackPressed() {
+
+        saveSettings();
         finishActivity();
     }
 

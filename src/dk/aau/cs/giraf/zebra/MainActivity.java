@@ -57,7 +57,10 @@ public class MainActivity extends Activity {
         setupGridView();
         setButtons();
         loadIntents();
-        setChild();
+
+        if (childId != -1) {
+            setChild();
+        }
         setColors();
     }
 
@@ -135,8 +138,11 @@ public class MainActivity extends Activity {
         childId = extras.getInt("currentChildID");
         Log.d("DebugYeah", "[Main] Application launched with ChildId " + Integer.toString(childId));
 
+
+        //TODO: if childId == -1 the profileSelector containing only children connected to the current guardianId should appear. The guardian should be forced to chose a child.
         if (childId == -1) {
-            finish();
+            setupChildMode();
+            return;
         }
 
         try {
@@ -477,7 +483,9 @@ public class MainActivity extends Activity {
                 ((PictogramView) view).placeDown();
             }
         }
-        updateSequences();
+        if (childId != -1) {
+            updateSequences();
+        }
     }
 
     @Override

@@ -298,7 +298,7 @@ public class MainActivity extends Activity {
             pasteGrid.setAdapter(pasteAdapter);
             setPasteGridItemClickListener(pasteGrid);
 
-            final GProfileSelector copyProfileSelector = new GProfileSelector(context,helper.profilesHelper.getProfileById(guardianId));
+            final GProfileSelector copyProfileSelector = new GProfileSelector(context, helper.profilesHelper.getProfileById(guardianId), selectedChild);
 
             copyProfileSelector.setOnListItemClick(new AdapterView.OnItemClickListener() {
                 @Override

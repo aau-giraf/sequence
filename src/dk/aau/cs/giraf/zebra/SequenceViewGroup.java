@@ -428,9 +428,12 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 								onLayout(true, getLeft(), getTop(), getRight(), getBottom());
 
                                 if (SequenceActivity.choiceMode == true) {
-                                    rearrangeFrames(SequenceActivity.choice, startDragIndex, curDragIndexPos);
+                                    SequenceActivity.choice = rearrangeFrames(SequenceActivity.choice, startDragIndex, curDragIndexPos);
+                                    SequenceActivity.choiceAdapter.notifyDataSetChanged();
                                 } else {
-                                    rearrangeFrames(SequenceActivity.sequence, startDragIndex, curDragIndexPos);
+                                    SequenceActivity.sequence = rearrangeFrames(SequenceActivity.sequence, startDragIndex, curDragIndexPos);
+                                    SequenceActivity.adapter.notifyDataSetChanged();
+
                                 }
 							} else {
 								//Must clear animation to prevent flicker - even though it just ended.
@@ -545,13 +548,11 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
         Frame frameX = tempFrameList.get(oldIndex);
         tempFrameList.remove(oldIndex);
 
-        for (int i = newIndex; i < tempFrameList.size(); i++) {
-            Frame frameY = tempFrameList.get(i);
-            tempFrameList.set(i, frameX);
-            frameX = frameY;
-        }
+        tempFrameList.add(newIndex, frameX);
 
-        seq.setFramesList(tempFrameList);
+        Log.d("DebugYeah", "[SequenceActivity] Number of frames after rearrange is " + Integer.toString(tempFrameList.size()));
+        //seq.setFramesList(tempFrameList);
+        Log.d("DebugYeah", "[SequenceActivity] Number of frames in returned seq is " + Integer.toString(seq.getFramesList().size()));
         return seq;
     }
 	private void resetViewPositions() {

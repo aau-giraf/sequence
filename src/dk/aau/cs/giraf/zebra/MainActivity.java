@@ -204,12 +204,20 @@ public class MainActivity extends Activity {
     }
 
     public void updateSequences() {
+        tempSequenceList.clear();
+
         try {
             helper = new Helper(this);
         } catch (Exception e) {
         }
 
         sequences = helper.sequenceController.getSequenceByProfileIdAndType(selectedChild.getId(), Sequence.SequenceType.SEQUENCE);
+        /*for (Sequence sequence : sequences) {
+            tempSequenceList.add(helper.sequenceController.getSequenceById(sequence.getId()));
+        }
+        sequences = tempSequenceList; */
+
+        //Log.d("DebugYeah", Integer.toString(tempSequenceList.get(0).getFramesList().size()));
         sequenceAdapter = new SequenceListAdapter(this, sequences);
         sequenceGrid.setAdapter(sequenceAdapter);
     }
@@ -445,7 +453,11 @@ public class MainActivity extends Activity {
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 ((PictogramView) arg1).liftUp();
                 Sequence sequence = sequenceAdapter.getItem(arg2);
-                nestedSequenceId = sequence.getId();
+                //nestedSequenceId = sequence.getId();
+
+                Intent intent = new Intent();
+                intent.putExtra("nestedSequenceId",sequence.getId());
+                setResult(RESULT_OK,intent);
                 finishActivity();
             }
         });

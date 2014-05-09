@@ -53,8 +53,8 @@ public class SequenceActivity extends Activity {
 	private Sequence originalSequence = new Sequence();
 	public static Sequence sequence;
     public static Sequence choice = new Sequence();
-    private SequenceAdapter adapter;
-    private SequenceAdapter choiceAdapter;
+    public static SequenceAdapter adapter;
+    public static SequenceAdapter choiceAdapter;
     private List<Frame> tempFrameList;
     private List<Pictogram> tempPictogramList = new ArrayList<Pictogram>();
 	private GButton cancelButton;
@@ -93,7 +93,7 @@ public class SequenceActivity extends Activity {
         }
 
         if (sequenceId != 0) {
-            originalSequence = helper.sequenceController.getSequenceById(sequenceId);
+            originalSequence = helper.sequenceController.getSequenceAndFrames(sequenceId);
         }
 
 		// Get a clone of the sequence so the original sequence is not modified
@@ -184,8 +184,14 @@ public class SequenceActivity extends Activity {
             sequence.setSequenceType(Sequence.SequenceType.SEQUENCE);
             //TODO: Figure out why frames are not saved. Database problem?
             Log.d("DebugYeah", "[SequenceActivity] Sequence  has " + Integer.toString(sequence.getFramesList().size()) + " frames before save");
-            helper.sequenceController.insertSequenceAndFrames(sequence);
-            //Log.d("DebugYeah", "[SequenceActivity] Sequence has " + Integer.toString(helper.sequenceController.getSequenceById(17).getFramesList().size()) + " frames after save");
+            Boolean result;
+            result = helper.sequenceController.insertSequenceAndFrames(sequence);
+            Log.d("DebugYeah", Boolean.toString(result));
+
+
+            Sequence s = helper.sequenceController.getSequenceAndFrames(sequence.getId());
+
+            Log.d("DebugYeah", "[SequenceActivity] Sequence has " + Integer.toString(s.getFramesList().size()) + " frames after save");
 
         } else {
             helper.sequenceController.modifySequenceAndFrames(sequence);
@@ -238,22 +244,8 @@ public class SequenceActivity extends Activity {
                         intent.putExtra("currentGuardianID", guardianId);
                         //TODO: Revert to int after sprint end
                         intent.putExtra("currentChildID", profileId);
-                        startActivity(intent);
+                        startActivityForResult(intent, 1);
                         isInEditMode = true;
-                        //TODO: Get chosen sequence from MainActivity.nestedSequenceId
-
-                        Frame frame = new Frame();
-                        frame.setNestedSequence(MainActivity.nestedSequenceId);
-
-                        if (pictogramEditPos == -1) {
-                            sequence.addFrame(frame);
-                        }
-                        else {
-                            tempFrameList = sequence.getFramesList();
-                            tempFrameList.set(pictogramEditPos, frame);
-                            sequence.setFramesList(tempFrameList);
-                        }
-
                     }
                 });
 
@@ -364,18 +356,13 @@ public class SequenceActivity extends Activity {
                     frame.setPictogramList(tempPictogramList);
                     frame.setPictogramId(tempPictogramList.get(0).getId());
 
+
                     if (pictogramEditPos == -1){
-                        tempFrameList.add(frame);
+                        sequence.addFrame(frame);
                         pictogramEditPos = tempFrameList.size()-1;
                     } else {
-                        tempFrameList.set(pictogramEditPos, frame);
+                        sequence.getFramesList().get(pictogramEditPos).setPictogramList(tempPictogramList);
                     }
-
-                    Log.d("DebugYeah", "[SequenceActivity] tempFrameList has " + Integer.toString(tempFrameList.size()) + " frames before setFramesList");
-                    //TODO: Figure out why this does not work setFramesList empties sequence.
-                    sequence.setFramesList(tempFrameList);
-
-                    Log.d("DebugYeah", "[SequenceActivity] sequence has " + Integer.toString(sequence.getFramesList().size()) + "frames after setFramesList");
                     adapter.notifyDataSetChanged();
                     choiceMode = false;
                     dismiss();
@@ -527,6 +514,7 @@ public class SequenceActivity extends Activity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+        Log.d("DebugYeah", Integer.toString(requestCode));
 
 		// Remove the highlight from the add pictogram button
 		final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup);
@@ -547,11 +535,36 @@ public class SequenceActivity extends Activity {
 				OnNewPictogramResult(data);
 				break;
 
+            case 1:
+                onNestedSequenceResult(data);
+                break;
+
+
 			default:
 				break;
 			}
 		}
 	}
+
+    private void onNestedSequenceResult(Intent data){
+        int id = data.getExtras().getInt("nestedSequenceId");
+
+        if (pictogramEditPos == -1) {
+            Frame frame = new Frame();
+            frame.setNestedSequence(id);
+            try {
+                helper = new Helper(getBaseContext());
+            } catch (Exception e) {
+            }
+            frame.setPictogramId(helper.sequenceController.getSequenceById(id).getPictogramId());
+            sequence.addFrame(frame);
+        }
+        else {
+            sequence.getFramesList().get(pictogramEditPos).setNestedSequence(id);
+            sequence.getFramesList().get(pictogramEditPos).setPictogramId(helper.sequenceController.getSequenceById(id).getPictogramId());
+        }
+        adapter.notifyDataSetChanged();
+    }
 
 	private void OnNewPictogramResult(Intent data) {
 		int[] checkoutIds = data.getExtras().getIntArray(

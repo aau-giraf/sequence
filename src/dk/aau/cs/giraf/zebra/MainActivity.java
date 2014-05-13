@@ -252,7 +252,6 @@ public class MainActivity extends Activity {
 
             GButton popupDelete = (GButton) findViewById(R.id.popup_accept);
             GButton popupDiscard = (GButton) findViewById(R.id.popup_back);
-            GButton popupExit = (GButton) findViewById(R.id.popup_exit_button);
 
             popupDelete.setOnClickListener(new GButton.OnClickListener() {
 
@@ -277,15 +276,6 @@ public class MainActivity extends Activity {
                     dismiss();
                 }
             });
-
-            popupExit.setOnClickListener(new GButton.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    dismiss();
-                }
-            });
-
         }
     }
 
@@ -341,15 +331,6 @@ public class MainActivity extends Activity {
                     dismiss();
                 }
             });
-
-            popupExit.setOnClickListener(new GButton.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    dismiss();
-                }
-            });
-
         }
     }
 

@@ -56,7 +56,7 @@
         <ImageView
             android:layout_width="85dp"
             android:layout_height="85dp"
-            android:src="@drawable/epic_arrow"
+            android:src="@drawable/gdialogcolorselect_arrow_right"
             android:layout_gravity="center_vertical"
             />
 

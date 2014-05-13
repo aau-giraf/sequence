@@ -44,7 +44,6 @@ public class MainActivity extends Activity {
     private List<View> tempViewList = new ArrayList<View>();
     public static Profile selectedChild;
     public static Activity activityToKill;
-    public static int nestedSequenceId;
     private int guardianId;
     private int childId;
     private Helper helper;
@@ -251,7 +250,7 @@ public class MainActivity extends Activity {
             setPasteGridItemClickListener(pasteGrid);
 
             GButton popupDelete = (GButton) findViewById(R.id.popup_accept);
-            GButton popupDiscard = (GButton) findViewById(R.id.popup_back);
+            GButton popupBack = (GButton) findViewById(R.id.popup_back);
 
             popupDelete.setOnClickListener(new GButton.OnClickListener() {
 
@@ -269,7 +268,7 @@ public class MainActivity extends Activity {
                 }
             });
 
-            popupDiscard.setOnClickListener(new GButton.OnClickListener() {
+            popupBack.setOnClickListener(new GButton.OnClickListener() {
 
                 @Override
                 public void onClick(View v) {

@@ -1,8 +1,9 @@
-<LinearLayout 
+<LinearLayout
     android:id="@+id/parent_container"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:svg="http://schemas.android.com/apk/res/dk.aau.cs.giraf.zebra"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -13,12 +14,12 @@
     tools:context=".SequenceActivity"
     android:focusableInTouchMode="true" >
 
-    <RelativeLayout 
+    <RelativeLayout
         android:id="@+id/sequence_bar"
         android:layout_width="match_parent"
         android:layout_height="140dp"
         android:orientation="horizontal">
-        
+
         <ImageView
             android:id="@+id/sequence_image"
             android:layout_width="85dp"
@@ -31,7 +32,7 @@
             android:layout_width="85dp"
             android:layout_height="85dp"
             android:layout_centerInParent="true"
-            android:drawableBottom="@drawable/preview_icon"
+            android:drawableBottom="@drawable/play"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/sequence_image"
             android:layout_marginLeft="15dp"
@@ -42,7 +43,7 @@
             android:layout_width="85dp"
             android:layout_height="85dp"
             android:layout_centerInParent="true"
-            android:drawableLeft="@drawable/return_100x100"
+            android:drawableLeft="@drawable/back"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="15dp"
@@ -53,7 +54,7 @@
             android:layout_width="85dp"
             android:layout_height="85dp"
             android:layout_centerInParent="true"
-            android:drawableLeft="@drawable/back_icon"
+            android:drawableLeft="@drawable/back"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/save_button"
             android:layout_marginRight="15dp"
@@ -64,7 +65,7 @@
             android:layout_width="85dp"
             android:layout_height="85dp"
             android:layout_centerInParent="true"
-            android:drawableLeft="@drawable/save_icon"
+            android:drawableLeft="@drawable/ok_icon"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/add_button"
             android:layout_marginRight="15dp"
@@ -75,7 +76,7 @@
             android:layout_width="85dp"
             android:layout_height="85dp"
             android:layout_centerInParent="true"
-            android:drawableLeft="@drawable/add_icon"
+            android:drawableLeft="@drawable/add"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="15dp"
@@ -123,7 +124,7 @@
         </LinearLayout>
 
     </RelativeLayout>
-    
+
     <HorizontalScrollView
         android:id="@+id/horizontalScrollView"
         android:layout_width="match_parent"
@@ -152,5 +153,5 @@
         </FrameLayout>
 
     </HorizontalScrollView>
-    
+
 </LinearLayout>

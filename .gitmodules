@@ -10,6 +10,3 @@
 [submodule "giraf-component"]
 	path = giraf-component
 	url = http://cs-cust06-int.cs.aau.dk/git-ro/giraf-component
-[submodule "project-icons"]
-	path = project-icons
-	url = http://cs-cust06-int.cs.aau.dk/git-ro/project-icons.git

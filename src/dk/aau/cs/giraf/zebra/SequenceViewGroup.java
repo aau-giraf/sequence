@@ -20,6 +20,7 @@ import android.widget.HorizontalScrollView;
 
 import java.util.List;
 
+import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Frame;
 import dk.aau.cs.giraf.oasis.lib.models.Sequence;
 
@@ -416,6 +417,19 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 						@Override
 						public void onAnimationEnd(Animation animation) {
 							if (startDragIndex != curDragIndexPos) {
+
+                                if (SequenceActivity.choiceMode == true) {
+                                    Helper helper;
+                                    try {
+                                        helper = new Helper(getContext());
+                                    } catch (Exception e) {
+                                    }
+                                    SequenceActivity.choice.rearrangeFrame(startDragIndex, curDragIndexPos);
+                                } else {
+                                    SequenceActivity.sequence.rearrangeFrame(startDragIndex, curDragIndexPos);
+
+                                }
+
 								final int childViews = getChildCount();
 								for (int i = 0; i < childViews; i++) {
 									getChildAt(i).clearAnimation();
@@ -427,14 +441,6 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 
 								onLayout(true, getLeft(), getTop(), getRight(), getBottom());
 
-                                if (SequenceActivity.choiceMode == true) {
-                                    SequenceActivity.choice = rearrangeFrames(SequenceActivity.choice, startDragIndex, curDragIndexPos);
-                                    SequenceActivity.choiceAdapter.notifyDataSetChanged();
-                                } else {
-                                    SequenceActivity.sequence = rearrangeFrames(SequenceActivity.sequence, startDragIndex, curDragIndexPos);
-                                    SequenceActivity.adapter.notifyDataSetChanged();
-
-                                }
 							} else {
 								//Must clear animation to prevent flicker - even though it just ended.
 								getChildAt(startDragIndex).clearAnimation();
@@ -536,25 +542,6 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 		return handled;
 	}
 
-    public Sequence rearrangeFrames(Sequence seq, int oldIndex, int newIndex) {
-        List<Frame> tempFrameList;
-        int size = seq.getFramesList().size();
-        Log.d("DebugYeah", "[SequenceActivity] Number of frames before rearrange is: " + Integer.toString(seq.getFramesList().size()));
-        Log.d("DebugYeah", "[SequenceActivity] Swapping from position " + Integer.toString(oldIndex) + " to " + Integer.toString(newIndex));
-        if (oldIndex < 0 || oldIndex >= size) throw new IllegalArgumentException("oldIndex out of range");
-        if (newIndex < 0 || newIndex >= size) throw new IllegalArgumentException("newIndex out of range");
-        //TODO: Get the code below to work
-        tempFrameList = seq.getFramesList();
-        Frame frameX = tempFrameList.get(oldIndex);
-        tempFrameList.remove(oldIndex);
-
-        tempFrameList.add(newIndex, frameX);
-
-        Log.d("DebugYeah", "[SequenceActivity] Number of frames after rearrange is " + Integer.toString(tempFrameList.size()));
-        //seq.setFramesList(tempFrameList);
-        Log.d("DebugYeah", "[SequenceActivity] Number of frames in returned seq is " + Integer.toString(seq.getFramesList().size()));
-        return seq;
-    }
 	private void resetViewPositions() {
 		newPositions = new int[getChildCount()];
 		for (int i = 0; i < newPositions.length; i++) {

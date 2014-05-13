@@ -26,6 +26,8 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import dk.aau.cs.giraf.gui.GButton;
@@ -94,6 +96,13 @@ public class SequenceActivity extends Activity {
 
         if (sequenceId != 0) {
             originalSequence = helper.sequenceController.getSequenceAndFrames(sequenceId);
+
+            // Orders the frames by the X coordinate
+            Collections.sort(originalSequence.getFramesList(), new Comparator<Frame>() {
+                public int compare(Frame x, Frame y) {
+                    return Integer.valueOf(x.getPosX()).compareTo(y.getPosX());
+                }
+            });
         }
 
 		// Get a clone of the sequence so the original sequence is not modified
@@ -178,6 +187,11 @@ public class SequenceActivity extends Activity {
             return;
         }
         sequence.setName(sequenceTitleView.getText().toString());
+
+        //Set PosX of every frame to save the order in which the frames should be shown.
+        for (int i = 0; i < sequence.getFramesList().size(); i++) {
+            sequence.getFramesList().get(i).setPosX(i);
+        }
 
         if (isNew == true) {
             sequence.setProfileId(MainActivity.selectedChild.getId());
@@ -432,7 +446,6 @@ public class SequenceActivity extends Activity {
 				.setOnRearrangeListener(new SequenceViewGroup.OnRearrangeListener() {
 					@Override
 					public void onRearrange(int indexFrom, int indexTo) {
-                        //TODO It seems one can't change views when rearranging. Figure out an alternative.
 						adapter.notifyDataSetChanged();
 					}
 				});

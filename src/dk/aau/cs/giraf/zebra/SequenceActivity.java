@@ -492,7 +492,7 @@ public class SequenceActivity extends Activity {
 							.setOnDeleteClickListener(new OnDeleteClickListener() {
 								@Override
 								public void onDeleteClick() {
-									//sequence.deletePictogram(position);
+                                    sequence.getFramesList().remove(position);
 									adapter.notifyDataSetChanged();
 								}
 							});
@@ -516,7 +516,7 @@ public class SequenceActivity extends Activity {
                             .setOnDeleteClickListener(new OnDeleteClickListener() {
                                 @Override
                                 public void onDeleteClick() {
-                                    //choice.deletePictogram(position);
+                                    choice.getFramesList().remove(position);
                                     adapter.notifyDataSetChanged();
                                 }
                             });

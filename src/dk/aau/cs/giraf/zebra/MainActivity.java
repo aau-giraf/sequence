@@ -293,15 +293,18 @@ public class MainActivity extends Activity {
             GButton popupBack = (GButton) findViewById(R.id.popup_copy_back);
 
 
-            List<Profile> children = helper.profilesHelper.getChildrenByGuardian(guardian);
+            List<Profile> children = new ArrayList<Profile>();
 
-            final GMultiProfileSelector childSelector = new GMultiProfileSelector(getContext(), helper.profilesHelper.getChildrenByGuardian(guardian), children);
+            final GMultiProfileSelector childSelector = new GMultiProfileSelector(context, helper.profilesHelper.getChildrenByGuardian(guardian), children);
 
             childSelector.setMyOnCloseListener(new GMultiProfileSelector.onCloseListener() {
                 @Override
                 public void onClose(List<Profile> selectedProfiles) {
-                    for(Profile p : selectedProfiles){
-                        //TODO: Copy sequences
+                    for (Profile p : selectedProfiles){
+                        for (Sequence s: tempSequenceList) {
+                            helper.sequenceController.copySequenceAndFrames(s);
+
+                        }
                     }
                 }
             });

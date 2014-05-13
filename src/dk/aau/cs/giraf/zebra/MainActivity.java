@@ -23,6 +23,7 @@ import dk.aau.cs.giraf.gui.GButtonTrash;
 import dk.aau.cs.giraf.gui.GComponent;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GGridView;
+import dk.aau.cs.giraf.gui.GMultiProfileSelector;
 import dk.aau.cs.giraf.gui.GProfileSelector;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
@@ -44,9 +45,9 @@ public class MainActivity extends Activity {
     private List<View> tempViewList = new ArrayList<View>();
     public static Profile selectedChild;
     public static Activity activityToKill;
-    private int guardianId;
     private int childId;
     private Helper helper;
+    private Profile guardian;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,7 +134,7 @@ public class MainActivity extends Activity {
     private void loadIntents() {
         //Fetches intents from launcher or SequenceActivity
         Bundle extras = getIntent().getExtras();
-        guardianId = extras.getInt("currentGuardianID");
+        int guardianId = extras.getInt("currentGuardianID");
         childId = extras.getInt("currentChildID");
         Log.d("DebugYeah", "[Main] Application launched with ChildId " + Integer.toString(childId));
 
@@ -149,6 +150,8 @@ public class MainActivity extends Activity {
         } catch (Exception e) {
         }
 
+        guardian = helper.profilesHelper.getProfileById(guardianId);
+
         //Makes the activity killable from SequenceActivity and (Nested) MainActivity
         if (extras.getBoolean("insertSequence") == false) {
             activityToKill = this;
@@ -160,7 +163,7 @@ public class MainActivity extends Activity {
             Log.d("DebugYeah", "[Main] NestedMode entered");
             setupNestedMode();
         }
-        else if (helper.profilesHelper.getProfileById(guardianId).getRole() == Profile.Roles.GUARDIAN) {
+        else if (guardian.getRole() == Profile.Roles.GUARDIAN) {
             Log.d("DebugYeah", "[Main] User is Guardian");
             setupGuardianMode();
         } else {
@@ -175,17 +178,8 @@ public class MainActivity extends Activity {
             helper = new Helper(this);
         } catch (Exception e) {
         }
-
-        Profile guardian = helper.profilesHelper.getProfileById(guardianId);
-        List<Profile> childProfiles = helper.profilesHelper.getChildrenByGuardian(guardian);
-
-        for (Profile p : childProfiles) {
-            //When the correct child is found it is created using a local child class
-            if (p.getId() == childId) {
-                selectedChild = p;
-                ((TextView) findViewById(R.id.child_name)).setText(selectedChild.getName());
-            }
-        }
+        selectedChild = helper.profilesHelper.getProfileById(childId);
+        ((TextView) findViewById(R.id.child_name)).setText(selectedChild.getName());
         updateSequences();
     }
 
@@ -211,12 +205,6 @@ public class MainActivity extends Activity {
         }
 
         sequences = helper.sequenceController.getSequenceByProfileIdAndType(selectedChild.getId(), Sequence.SequenceType.SEQUENCE);
-        /*for (Sequence sequence : sequences) {
-            tempSequenceList.add(helper.sequenceController.getSequenceById(sequence.getId()));
-        }
-        sequences = tempSequenceList; */
-
-        //Log.d("DebugYeah", Integer.toString(tempSequenceList.get(0).getFramesList().size()));
         sequenceAdapter = new SequenceListAdapter(this, sequences);
         sequenceGrid.setAdapter(sequenceAdapter);
     }
@@ -301,29 +289,32 @@ public class MainActivity extends Activity {
             pasteGrid.setAdapter(pasteAdapter);
             setPasteGridItemClickListener(pasteGrid);
 
-            final GProfileSelector copyProfileSelector = new GProfileSelector(context, helper.profilesHelper.getProfileById(guardianId), selectedChild);
+            GButton popupCopy = (GButton) findViewById(R.id.popup_copy_accept);
+            GButton popupBack = (GButton) findViewById(R.id.popup_copy_back);
 
-            copyProfileSelector.setOnListItemClick(new AdapterView.OnItemClickListener() {
+
+            List<Profile> children = helper.profilesHelper.getChildrenByGuardian(guardian);
+
+            final GMultiProfileSelector childSelector = new GMultiProfileSelector(getContext(), helper.profilesHelper.getChildrenByGuardian(guardian), children);
+
+            childSelector.setMyOnCloseListener(new GMultiProfileSelector.onCloseListener() {
                 @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
+                public void onClose(List<Profile> selectedProfiles) {
+                    for(Profile p : selectedProfiles){
+                        //TODO: Copy sequences
+                    }
                 }
             });
-
-            GButton popupCopy = (GButton) findViewById(R.id.popup_copy_accept);
-            GButton popupCopyDiscard = (GButton) findViewById(R.id.popup_copy_back);
-            GButton popupExit = (GButton) findViewById(R.id.popup_exit_button);
 
             popupCopy.setOnClickListener(new GButton.OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
-                    //TODO: Make this functionality
-                    copyProfileSelector.show();
+                    childSelector.show();
                 }
             });
 
-            popupCopyDiscard.setOnClickListener(new GButton.OnClickListener() {
+            popupBack.setOnClickListener(new GButton.OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
@@ -449,7 +440,7 @@ public class MainActivity extends Activity {
         assumeMinimize = false;
         Intent intent = new Intent(getApplication(), SequenceActivity.class);
         intent.putExtra("profileId", selectedChild.getId());
-        intent.putExtra("guardianId", guardianId);
+        intent.putExtra("guardianId", guardian.getId());
         intent.putExtra("editMode", isInEditMode);
         intent.putExtra("new", isNew);
         intent.putExtra("sequenceId", sequence.getId());

@@ -20,12 +20,12 @@
         android:layout_height="140dp"
         android:orientation="horizontal">
 
-        <ImageView
+        <dk.aau.cs.giraf.gui.GButton
             android:id="@+id/sequence_image"
             android:layout_width="85dp"
             android:layout_height="85dp"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="15dp" />
+            android:layout_marginLeft="15dp"/>
 
         <dk.aau.cs.giraf.gui.GButton
             android:id="@+id/preview_button"

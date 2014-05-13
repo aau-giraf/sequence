@@ -5,6 +5,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -63,8 +65,8 @@ public class SequenceActivity extends Activity {
     private GButton saveButton;
     private GButton addButton;
     private GButton previewButton;
-	private EditText sequenceTitleView;
-	private ImageView sequenceImageView;
+	private GButton sequenceImageButton;
+    private EditText sequenceTitleView;
 	private final String PICTO_ADMIN_PACKAGE = "dk.aau.cs.giraf.pictosearch";
 	private final String PICTO_ADMIN_CLASS = PICTO_ADMIN_PACKAGE + "." + "PictoAdminMain";
     private final String PICTO_INTENT_CHECKOUT_ID = "checkoutIds";
@@ -123,20 +125,21 @@ public class SequenceActivity extends Activity {
 
 		initializeTopBar();
 
-		sequenceImageView = (ImageView) findViewById(R.id.sequence_image);
+		sequenceImageButton = (GButton) findViewById(R.id.sequence_image);
 
 		if (sequence.getPictogramId() == 0) {
-			sequenceImageView.setImageDrawable(getResources().getDrawable(
-					R.drawable.ic_launcher));
+            Drawable d = getResources().getDrawable(R.drawable.add_sequence_picture);
+            sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
 		} else {
             try {
                 helper = new Helper(this);
             } catch (Exception e) {
             }
-            sequenceImageView.setImageBitmap(helper.pictogramHelper.getPictogramById(sequence.getPictogramId()).getImage());
+            Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(sequence.getPictogramId()).getImage());
+            sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
 		}
 
-		sequenceImageView.setOnClickListener(new ImageView.OnClickListener() {
+		sequenceImageButton.setOnClickListener(new ImageView.OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
@@ -619,7 +622,10 @@ public class SequenceActivity extends Activity {
                     helper = new Helper(this);
                 } catch (Exception e) {
                 }
-                sequenceImageView.setImageBitmap(helper.pictogramHelper.getPictogramById(sequence.getPictogramId()).getImage());
+                Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(sequence.getPictogramId()).getImage());
+                sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
+                sequenceImageButton.setVisibility(View.GONE);
+                sequenceImageButton.setVisibility(View.VISIBLE);
             }
             adapter.notifyDataSetChanged();
         }
@@ -646,7 +652,10 @@ public class SequenceActivity extends Activity {
 		if (checkoutIds.length == 0)
 			return;
 		sequence.setPictogramId(checkoutIds[0]);
-		sequenceImageView.setImageBitmap(helper.pictogramHelper.getPictogramById(sequence.getPictogramId()).getImage());
+        Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(sequence.getPictogramId()).getImage());
+        sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
+        sequenceImageButton.setVisibility(View.GONE);
+        sequenceImageButton.setVisibility(View.VISIBLE);
 	}
 
 	private void initializeTopBar() {

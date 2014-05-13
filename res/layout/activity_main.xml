@@ -24,7 +24,7 @@
             android:layout_width="85dp"
             android:layout_height="85dp"
             android:layout_centerInParent="true"
-            android:drawableLeft="@drawable/exit_icon"
+            android:drawableLeft="@drawable/exit"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="15dp"

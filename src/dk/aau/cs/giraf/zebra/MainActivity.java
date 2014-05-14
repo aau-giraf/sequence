@@ -13,7 +13,6 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.view.LayoutInflater;
@@ -25,12 +24,10 @@ import dk.aau.cs.giraf.gui.GComponent;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GGridView;
 import dk.aau.cs.giraf.gui.GMultiProfileSelector;
-import dk.aau.cs.giraf.gui.GProfileAdapter;
 import dk.aau.cs.giraf.gui.GProfileSelector;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.oasis.lib.models.Sequence;
-
 
 public class MainActivity extends Activity {
     private boolean isInEditMode = false;
@@ -146,7 +143,7 @@ public class MainActivity extends Activity {
         }
 
         guardian = helper.profilesHelper.getProfileById(guardianId);
-        childId = -1;
+        Log.d("DebugYeah", Integer.toString(guardianId));
 
         //TODO: if childId == -1 the profileSelector containing only children connected to the current guardianId should appear. The guardian should be forced to chose a child.
         if (childId == -1) {
@@ -306,7 +303,7 @@ public class MainActivity extends Activity {
                 public void onClose(List<Profile> selectedProfiles) {
                     for (Profile p : selectedProfiles){
                         for (Sequence s: tempSequenceList) {
-                            helper.sequenceController.copySequenceAndFrames(s);
+                            helper.sequenceController.copySequenceAndFrames(s, p);
 
                         }
                     }

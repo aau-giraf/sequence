@@ -780,7 +780,14 @@ public class SequenceActivity extends Activity {
             //TODO: CREATE FUNCTIONALITY HERE (CALL SEQUENCEVIEWER)
             @Override
             public void onClick(View v) {
-                finishActivity();
+                assumeMinimize = false;
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName("dk.aau.cs.giraf.sequenceviewer", "dk.aau.cs.giraf.sequenceviewer.MainActivity"));
+                intent.putExtra("sequenceId", sequence.getId());
+                intent.putExtra("landscapeMode", true);
+                intent.putExtra("visiblePictogramCount", 5);
+                intent.putExtra("callerType", "Zebra");
+                startActivityForResult(intent, 0);
             }
         });
     }

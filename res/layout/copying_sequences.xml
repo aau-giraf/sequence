@@ -3,8 +3,6 @@
 <LinearLayout
     android:id="@+id/copying_sequences"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:svg="http://schemas.android.com/apk/res/dk.aau.cs.giraf.zebra"
     android:layout_width="750dp"
     android:layout_height="650dp"
     android:orientation="vertical"

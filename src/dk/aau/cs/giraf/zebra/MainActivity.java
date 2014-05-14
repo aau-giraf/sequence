@@ -13,6 +13,7 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.view.LayoutInflater;
@@ -24,6 +25,7 @@ import dk.aau.cs.giraf.gui.GComponent;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GGridView;
 import dk.aau.cs.giraf.gui.GMultiProfileSelector;
+import dk.aau.cs.giraf.gui.GProfileAdapter;
 import dk.aau.cs.giraf.gui.GProfileSelector;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
@@ -57,11 +59,11 @@ public class MainActivity extends Activity {
         setupGridView();
         setButtons();
         loadIntents();
+        setColors();
 
         if (childId != -1) {
             setChild();
         }
-        setColors();
     }
 
     private void setupGridView() {
@@ -138,19 +140,21 @@ public class MainActivity extends Activity {
         childId = extras.getInt("currentChildID");
         Log.d("DebugYeah", "[Main] Application launched with ChildId " + Integer.toString(childId));
 
-
-        //TODO: if childId == -1 the profileSelector containing only children connected to the current guardianId should appear. The guardian should be forced to chose a child.
-        if (childId == -1) {
-            setupChildMode();
-            return;
-        }
-
         try {
             helper = new Helper(this);
         } catch (Exception e) {
         }
 
         guardian = helper.profilesHelper.getProfileById(guardianId);
+        childId = -1;
+
+        //TODO: if childId == -1 the profileSelector containing only children connected to the current guardianId should appear. The guardian should be forced to chose a child.
+        if (childId == -1) {
+            setupChildMode();
+            setupPickChild();
+
+            return;
+        }
 
         //Makes the activity killable from SequenceActivity and (Nested) MainActivity
         if (extras.getBoolean("insertSequence") == false) {
@@ -437,6 +441,31 @@ public class MainActivity extends Activity {
         });
 
 
+    }
+
+    private void setupPickChild(){
+
+        try {
+            helper = new Helper(this);
+        } catch (Exception e) {
+        }
+
+        final GProfileSelector childSelector = new GProfileSelector(this, guardian, null, false);
+        try{childSelector.backgroundCancelsDialog(false);}
+        catch (Exception e)
+        {}
+        childSelector.show();
+
+        childSelector.setOnListItemClick(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                selectedChild = helper.profilesHelper.getProfileById((int) id);
+                childSelector.dismiss();
+                ((TextView) findViewById(R.id.child_name)).setText(selectedChild.getName());
+                updateSequences();
+                setupGuardianMode();
+            }
+        });
     }
 
     private void enterSequence(Sequence sequence, boolean isNew) {

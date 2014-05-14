@@ -204,7 +204,7 @@ public class MainActivity extends Activity {
         } catch (Exception e) {
         }
 
-        sequences = helper.sequenceController.getSequenceByProfileIdAndType(selectedChild.getId(), Sequence.SequenceType.SEQUENCE);
+        sequences = helper.sequenceController.getSequencesAndFramesByProfileIdAndType(selectedChild.getId(), Sequence.SequenceType.SEQUENCE);
         sequenceAdapter = new SequenceListAdapter(this, sequences);
         sequenceGrid.setAdapter(sequenceAdapter);
     }

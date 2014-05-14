@@ -27,14 +27,7 @@
             android:layout_centerInParent="true"
             android:layout_marginTop="15dp"
             />
-
-        <dk.aau.cs.giraf.gui.GButton
-            android:id="@+id/popup_exit_button"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:text="E"
-            android:layout_alignParentRight="true"
-            />
+        
     </RelativeLayout>
     <LinearLayout
         android:id="@+id/lists_copy"

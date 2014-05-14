@@ -35,6 +35,10 @@
             android:name="dk.aau.cs.giraf.zebra.SettingsActivity"
             android:label="@string/app_name"
             android:screenOrientation="landscape" >
+            <intent-filter>
+                <action android:name="dk.aau.cs.giraf.zebra.SETTINGSACTIVITY"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="MainActivity" />

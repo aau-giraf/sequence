@@ -1,3 +1,4 @@
+include ':metadata'
 include ':OasisLib'
 include ':pictogram-lib'
 include ':GIRAF_Components'

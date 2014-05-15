@@ -81,7 +81,7 @@
             android:id="@+id/popup_copy_accept"
             android:layout_width="150dp"
             android:layout_height="50dp"
-            android:text="Kopier til"
+            android:text="Kopier og send til"
             android:layout_alignRight="@id/white_thingy_two"
             android:layout_marginRight="25dp"
             android:layout_marginTop="15dp"

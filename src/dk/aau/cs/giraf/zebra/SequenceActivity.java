@@ -56,6 +56,8 @@ public class SequenceActivity extends Activity {
     private int profileId;
     private int sequenceId;
     private int pictogramEditPos = -1;
+    private int tempId;
+    private Sequence tempSequence;
 	private Sequence originalSequence = new Sequence();
 	public static Sequence sequence;
     public static Sequence choice = new Sequence();
@@ -180,7 +182,7 @@ public class SequenceActivity extends Activity {
 		});
 	}
 
-	private void saveChanges() {
+	private void saveChanges(boolean forPreview) {
 
         try {
             helper = new Helper(this);
@@ -198,24 +200,50 @@ public class SequenceActivity extends Activity {
             sequence.getFramesList().get(i).setPosX(i);
         }
 
-        if (isNew == true) {
+        if (forPreview) {
+            if (isNew) {
+                tempSequence = sequence;
+                helper.sequenceController.insertSequenceAndFrames(sequence);
+            }
+            else {
+                tempId = sequence.getId();
+                sequence.setProfileId(MainActivity.selectedChild.getId());
+                sequence.setSequenceType(Sequence.SequenceType.SEQUENCE);
+                helper.sequenceController.insertSequenceAndFrames(sequence);
+            }
+        }
+        if (isNew) {
             sequence.setProfileId(MainActivity.selectedChild.getId());
             sequence.setSequenceType(Sequence.SequenceType.SEQUENCE);
-            //TODO: Figure out why frames are not saved. Database problem?
-            Log.d("DebugYeah", "[SequenceActivity] Sequence  has " + Integer.toString(sequence.getFramesList().size()) + " frames before save");
-            Boolean result;
-            result = helper.sequenceController.insertSequenceAndFrames(sequence);
-            Log.d("DebugYeah", Boolean.toString(result));
-
-
-            Sequence s = helper.sequenceController.getSequenceAndFrames(sequence.getId());
-
-            Log.d("DebugYeah", "[SequenceActivity] Sequence has " + Integer.toString(s.getFramesList().size()) + " frames after save");
-
-        } else {
+            helper.sequenceController.insertSequenceAndFrames(sequence);
+        }
+        else {
             helper.sequenceController.modifySequenceAndFrames(sequence);
         }
-        finishActivity();
+
+        //If Sequence is new and user is trying to preview, just save Sequence
+        if (isNew && forPreview) {
+            sequence.setProfileId(MainActivity.selectedChild.getId());
+            sequence.setSequenceType(Sequence.SequenceType.SEQUENCE);
+            helper.sequenceController.insertSequenceAndFrames(sequence);
+        }
+        //If Sequence is not new but user is previewing, save Id of old Sequence and save as new
+        else if (forPreview) {
+            tempId = sequence.getId();
+            sequence.setProfileId(MainActivity.selectedChild.getId());
+            sequence.setSequenceType(Sequence.SequenceType.SEQUENCE);
+            helper.sequenceController.insertSequenceAndFrames(sequence);
+        }
+        //If Sequence is new, insert into database
+        else if (isNew) {
+            sequence.setProfileId(MainActivity.selectedChild.getId());
+            sequence.setSequenceType(Sequence.SequenceType.SEQUENCE);
+            helper.sequenceController.insertSequenceAndFrames(sequence);
+        }
+        //If Sequence is old, modify existing Sequence in database
+        else {
+            helper.sequenceController.modifySequenceAndFrames(sequence);
+        }
 	}
 
     public void showSaveDialog(View v) {
@@ -226,7 +254,8 @@ public class SequenceActivity extends Activity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        saveChanges();
+                        saveChanges(false);
+                        finishActivity();
                     }
                 });
         saveDialog.show();
@@ -287,7 +316,8 @@ public class SequenceActivity extends Activity {
 
                 @Override
                 public void onClick(View v) {
-                    SequenceActivity.this.saveChanges();
+                    SequenceActivity.this.saveChanges(false);
+                    finishActivity();
                 }
             });
 
@@ -383,6 +413,7 @@ public class SequenceActivity extends Activity {
                         sequence.getFramesList().get(pictogramEditPos).setPictogramList(tempPictogramList);
                     }
                     adapter.notifyDataSetChanged();
+                    choice.getFramesList().clear();
                     choiceMode = false;
                     dismiss();
                 }
@@ -541,21 +572,24 @@ public class SequenceActivity extends Activity {
 		if (resultCode == RESULT_OK) {
 			switch (requestCode) {
 
-			case PICTO_SEQUENCE_IMAGE_CALL:
-				OnEditSequenceImageResult(data);
-				break;
+			    case PICTO_SEQUENCE_IMAGE_CALL:
+				    OnEditSequenceImageResult(data);
+				    break;
 
-			case PICTO_EDIT_PICTOGRAM_CALL:
-				OnEditPictogramResult(data);
-				break;
+			    case PICTO_EDIT_PICTOGRAM_CALL:
+				    OnEditPictogramResult(data);
+				    break;
 
-			case PICTO_NEW_PICTOGRAM_CALL:
-				OnNewPictogramResult(data);
-				break;
+			    case PICTO_NEW_PICTOGRAM_CALL:
+				    OnNewPictogramResult(data);
+				    break;
 
-            case 1:
-                onNestedSequenceResult(data);
-                break;
+                case 1:
+                    onNestedSequenceResult(data);
+                    break;
+
+                case 2:
+                    deletePreviewSequence();
 
 
 			default:
@@ -564,6 +598,16 @@ public class SequenceActivity extends Activity {
 		}
 	}
 
+    private void deletePreviewSequence() {
+
+        if (isNew) {
+            sequence = tempSequence;
+            helper.sequenceController.removeSequence(tempSequence);
+        } else {
+            helper.sequenceController.removeSequence(sequence);
+            helper.sequenceController.getSequenceAndFrames(tempId);
+        }
+    }
     private void onNestedSequenceResult(Intent data){
         int id = data.getExtras().getInt("nestedSequenceId");
 
@@ -782,6 +826,7 @@ public class SequenceActivity extends Activity {
             @Override
             public void onClick(View v) {
                 assumeMinimize = false;
+                saveChanges(true);
 
                 SharedPreferences settings = getSharedPreferences(SettingsActivity.class.getName() + Integer.toString(MainActivity.selectedChild.getId()), MODE_PRIVATE);
                 int pictogramSetting = settings.getInt("pictogramSetting", 5);

@@ -257,7 +257,6 @@ public class SequenceActivity extends Activity {
                         Intent intent = new Intent(getApplication(), MainActivity.class);
                         intent.putExtra("insertSequence", true);
                         intent.putExtra("currentGuardianID", guardianId);
-                        //TODO: Revert to int after sprint end
                         intent.putExtra("currentChildID", profileId);
                         startActivityForResult(intent, 1);
                         isInEditMode = true;

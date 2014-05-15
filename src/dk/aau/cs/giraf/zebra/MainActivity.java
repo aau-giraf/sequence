@@ -32,7 +32,6 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.oasis.lib.models.Sequence;
 
 public class MainActivity extends Activity {
-    private boolean isInEditMode = false;
     private boolean nestedMode;
     private boolean assumeMinimize = true;
     private boolean childIsSet = false;
@@ -56,40 +55,37 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        setupGridView();
-        setButtons();
-        loadIntents();
+        setupSequenceGridView();
+        setupButtons();
+        setupModeFromIntents();
         setColors();
-
-        if (childId != -1) {
-            setChild();
-        }
     }
 
-    private void setupGridView() {
+    private void setupSequenceGridView() {
         //Sets the GridView and adapter to display Sequences
         sequenceGrid = (GGridView) findViewById(R.id.sequence_grid);
         sequenceAdapter = new SequenceListAdapter(this, sequences);
         sequenceGrid.setAdapter(sequenceAdapter);
     }
 
-    private void setButtons() {
+    private void setupButtons() {
+        //Creates all buttons in Activity and their listeners. Initially they are invisible
         GButton addButton = (GButton) findViewById(R.id.add_button);
         GButtonTrash deleteButton = (GButtonTrash)findViewById(R.id.delete_button);
         GButton copyButton = (GButton) findViewById(R.id.copy_button);
         GButtonSettings settingsButton = (GButtonSettings)findViewById(R.id.settings_button);
-        GButton logoutButton = (GButton) findViewById(R.id.relog_button);
+        GButton childSelectButton = (GButton) findViewById(R.id.relog_button);
         GButton exitButton = (GButton) findViewById(R.id.exit_button);
 
         addButton.setVisibility(View.INVISIBLE);
         deleteButton.setVisibility(View.INVISIBLE);
         copyButton.setVisibility(View.INVISIBLE);
         settingsButton.setVisibility(View.INVISIBLE);
-        logoutButton.setVisibility(View.INVISIBLE);
+        childSelectButton.setVisibility(View.INVISIBLE);
         exitButton.setVisibility(View.INVISIBLE);
 
         addButton.setOnClickListener(new OnClickListener() {
-
+            //Enter SequenceActivity when clicking the Add Button
             @Override
             public void onClick(View v) {
                 Sequence sequence = new Sequence();
@@ -98,7 +94,7 @@ public class MainActivity extends Activity {
         });
 
         deleteButton.setOnClickListener(new OnClickListener() {
-
+            //Open Delete Dialog when clicking the Delete Button
             @Override
             public void onClick(View v) {
                 showDeleteDialog(v);
@@ -106,7 +102,7 @@ public class MainActivity extends Activity {
         });
 
         copyButton.setOnClickListener(new OnClickListener() {
-
+            //Open Copy Dialog when clicking the Copy Button
             @Override
             public void onClick(View v) {
                 showCopyDialog(v);
@@ -114,17 +110,18 @@ public class MainActivity extends Activity {
         });
 
         settingsButton.setOnClickListener(new OnClickListener() {
+            //Open SettingsActivity when clicking the Settings Button
             @Override
             public void onClick(View v) {
+                //Launches settingsActivity
                 assumeMinimize = false;
                 Intent intent = new Intent(getApplication(), SettingsActivity.class);
-                intent.putExtra("childId", childId);
-
                 startActivity(intent);
             }
         });
 
-        logoutButton.setOnClickListener(new OnClickListener() {
+        childSelectButton.setOnClickListener(new OnClickListener() {
+            //Open Child Selector when pressing the Child Select Button
             @Override
             public void onClick(View v) {
                 final GProfileSelector childSelector = new GProfileSelector(v.getContext(), guardian, null, false);
@@ -133,9 +130,9 @@ public class MainActivity extends Activity {
                 childSelector.setOnListItemClick(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                        selectedChild = helper.profilesHelper.getProfileById((int) id);
-                        ((TextView) findViewById(R.id.child_name)).setText(selectedChild.getName());
-                        updateSequences();
+                        //When child is selected, save Child locally and update application accordingly (Title name and Sequences)
+                        childId = (int) id;
+                        setChild();
                         childSelector.dismiss();
                     }
                 });
@@ -143,7 +140,7 @@ public class MainActivity extends Activity {
         });
 
         exitButton.setOnClickListener(new OnClickListener() {
-
+        //Exit application when pressing the Exit Button
             @Override
             public void onClick(View v) {
                 finishActivity();
@@ -151,76 +148,71 @@ public class MainActivity extends Activity {
         });
     }
 
-    private void loadIntents() {
-        //Helper to fetch data from database
+    private void setupModeFromIntents() {
+        //Create helper to fetch data from database
         try {
             helper = new Helper(this);
         } catch (Exception e) {
         }
 
-        //Fetches intents from launcher or SequenceActivity
+        //Fetches intents (from Launcher or SequenceActivity)
         Bundle extras = getIntent().getExtras();
 
-        //Makes the activity killable from SequenceActivity and (Nested) MainActivity
+        //Makes the Activity killable from SequenceActivity and (Nested) MainActivity
         if (extras.getBoolean("insertSequence") == false) {
             activityToKill = this;
         }
 
-        //Get guardian and child extras
+        //Get GuardianId and ChildId from extras
         int guardianId = extras.getInt("currentGuardianID");
         childId = extras.getInt("currentChildID");
-        Log.d("DebugYeah", "[Main] Application launched with ChildId " + Integer.toString(childId));
 
-        //Get guardian from ID
+        //Save guardian locally (Fetch from Database by Id)
         guardian = helper.profilesHelper.getProfileById(guardianId);
 
-        //Setup nested mode if we are trying to insert a Sequence
+        //Setup nestedMode if insertSequence extra is present
         if (extras.getBoolean("insertSequence")) {
             nestedMode = true;
-            Log.d("DebugYeah", "[Main] NestedMode entered");
             setupNestedMode();
-            return;
         }
-        //Setup GuardianMode if not launched by a Child
+        //Make user pick a child and set up GuardianMode if ChildId is -1 (= Logged in as Guardian)
         else if (childId == -1) {
             pickChild();
             setupGuardianMode();
-            return;
         }
         //Else setup application for a Child
         else {
-            childIsSet = true;
             setupChildMode();
+            setChild();
+            childIsSet = true;
         }
     }
 
     private void setChild() {
-        //Creates helper to get the relevant profiles from their ID's
+        //Creates helper to fetch data from the Database
         try {
             helper = new Helper(this);
         } catch (Exception e) {
         }
+        //Save Child locally and update relevant information for application
         selectedChild = helper.profilesHelper.getProfileById(childId);
         ((TextView) findViewById(R.id.child_name)).setText(selectedChild.getName());
         updateSequences();
     }
 
     private void setColors() {
-
+        //Sets up application colors using colors from GIRAF_Components
         LinearLayout backgroundLayout = (LinearLayout) findViewById(R.id.parent_container);
         RelativeLayout topbarLayout = (RelativeLayout) findViewById(R.id.sequence_bar);
         backgroundLayout.setBackgroundDrawable(GComponent.GetBackground(GComponent.Background.SOLID));
         topbarLayout.setBackgroundDrawable(GComponent.GetBackground(GComponent.Background.SOLID));
     }
-    //TODO: create this functionality when database sync is ready.
-    private boolean deleteSequenceDialog(final int position) {
-        return true;
-
-    }
 
     public void updateSequences() {
+        //Updates the list of Sequences by clearing and (re)loading a Childs Sequences from the Database
         tempSequenceList.clear();
 
+        //Creates helper to fetch data from the Database
         try {
             helper = new Helper(this);
         } catch (Exception e) {
@@ -244,11 +236,11 @@ public class MainActivity extends Activity {
     public class deletingSequencesDialog extends GDialog {
 
         public deletingSequencesDialog(final Context context) {
-
+            //Dialog where user can sort Sequences to delete
             super(context);
-
             this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.deleting_sequences,null));
 
+            //Set up two GridViews for the Delete operation
             copyAdapter = new SequenceListAdapter(this.getContext(), sequences);
             copyGrid = (GGridView) findViewById(R.id.existing_sequences);
             copyGrid.setAdapter(copyAdapter);
@@ -259,6 +251,7 @@ public class MainActivity extends Activity {
             pasteGrid.setAdapter(pasteAdapter);
             setPasteGridItemClickListener(pasteGrid);
 
+            //Set up Delete and Back Buttons
             GButton popupDelete = (GButton) findViewById(R.id.popup_accept);
             GButton popupBack = (GButton) findViewById(R.id.popup_back);
 
@@ -266,6 +259,7 @@ public class MainActivity extends Activity {
 
                 @Override
                 public void onClick(View v) {
+                    //Delete all selected Sequences and update the main Sequence Grid
                     for (Sequence seq : tempSequenceList) {
                         try {
                             helper = new Helper(context);
@@ -279,7 +273,7 @@ public class MainActivity extends Activity {
             });
 
             popupBack.setOnClickListener(new GButton.OnClickListener() {
-
+                //Cancel and close Dialog
                 @Override
                 public void onClick(View v) {
                     dismiss();
@@ -291,16 +285,17 @@ public class MainActivity extends Activity {
     public class copyingSequencesDialog extends GDialog {
 
         public copyingSequencesDialog(Context context) {
-
+            //Dialog where user can pick Sequences to copy to other Children
             super(context);
-
             this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.copying_sequences, null));
 
+            //Creates helper to fetch data from the Database
             try {
                 helper = new Helper(context);
             } catch (Exception e) {
             }
 
+            //Set up two GridViews for the Copy operation
             copyAdapter = new SequenceListAdapter(this.getContext(), sequences);
             copyGrid = (GGridView) findViewById(R.id.existing_sequences);
             copyGrid.setAdapter(copyAdapter);
@@ -311,28 +306,28 @@ public class MainActivity extends Activity {
             pasteGrid.setAdapter(pasteAdapter);
             setPasteGridItemClickListener(pasteGrid);
 
+            //Set up Buttons
             GButton popupCopy = (GButton) findViewById(R.id.popup_copy_accept);
             GButton popupBack = (GButton) findViewById(R.id.popup_copy_back);
 
-
+            //Create a MultiProfileSelector given a fresh list of Profiles to store chosen profiles in
             List<Profile> children = new ArrayList<Profile>();
 
             final GMultiProfileSelector childSelector = new GMultiProfileSelector(context, helper.profilesHelper.getChildrenByGuardian(guardian), children);
-
             childSelector.setMyOnCloseListener(new GMultiProfileSelector.onCloseListener() {
+                //When closing the MultiProileSelector, copy all chosen Sequences to all chosen Children
                 @Override
                 public void onClose(List<Profile> selectedProfiles) {
                     for (Profile p : selectedProfiles){
                         for (Sequence s: tempSequenceList) {
                             helper.sequenceController.copySequenceAndFrames(s, p);
-
                         }
                     }
                 }
             });
 
             popupCopy.setOnClickListener(new GButton.OnClickListener() {
-
+            //Show the MultiProfileSelector when clicking the Copy Button
                 @Override
                 public void onClick(View v) {
                     childSelector.show();
@@ -340,7 +335,7 @@ public class MainActivity extends Activity {
             });
 
             popupBack.setOnClickListener(new GButton.OnClickListener() {
-
+            //Cancel and close when clicking the Back Button
                 @Override
                 public void onClick(View v) {
                     dismiss();
@@ -350,25 +345,29 @@ public class MainActivity extends Activity {
     }
 
     private void setCopyGridItemClickListener(GridView copyGrid) {
+        //When clicking a Sequence in the CopyGrid (Left Grid), add to temporary list and the PasteGrid (Right Grid)
         clearTempLists();
         copyGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                //Check if Sequence is already in the PasteGrid. If so, do nothing
                 for (int i = 0; i < tempSequenceList.size(); i++) {
                     if (copyAdapter.getItem(position).getId() == tempSequenceList.get(i).getId()) {
                         return;
                     }
                 }
 
+                //Else, add Sequence to PasteGrid and save the View which is needed to reverse the operation
                 tempSequenceList.add(copyAdapter.getItem(position));
                 tempViewList.add(copyAdapter.getView(position, view, parent));
 
+                //Make the Sequence smaller on the CopyGrid to show it has been selected
                 View v = copyAdapter.getView(position, view, parent);
                 v.setAlpha(0.2f);
                 v.setScaleY(0.85f);
                 v.setScaleX(0.85f);
 
+                //Update the PasteGrid
                 pasteAdapter.notifyDataSetChanged();
             }
         });
@@ -376,22 +375,27 @@ public class MainActivity extends Activity {
     }
 
     private void setPasteGridItemClickListener(GridView pasteGrid) {
+        //When clicking a Sequence in the PasteGrid (Right Grid), remove and remove selection from CopyGrid ( Left Grid)
         clearTempLists();
         pasteGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+                //Find Sequence in list
                 for (int i = 0; i < tempSequenceList.size(); i++) {
                     if (pasteAdapter.getItem(position).getId() == tempSequenceList.get(i).getId()) {
 
+                        //Remove selection in CopyGrid
                         View v = tempViewList.get(i);
                         v.setAlpha(0.99f);
                         v.setScaleX(0.99f);
                         v.setScaleY(0.99f);
 
+                        //Remove Sequence and view from lists
                         tempSequenceList.remove(i);
                         tempViewList.remove(i);
 
+                        //Update PasteGrid
                         pasteAdapter.notifyDataSetChanged();
                     }
                 }
@@ -405,21 +409,18 @@ public class MainActivity extends Activity {
     }
 
     private void setupGuardianMode() {
-
-        isInEditMode = true;
-
-        //OnClickListener leads to SequenceActivity so Guardian can edit Sequence
+        //Clicking a Sequence lifts up the view and leads up to entering SequenceActivity by calling enterSequence
         sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-                ((PictogramView) arg1).liftUp();
-                Sequence sequence = sequenceAdapter.getItem(arg2);
-                Log.d("DebugYeah", "[Main] Selected sequence has " + Integer.toString(sequenceAdapter.getItem(arg2).getFramesList().size()) + " frames");
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                ((PictogramView) view).liftUp();
+                Sequence sequence = sequenceAdapter.getItem(position);
                 enterSequence(sequence, false);
             }
         });
 
+        //Makes adminstrative buttons visible
         final GButton addButton = (GButton) findViewById(R.id.add_button);
         final GButton deleteButton = (GButton) findViewById(R.id.delete_button);
         final GButton copyButton = (GButton) findViewById(R.id.copy_button);
@@ -433,11 +434,11 @@ public class MainActivity extends Activity {
         settingsButton.setVisibility(View.VISIBLE);
         logoutButton.setVisibility(View.VISIBLE);
         exitButton.setVisibility(View.VISIBLE);
-
-
     }
 
     private void setupChildMode() {
+
+        //When clicking a Sequence, lift up the view, load Settings from Child, create Intent for SequenceViewer and launch it
         sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -445,84 +446,81 @@ public class MainActivity extends Activity {
                 ((PictogramView) arg1).liftUp();
                 assumeMinimize = false;
 
+                //Load Preferences
                 SharedPreferences settings = getSharedPreferences(SettingsActivity.class.getName() + Integer.toString(MainActivity.selectedChild.getId()), MODE_PRIVATE);
                 int pictogramSetting = settings.getInt("pictogramSetting", 5);
                 boolean landscapeSetting = settings.getBoolean("landscapeSetting", true);
 
-                Log.d("DebugYeah", Integer.toString(pictogramSetting));
-                Log.d("DebugYeah", Boolean.toString(landscapeSetting));
-
+                //Create Intent with relevant Extras
                 Intent intent = new Intent();
                 intent.setComponent(new ComponentName("dk.aau.cs.giraf.sequenceviewer", "dk.aau.cs.giraf.sequenceviewer.MainActivity"));
                 intent.putExtra("sequenceId", sequenceAdapter.getItem(arg2).getId());
                 intent.putExtra("landscapeMode", landscapeSetting);
                 intent.putExtra("visiblePictogramCount", pictogramSetting);
                 intent.putExtra("callerType", "Zebra");
-                startActivityForResult(intent, 0);
+                startActivityForResult(intent, 2);
             }
         });
     }
 
     private void setupNestedMode() {
-
-        //OnClickListener saves ID of selected Sequence so it can be picked up and finishes activity.
+        //On clicking a Sequence, lift up the Sequence, finish Activity and send Id of Sequence as an extra back to SequenceActivity
         sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
             @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-                ((PictogramView) arg1).liftUp();
-                Sequence sequence = sequenceAdapter.getItem(arg2);
-                //nestedSequenceId = sequence.getId();
-
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                ((PictogramView) view).liftUp();
                 Intent intent = new Intent();
-                intent.putExtra("nestedSequenceId",sequence.getId());
-                setResult(RESULT_OK,intent);
+                intent.putExtra("nestedSequenceId",sequenceAdapter.getItem(position).getId());
+                setResult(RESULT_OK, intent);
                 finishActivity();
             }
         });
-
-
     }
 
     private void pickChild(){
-
+        //Create helper to fetch data from database
         try {
             helper = new Helper(this);
         } catch (Exception e) {
         }
 
+        //Create ProfileSelector to make Guardian select Child
         final GProfileSelector childSelector = new GProfileSelector(this, guardian, null, false);
-        try{childSelector.backgroundCancelsDialog(false);}
-        catch (Exception e)
-        {}
-        childSelector.show();
 
+        //Make Guardian unable to skip past picking a Child (Guardian can not click beside window to close ProfileSelector)
+        //TODO: Pressing the back key can close the ProfileSelector. Find a fix.
+        try{childSelector.backgroundCancelsDialog(false);}
+        catch (Exception e) {}
+
+
+        //When child is selected, save Child locally and update application accordingly (Title name and Sequences)
         childSelector.setOnListItemClick(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                selectedChild = helper.profilesHelper.getProfileById((int) id);
+                childId = (int) id;
+                setChild();
                 childIsSet = true;
-                ((TextView) findViewById(R.id.child_name)).setText(selectedChild.getName());
-                updateSequences();
                 childSelector.dismiss();
             }
         });
+        childSelector.show();
     }
 
     private void enterSequence(Sequence sequence, boolean isNew) {
+        //Sets up relevant intents and starts SequenceActivity
         assumeMinimize = false;
         Intent intent = new Intent(getApplication(), SequenceActivity.class);
         intent.putExtra("profileId", selectedChild.getId());
         intent.putExtra("guardianId", guardian.getId());
-        intent.putExtra("editMode", isInEditMode);
+        intent.putExtra("editMode", true);
         intent.putExtra("new", isNew);
         intent.putExtra("sequenceId", sequence.getId());
-        Log.d("DebugYeah", "[Main] Entering SequenceActivity for SequenceId " + Integer.toString(sequence.getId()));
 
         startActivity(intent);
     }
 
     private void finishActivity() {
+        //Closes Activity properly by setting assumeMinimize to false. See onStop for explanation on assumeMinimize
         assumeMinimize = false;
         finish();
     }
@@ -531,7 +529,7 @@ public class MainActivity extends Activity {
     protected void onResume() {
         super.onResume();
 
-        // Removes highlighting from all images
+        // Removes highlighting from Sequences that might have been lifted up when selected earlier
         for (int i = 0; i < sequenceGrid.getChildCount(); i++) {
             View view = sequenceGrid.getChildAt(i);
 
@@ -539,6 +537,7 @@ public class MainActivity extends Activity {
                 ((PictogramView) view).placeDown();
             }
         }
+        //If a Child is selected at this point, update Sequences for the Child
         if (childIsSet) {
             updateSequences();
         }
@@ -546,9 +545,11 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onStop() {
-        //assumeMinimize kills the entire application if minimized
-        // in any other ways than opening SequenceActivity or inserting a nested Sequence
+        /*assumeMinimize makes it possible to kill the entire application if ever minimized.
+        onStop is also called when entering other Activities, which is why the assumeMinimize check is needed
+        assumeMinimize is set to false every time an Activity is entered and then reset to true here so application is not killed*/
         if (assumeMinimize) {
+            //If in NestedMode, kill all open Activities. If not Nested, only this Activity needs to be killed
             if (nestedMode) {
                 SequenceActivity.activityToKill.finish();
                 MainActivity.activityToKill.finish();
@@ -556,6 +557,7 @@ public class MainActivity extends Activity {
             finishActivity();
         }
         else {
+            //If assumeMinimize was false, reset it to true
             assumeMinimize = true;
         }
         super.onStop();

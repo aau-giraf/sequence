@@ -80,6 +80,7 @@ public class SettingsActivity extends Activity {
         pictogramSlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
+                //Divide and add 1 to limit the setting between 1-7
                 pictogramSetting = 1 + (int) Math.round(progress / 16.666666666666666666666666666667);
                 pictogramSliderText.setText(pictogramSetting + " piktogrammer");
             }
@@ -114,12 +115,14 @@ public class SettingsActivity extends Activity {
 
     @Override
     protected void onStop() {
-        //assumeMinimize kills the entire application if minimized while assumeMinimize is true
+        /*assumeMinimize makes it possible to kill the entire application if ever minimized.
+        onStop is also called when entering other Activities, which is why the assumeMinimize check is needed
+        assumeMinimize is set to false every time an Activity is entered and then reset to true here so application is not killed*/
         if (assumeMinimize) {
             MainActivity.activityToKill.finish();
             finishActivity();
-        }
-        else {
+        } else {
+            //If assumeMinimize was false, reset it to true
             assumeMinimize = true;
         }
         super.onStop();

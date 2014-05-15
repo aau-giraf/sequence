@@ -841,13 +841,14 @@ public class SequenceActivity extends Activity {
 
     @Override
     protected void onStop() {
-        //assumeMinimize kills the entire application if minimized
-        // in any other ways than opening Pictosearch or inserting a nested Sequence
+        /*assumeMinimize makes it possible to kill the entire application if ever minimized.
+        onStop is also called when entering other Activities, which is why the assumeMinimize check is needed
+        assumeMinimize is set to false every time an Activity is entered and then reset to true here so application is not killed*/
         if (assumeMinimize) {
             MainActivity.activityToKill.finish();
             finishActivity();
-        }
-        else {
+        } else {
+            //If assumeMinimize was false, reset it to true
             assumeMinimize = true;
         }
         super.onStop();

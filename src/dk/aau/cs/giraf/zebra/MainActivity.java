@@ -554,8 +554,7 @@ public class MainActivity extends Activity {
                 MainActivity.activityToKill.finish();
             }
             finishActivity();
-        }
-        else {
+        } else {
             //If assumeMinimize was false, reset it to true
             assumeMinimize = true;
         }

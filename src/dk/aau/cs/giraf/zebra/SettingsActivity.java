@@ -3,6 +3,7 @@ package dk.aau.cs.giraf.zebra;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
@@ -73,19 +74,22 @@ public class SettingsActivity extends Activity {
 
         //Set slider and text to initial values. Slider progress works in percent, but is divided to limit the option between 1-7
         pictogramSliderText.setText(Integer.toString(pictogramSetting) + " piktogrammer");
-        pictogramSlider.setProgress((int) Math.round(pictogramSetting*14.285714285714285714285714285714));
+        pictogramSlider.setProgress((int) Math.round((pictogramSetting - 1)*16.666666666666666666666666666667));
+        Log.d("DebugYeah", Integer.toString(pictogramSlider.getProgress()));
 
         pictogramSlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
-                pictogramSetting = (int) Math.round(progress/14.285714285714285714285714285714);
+                pictogramSetting = 1 + (int) Math.round(progress / 16.666666666666666666666666666667);
                 pictogramSliderText.setText(pictogramSetting + " piktogrammer");
             }
+
             @Override
-            public void onStartTrackingTouch (SeekBar seekBar) {
+            public void onStartTrackingTouch(SeekBar seekBar) {
             }
+
             @Override
-            public void onStopTrackingTouch (SeekBar seekBar) {
+            public void onStopTrackingTouch(SeekBar seekBar) {
             }
         });
     }

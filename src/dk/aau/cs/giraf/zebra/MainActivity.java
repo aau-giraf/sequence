@@ -187,6 +187,14 @@ public class MainActivity extends Activity {
         }
     }
 
+    private void setColors() {
+        //Sets up application colors using colors from GIRAF_Components
+        LinearLayout backgroundLayout = (LinearLayout) findViewById(R.id.parent_container);
+        RelativeLayout topbarLayout = (RelativeLayout) findViewById(R.id.sequence_bar);
+        backgroundLayout.setBackgroundDrawable(GComponent.GetBackground(GComponent.Background.SOLID));
+        topbarLayout.setBackgroundDrawable(GComponent.GetBackground(GComponent.Background.SOLID));
+    }
+
     private void setChild() {
         //Creates helper to fetch data from the Database
         try {
@@ -197,14 +205,6 @@ public class MainActivity extends Activity {
         selectedChild = helper.profilesHelper.getProfileById(childId);
         ((TextView) findViewById(R.id.child_name)).setText(selectedChild.getName());
         updateSequences();
-    }
-
-    private void setColors() {
-        //Sets up application colors using colors from GIRAF_Components
-        LinearLayout backgroundLayout = (LinearLayout) findViewById(R.id.parent_container);
-        RelativeLayout topbarLayout = (RelativeLayout) findViewById(R.id.sequence_bar);
-        backgroundLayout.setBackgroundDrawable(GComponent.GetBackground(GComponent.Background.SOLID));
-        topbarLayout.setBackgroundDrawable(GComponent.GetBackground(GComponent.Background.SOLID));
     }
 
     public void updateSequences() {

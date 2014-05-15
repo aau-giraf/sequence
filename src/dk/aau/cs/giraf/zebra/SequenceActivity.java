@@ -55,7 +55,6 @@ public class SequenceActivity extends Activity {
     private int profileId;
     private int sequenceId;
     private int pictogramEditPos = -1;
-	private Sequence originalSequence = new Sequence();
 	public static Sequence sequence;
     public static Sequence choice = new Sequence();
     public static SequenceAdapter adapter;
@@ -82,48 +81,14 @@ public class SequenceActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_sequence);
 
+        //Make Activity killable
         activityToKill = this;
 
-		Bundle extras = getIntent().getExtras();
-		profileId = extras.getInt("profileId");
-        sequenceId = extras.getInt("sequenceId");
-        Log.d("DebugYeah", "[SequenceActivity] Activity launched for SequenceId " + Integer.toString(sequenceId));
-		guardianId = extras.getInt("guardianId");
-		isNew = extras.getBoolean("new");
-		isInEditMode = extras.getBoolean("editMode");
-
-        try {
-            helper = new Helper(this);
-        } catch (Exception e) {
-        }
-
-        if (sequenceId != 0) {
-            originalSequence = helper.sequenceController.getSequenceAndFrames(sequenceId);
-
-            // Orders the frames by the X coordinate
-            Collections.sort(originalSequence.getFramesList(), new Comparator<Frame>() {
-                public int compare(Frame x, Frame y) {
-                    return Integer.valueOf(x.getPosX()).compareTo(y.getPosX());
-                }
-            });
-        }
-
-		// Get a clone of the sequence so the original sequence is not modified
-		sequence = originalSequence;
-        Log.d("DebugYeah", "[SequenceActivity] Sequence currently has " + Integer.toString(sequence.getFramesList().size()) + " frames");
-
-		// Create Adapter
-		adapter = setupAdapter();
-
-		// Create Sequence Group
-		SequenceViewGroup sequenceViewGroup = setupSequenceViewGroup(adapter);
-		sequenceTitleView = (EditText) findViewById(R.id.sequence_title);
-
-        LinearLayout backgroundLayout = (LinearLayout) findViewById(R.id.parent_container);
-        RelativeLayout topbarLayout = (RelativeLayout) findViewById(R.id.sequence_bar);
-        backgroundLayout.setBackgroundDrawable(GComponent.GetBackground(GComponent.Background.SOLID));
-        topbarLayout.setBackgroundDrawable(GComponent.GetBackground(GComponent.Background.SOLID));
-
+		loadIntents();
+        loadSequence();
+        setColors();
+        setupFramesGrid();
+        setupButtons();
 		initializeTopBar();
 
 		sequenceImageButton = (GButton) findViewById(R.id.sequence_image);
@@ -178,6 +143,166 @@ public class SequenceActivity extends Activity {
 			}
 		});
 	}
+
+    private void loadIntents() {
+        Bundle extras = getIntent().getExtras();
+        profileId = extras.getInt("profileId");
+        sequenceId = extras.getInt("sequenceId");
+        guardianId = extras.getInt("guardianId");
+        isNew = extras.getBoolean("new");
+        isInEditMode = extras.getBoolean("editMode");
+    }
+
+    private void loadSequence() {
+        //Create helper to load data from Database (Otherwise start working on empty Sequence)
+        try {
+            helper = new Helper(this);
+        } catch (Exception e) {
+        }
+
+        //If SequenceId from intents is valid, get it from the Database
+        if (sequenceId != 0) {
+            sequence = helper.sequenceController.getSequenceAndFrames(sequenceId);
+
+            // Orders the frames by the X coordinate
+            Collections.sort(sequence.getFramesList(), new Comparator<Frame>() {
+                public int compare(Frame x, Frame y) {
+                    return Integer.valueOf(x.getPosX()).compareTo(y.getPosX());
+                }
+            });
+        } else {
+            sequence = new Sequence();
+        }
+    }
+
+    private void setColors() {
+        //Sets up application colors using colors from GIRAF_Components
+        LinearLayout backgroundLayout = (LinearLayout) findViewById(R.id.parent_container);
+        RelativeLayout topbarLayout = (RelativeLayout) findViewById(R.id.sequence_bar);
+        backgroundLayout.setBackgroundDrawable(GComponent.GetBackground(GComponent.Background.SOLID));
+        topbarLayout.setBackgroundDrawable(GComponent.GetBackground(GComponent.Background.SOLID));
+    }
+
+    private void setupFramesGrid() {
+        // Create Adapter for the SequenceViewGroup (The Grid displaying the Sequence)
+        adapter = setupAdapter();
+        setupSequenceViewGroup(adapter);
+    }
+
+    private void setupButtons() {
+        //Creates all buttons in Activity and their listeners
+        cancelButton = (GButton) findViewById(R.id.cancel_button);
+        saveButton = (GButton) findViewById(R.id.save_button);
+        addButton = (GButton) findViewById(R.id.add_button);
+        previewButton = (GButton) findViewById(R.id.preview_button);
+
+        saveButton.setOnClickListener(new ImageButton.OnClickListener() {
+        //Show Dialog to save Sequence when clicking the Save Button
+            @Override
+            public void onClick(View v) {
+                showSaveDialog(v);
+            }
+        });
+
+        cancelButton.setOnClickListener(new ImageButton.OnClickListener() {
+        //Show Exit Dialog when clicking the Cancel Button
+            @Override
+            public void onClick(View v) {
+                showExitDialog(v);
+            }
+        });
+
+        addButton.setOnClickListener(new ImageButton.OnClickListener(){
+        //Show Add dialog when clicking the Add Button
+            @Override
+            public void onClick(View v) {
+                showAddDialog(v);
+            }
+        });
+
+        previewButton.setOnClickListener(new ImageButton.OnClickListener() {
+            //If no changes has been made to Sequence, call SequenceViewer. Otherwise display Dialog, prompting user to save Sequence first
+            @Override
+            public void onClick(View v) {
+                if (isNew == false && sequence.getFramesList().equals(helper.sequenceController.getSequenceAndFrames(sequence.getId()).getFramesList())) {
+                    callSequenceViewer();
+                } else {
+                    showpreviewDialog(v);
+                }
+            }
+        });
+    }
+
+    private void initializeTopBar() {
+        sequenceTitleView = (EditText) findViewById(R.id.sequence_title);
+        sequenceTitleView.setText(sequence.getName());
+
+        // Create listener to remove focus when "Done" is pressed on the keyboard
+        sequenceTitleView
+                .setOnEditorActionListener(new OnEditorActionListener() {
+                    @Override
+                    public boolean onEditorAction(TextView v, int actionId,
+                                                  KeyEvent event) {
+                        if (actionId == EditorInfo.IME_ACTION_DONE) {
+                            EditText editText = (EditText) findViewById(R.id.sequence_title);
+                            editText.clearFocus();
+                        }
+                        return false;
+                    }
+                });
+
+        // Create listeners on every view to remove focus from the EditText when touched
+        createClearFocusListeners(findViewById(R.id.parent_container));
+
+        // Create listener to hide the keyboard and save when the EditText loses focus
+        sequenceTitleView.setOnFocusChangeListener(new OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    hideSoftKeyboardFromView(sequenceTitleView);
+                }
+            }
+        });
+
+        TextView childName = (TextView) findViewById(R.id.child_name);
+        childName.setText(MainActivity.selectedChild.getName());
+    }
+
+    public void hideSoftKeyboardFromView(View view) {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    /*
+       Creates listeners to remove focus from EditText when something else is
+       touched (to hide the softkeyboard)
+
+       @param view
+                  The parent container. The function runs recursively on its children
+     */
+    public void createClearFocusListeners(View view) {
+        // Create listener to remove focus from EditText when something else is touched
+        if (!(view instanceof EditText)) {
+            view.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    EditText editText = (EditText) findViewById(R.id.sequence_title);
+                    editText.clearFocus();
+
+                    return false;
+                }
+
+            });
+        }
+
+        // If the view is a container, run the function recursively on the children
+        if (view instanceof ViewGroup) {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                View innerView = ((ViewGroup) view).getChildAt(i);
+                createClearFocusListeners(innerView);
+            }
+        }
+    }
 
 	private void saveChanges() {
 
@@ -664,80 +789,6 @@ public class SequenceActivity extends Activity {
         sequenceImageButton.setVisibility(View.VISIBLE);
 	}
 
-	private void initializeTopBar() {
-
-        Buttons();
-
-		sequenceTitleView.setEnabled(isInEditMode);
-            sequenceTitleView.setText(sequence.getName());
-
-		// Create listener to remove focus when "Done" is pressed on the keyboard
-		sequenceTitleView
-				.setOnEditorActionListener(new OnEditorActionListener() {
-                    @Override
-                    public boolean onEditorAction(TextView v, int actionId,
-                                                  KeyEvent event) {
-                        if (actionId == EditorInfo.IME_ACTION_DONE) {
-                            EditText editText = (EditText) findViewById(R.id.sequence_title);
-                            editText.clearFocus();
-                        }
-                        return false;
-                    }
-                });
-
-		// Create listeners on every view to remove focus from the EditText when touched
-		createClearFocusListeners(findViewById(R.id.parent_container));
-
-		// Create listener to hide the keyboard and save when the EditText loses focus
-		sequenceTitleView.setOnFocusChangeListener(new OnFocusChangeListener() {
-			@Override
-			public void onFocusChange(View v, boolean hasFocus) {
-				if (!hasFocus) {
-					hideSoftKeyboardFromView(sequenceTitleView);
-				}
-			}
-		});
-
-		TextView childName = (TextView) findViewById(R.id.child_name);
-		childName.setText(MainActivity.selectedChild.getName());
-	}
-
-	public void hideSoftKeyboardFromView(View view) {
-		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-		imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-	}
-
-	/*
-	   Creates listeners to remove focus from EditText when something else is
-	   touched (to hide the softkeyboard)
-
-	   @param view
-	              The parent container. The function runs recursively on its children
-	 */
-	public void createClearFocusListeners(View view) {
-		// Create listener to remove focus from EditText when something else is touched
-		if (!(view instanceof EditText)) {
-			view.setOnTouchListener(new View.OnTouchListener() {
-				@Override
-				public boolean onTouch(View v, MotionEvent event) {
-					EditText editText = (EditText) findViewById(R.id.sequence_title);
-					editText.clearFocus();
-
-					return false;
-				}
-
-			});
-		}
-
-		// If the view is a container, run the function recursively on the children
-		if (view instanceof ViewGroup) {
-			for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
-				View innerView = ((ViewGroup) view).getChildAt(i);
-				createClearFocusListeners(innerView);
-			}
-		}
-	}
-
 	private void callPictoAdmin(int modeId) {
         assumeMinimize = false;
 		Intent intent = new Intent();
@@ -752,46 +803,6 @@ public class SequenceActivity extends Activity {
 		
 		startActivityForResult(intent, modeId);
 	}
-
-    private void Buttons() {
-
-        cancelButton = (GButton) findViewById(R.id.cancel_button);
-        saveButton = (GButton) findViewById(R.id.save_button);
-        addButton = (GButton) findViewById(R.id.add_button);
-        previewButton = (GButton) findViewById(R.id.preview_button);
-
-        saveButton.setOnClickListener(new ImageButton.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                showSaveDialog(v);
-            }
-        });
-        cancelButton.setOnClickListener(new ImageButton.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                showExitDialog(v);
-            }
-        });
-        addButton.setOnClickListener(new ImageButton.OnClickListener(){
-
-            @Override
-            public void onClick(View v) {
-                showAddDialog(v);
-            }
-        });
-        previewButton.setOnClickListener(new ImageButton.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isNew == false && sequence.getFramesList().equals(helper.sequenceController.getSequenceAndFrames(sequence.getId()).getFramesList())) {
-                    callSequenceViewer();
-                } else {
-                    showpreviewDialog(v);
-                }
-            }
-        });
-    }
 
     private void callSequenceViewer(){
         assumeMinimize = false;

@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -587,8 +589,9 @@ public class SequenceActivity extends Activity {
 				PICTO_INTENT_CHECKOUT_ID);
 
         //If no pictures are returned, assume user canceled and nothing is supposed to change.
-        if (checkoutIds == null) {
-            return;
+        if (checkoutIds.length == 0 || checkoutIds == null) {
+                checkoutIds = new int[]{1,2,3,4};
+           // return;
         }
         if (choiceMode) {
 
@@ -781,11 +784,19 @@ public class SequenceActivity extends Activity {
             @Override
             public void onClick(View v) {
                 assumeMinimize = false;
+
+                SharedPreferences settings = getSharedPreferences(SettingsActivity.class.getName() + Integer.toString(MainActivity.selectedChild.getId()), MODE_PRIVATE);
+                int pictogramSetting = settings.getInt("pictogramSetting", 5);
+                boolean landscapeSetting = settings.getBoolean("landscapeSetting", true);
+
+                Log.d("DebugYeah", Integer.toString(pictogramSetting));
+                Log.d("DebugYeah", Boolean.toString(landscapeSetting));
+
                 Intent intent = new Intent();
                 intent.setComponent(new ComponentName("dk.aau.cs.giraf.sequenceviewer", "dk.aau.cs.giraf.sequenceviewer.MainActivity"));
                 intent.putExtra("sequenceId", sequence.getId());
-                intent.putExtra("landscapeMode", true);
-                intent.putExtra("visiblePictogramCount", 5);
+                intent.putExtra("landscapeMode", landscapeSetting);
+                intent.putExtra("visiblePictogramCount", pictogramSetting);
                 intent.putExtra("callerType", "Zebra");
                 startActivityForResult(intent, 0);
             }

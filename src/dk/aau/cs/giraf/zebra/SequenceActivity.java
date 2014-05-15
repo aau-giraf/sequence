@@ -193,7 +193,6 @@ public class SequenceActivity extends Activity {
             //TODO: Display message that user is about to try saving an empty sequence.
             return;
         }
-        isNew = false;
         sequence.setName(sequenceTitleView.getText().toString());
 
         //Set PosX of every frame to save the order in which the frames should be shown.

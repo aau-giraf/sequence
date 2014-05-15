@@ -152,45 +152,44 @@ public class MainActivity extends Activity {
     }
 
     private void loadIntents() {
-        //Fetches intents from launcher or SequenceActivity
-        Bundle extras = getIntent().getExtras();
-        int guardianId = extras.getInt("currentGuardianID");
-        childId = extras.getInt("currentChildID");
-        Log.d("DebugYeah", "[Main] Application launched with ChildId " + Integer.toString(childId));
-
+        //Helper to fetch data from database
         try {
             helper = new Helper(this);
         } catch (Exception e) {
         }
 
-        guardian = helper.profilesHelper.getProfileById(guardianId);
-        Log.d("DebugYeah", Integer.toString(guardianId));
-
-        //TODO: if childId == -1 the profileSelector containing only children connected to the current guardianId should appear. The guardian should be forced to chose a child.
-        if (childId == -1) {
-            setupChildMode();
-            setupPickChild();
-
-            return;
-        } else {
-            childIsSet = true;
-        }
+        //Fetches intents from launcher or SequenceActivity
+        Bundle extras = getIntent().getExtras();
 
         //Makes the activity killable from SequenceActivity and (Nested) MainActivity
         if (extras.getBoolean("insertSequence") == false) {
             activityToKill = this;
         }
 
-        //Set up user mode depending on extras
+        //Get guardian and child extras
+        int guardianId = extras.getInt("currentGuardianID");
+        childId = extras.getInt("currentChildID");
+        Log.d("DebugYeah", "[Main] Application launched with ChildId " + Integer.toString(childId));
+
+        //Get guardian from ID
+        guardian = helper.profilesHelper.getProfileById(guardianId);
+
+        //Setup nested mode if we are trying to insert a Sequence
         if (extras.getBoolean("insertSequence")) {
             nestedMode = true;
             Log.d("DebugYeah", "[Main] NestedMode entered");
             setupNestedMode();
-        }  else if (guardian.getRole() == Profile.Roles.GUARDIAN) {
-            Log.d("DebugYeah", "[Main] User is Guardian");
+            return;
+        }
+        //Setup GuardianMode if not launched by a Child
+        else if (childId == -1) {
+            pickChild();
             setupGuardianMode();
-        } else {
-            Log.d("DebugYeah", "[Main] User is Child");
+            return;
+        }
+        //Else setup application for a Child
+        else {
+            childIsSet = true;
             setupChildMode();
         }
     }
@@ -485,7 +484,7 @@ public class MainActivity extends Activity {
 
     }
 
-    private void setupPickChild(){
+    private void pickChild(){
 
         try {
             helper = new Helper(this);
@@ -505,7 +504,6 @@ public class MainActivity extends Activity {
                 childIsSet = true;
                 ((TextView) findViewById(R.id.child_name)).setText(selectedChild.getName());
                 updateSequences();
-                setupGuardianMode();
                 childSelector.dismiss();
             }
         });

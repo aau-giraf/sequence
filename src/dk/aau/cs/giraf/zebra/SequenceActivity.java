@@ -182,7 +182,7 @@ public class SequenceActivity extends Activity {
 		});
 	}
 
-	private void saveChanges(boolean forPreview) {
+	private void saveChanges() {
 
         try {
             helper = new Helper(this);
@@ -193,6 +193,7 @@ public class SequenceActivity extends Activity {
             //TODO: Display message that user is about to try saving an empty sequence.
             return;
         }
+        isNew = false;
         sequence.setName(sequenceTitleView.getText().toString());
 
         //Set PosX of every frame to save the order in which the frames should be shown.
@@ -200,26 +201,15 @@ public class SequenceActivity extends Activity {
             sequence.getFramesList().get(i).setPosX(i);
         }
 
-        if (forPreview) {
-            if (isNew) {
-                sequence.setProfileId(MainActivity.selectedChild.getId());
-                sequence.setSequenceType(Sequence.SequenceType.SEQUENCE);
-                tempSequence = sequence;
-                helper.sequenceController.insertSequenceAndFrames(sequence);
-            }
-            else {
-                tempId = sequence.getId();
-                sequence.setProfileId(MainActivity.selectedChild.getId());
-                sequence.setSequenceType(Sequence.SequenceType.SEQUENCE);
-                helper.sequenceController.insertSequenceAndFrames(sequence);
-            }
-        }
-        else if (isNew) {
+        if (isNew) {
+            Log.d("DebugYeah", "[SequenceActivity] Saving Sequence. Sequence is new.");
             sequence.setProfileId(MainActivity.selectedChild.getId());
             sequence.setSequenceType(Sequence.SequenceType.SEQUENCE);
             helper.sequenceController.insertSequenceAndFrames(sequence);
         }
         else {
+
+            Log.d("DebugYeah", "[SequenceActivity] Saving Sequence. Sequence is old.");
             helper.sequenceController.modifySequenceAndFrames(sequence);
         }
 	}
@@ -232,7 +222,7 @@ public class SequenceActivity extends Activity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        saveChanges(false);
+                        saveChanges();
                         finishActivity();
                     }
                 });
@@ -294,7 +284,7 @@ public class SequenceActivity extends Activity {
 
                 @Override
                 public void onClick(View v) {
-                    SequenceActivity.this.saveChanges(false);
+                    SequenceActivity.this.saveChanges();
                     finishActivity();
                 }
             });
@@ -567,9 +557,6 @@ public class SequenceActivity extends Activity {
                     onNestedSequenceResult(data);
                     break;
 
-                case 2:
-                    deletePreviewSequence();
-
 
 			default:
 				break;
@@ -577,16 +564,6 @@ public class SequenceActivity extends Activity {
 		}
 	}
 
-    private void deletePreviewSequence() {
-
-        if (isNew) {
-            sequence = tempSequence;
-            helper.sequenceController.removeSequence(tempSequence);
-        } else {
-            helper.sequenceController.removeSequence(sequence);
-            helper.sequenceController.getSequenceAndFrames(tempId);
-        }
-    }
     private void onNestedSequenceResult(Intent data){
         int id = data.getExtras().getInt("nestedSequenceId");
 
@@ -804,27 +781,44 @@ public class SequenceActivity extends Activity {
         previewButton.setOnClickListener(new ImageButton.OnClickListener() {
             @Override
             public void onClick(View v) {
-                assumeMinimize = false;
-                saveChanges(true);
-
-                SharedPreferences settings = getSharedPreferences(SettingsActivity.class.getName() + Integer.toString(MainActivity.selectedChild.getId()), MODE_PRIVATE);
-                int pictogramSetting = settings.getInt("pictogramSetting", 5);
-                boolean landscapeSetting = settings.getBoolean("landscapeSetting", true);
-
-                Log.d("DebugYeah", Integer.toString(pictogramSetting));
-                Log.d("DebugYeah", Boolean.toString(landscapeSetting));
-
-                Intent intent = new Intent();
-                intent.setComponent(new ComponentName("dk.aau.cs.giraf.sequenceviewer", "dk.aau.cs.giraf.sequenceviewer.MainActivity"));
-                intent.putExtra("sequenceId", sequence.getId());
-                intent.putExtra("landscapeMode", landscapeSetting);
-                intent.putExtra("visiblePictogramCount", pictogramSetting);
-                intent.putExtra("callerType", "Zebra");
-                startActivityForResult(intent, 0);
+                if (isNew == false && sequence.getFramesList().equals(helper.sequenceController.getSequenceAndFrames(sequence.getId()).getFramesList())) {
+                    callSequenceViewer();
+                } else {
+                    showpreviewDialog(v);
+                }
             }
         });
     }
 
+    private void callSequenceViewer(){
+        assumeMinimize = false;
+
+        SharedPreferences settings = getSharedPreferences(SettingsActivity.class.getName() + Integer.toString(MainActivity.selectedChild.getId()), MODE_PRIVATE);
+        int pictogramSetting = settings.getInt("pictogramSetting", 5);
+        boolean landscapeSetting = settings.getBoolean("landscapeSetting", true);
+
+        Intent intent = new Intent();
+        intent.setComponent(new ComponentName("dk.aau.cs.giraf.sequenceviewer", "dk.aau.cs.giraf.sequenceviewer.MainActivity"));
+        intent.putExtra("sequenceId", sequence.getId());
+        intent.putExtra("landscapeMode", landscapeSetting);
+        intent.putExtra("visiblePictogramCount", pictogramSetting);
+        intent.putExtra("callerType", "Zebra");
+        startActivityForResult(intent, 2);
+    }
+
+    private void showpreviewDialog(View v) {
+        GDialogMessage previewDialog = new GDialogMessage(v.getContext(),
+                "Gem Sekvens",
+                "Du bliver nødt til at gemme sekvensen før du kan se den",
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v){
+                        saveChanges();
+                        callSequenceViewer();
+                    }
+                });
+        previewDialog.show();
+    }
     private void finishActivity(){
         assumeMinimize = false;
         finish();

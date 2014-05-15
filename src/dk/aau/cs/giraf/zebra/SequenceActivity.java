@@ -202,6 +202,8 @@ public class SequenceActivity extends Activity {
 
         if (forPreview) {
             if (isNew) {
+                sequence.setProfileId(MainActivity.selectedChild.getId());
+                sequence.setSequenceType(Sequence.SequenceType.SEQUENCE);
                 tempSequence = sequence;
                 helper.sequenceController.insertSequenceAndFrames(sequence);
             }
@@ -212,35 +214,11 @@ public class SequenceActivity extends Activity {
                 helper.sequenceController.insertSequenceAndFrames(sequence);
             }
         }
-        if (isNew) {
-            sequence.setProfileId(MainActivity.selectedChild.getId());
-            sequence.setSequenceType(Sequence.SequenceType.SEQUENCE);
-            helper.sequenceController.insertSequenceAndFrames(sequence);
-        }
-        else {
-            helper.sequenceController.modifySequenceAndFrames(sequence);
-        }
-
-        //If Sequence is new and user is trying to preview, just save Sequence
-        if (isNew && forPreview) {
-            sequence.setProfileId(MainActivity.selectedChild.getId());
-            sequence.setSequenceType(Sequence.SequenceType.SEQUENCE);
-            helper.sequenceController.insertSequenceAndFrames(sequence);
-        }
-        //If Sequence is not new but user is previewing, save Id of old Sequence and save as new
-        else if (forPreview) {
-            tempId = sequence.getId();
-            sequence.setProfileId(MainActivity.selectedChild.getId());
-            sequence.setSequenceType(Sequence.SequenceType.SEQUENCE);
-            helper.sequenceController.insertSequenceAndFrames(sequence);
-        }
-        //If Sequence is new, insert into database
         else if (isNew) {
             sequence.setProfileId(MainActivity.selectedChild.getId());
             sequence.setSequenceType(Sequence.SequenceType.SEQUENCE);
             helper.sequenceController.insertSequenceAndFrames(sequence);
         }
-        //If Sequence is old, modify existing Sequence in database
         else {
             helper.sequenceController.modifySequenceAndFrames(sequence);
         }
@@ -422,6 +400,7 @@ public class SequenceActivity extends Activity {
 
                 @Override
                 public void onClick(View v) {
+                    choice.getFramesList().clear();
                     choiceMode = false;
                     dismiss();
                 }

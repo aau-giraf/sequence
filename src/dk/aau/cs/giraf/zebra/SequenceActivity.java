@@ -352,6 +352,16 @@ public class SequenceActivity extends Activity {
         public choiceDialog(Context context) {
             super(context);
 
+            choice.getFramesList().clear();
+            if ( pictogramEditPos != -1 ) {
+                for (int i = 0; i < adapter.getItem(pictogramEditPos).getPictogramList().size(); i++)
+                {
+                    Frame frame = new Frame();
+                    frame.setPictogramId(adapter.getItem(pictogramEditPos).getPictogramList().get(i).getId());
+                    choice.addFrame(frame);
+                }
+            }
+
             this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.choice_dialog,null));
 
             GButton saveChoice = (GButton) findViewById(R.id.save_choice);
@@ -381,16 +391,14 @@ public class SequenceActivity extends Activity {
                         sequence.getFramesList().get(pictogramEditPos).setPictogramList(tempPictogramList);
                     }
                     adapter.notifyDataSetChanged();
-                    choice.getFramesList().clear();
                     choiceMode = false;
+                    pictogramEditPos = -1;
                     dismiss();
                 }
             });
             discardChoice.setOnClickListener(new GButton.OnClickListener(){
-
                 @Override
                 public void onClick(View v) {
-                    choice.getFramesList().clear();
                     choiceMode = false;
                     dismiss();
                 }

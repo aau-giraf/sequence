@@ -9,7 +9,6 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.preference.Preference;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -56,8 +55,6 @@ public class SequenceActivity extends Activity {
     private int profileId;
     private int sequenceId;
     private int pictogramEditPos = -1;
-    private int tempId;
-    private Sequence tempSequence;
 	private Sequence originalSequence = new Sequence();
 	public static Sequence sequence;
     public static Sequence choice = new Sequence();

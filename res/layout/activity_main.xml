@@ -58,7 +58,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:text="Sekvens"
+            android:text="Vælg et barn"
             android:textSize="60sp"
             android:textColor="@color/text_color" />
 

@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -33,6 +35,7 @@ public class MainActivity extends Activity {
     private boolean isInEditMode = false;
     private boolean nestedMode;
     private boolean assumeMinimize = true;
+    private boolean childIsSet = false;
     private GridView sequenceGrid;
     private GridView copyGrid;
     private GridView pasteGrid;
@@ -121,6 +124,24 @@ public class MainActivity extends Activity {
             }
         });
 
+        logoutButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final GProfileSelector childSelector = new GProfileSelector(v.getContext(), guardian, null, false);
+                childSelector.show();
+
+                childSelector.setOnListItemClick(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                        selectedChild = helper.profilesHelper.getProfileById((int) id);
+                        ((TextView) findViewById(R.id.child_name)).setText(selectedChild.getName());
+                        updateSequences();
+                        childSelector.dismiss();
+                    }
+                });
+            }
+        });
+
         exitButton.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -151,6 +172,8 @@ public class MainActivity extends Activity {
             setupPickChild();
 
             return;
+        } else {
+            childIsSet = true;
         }
 
         //Makes the activity killable from SequenceActivity and (Nested) MainActivity
@@ -163,8 +186,7 @@ public class MainActivity extends Activity {
             nestedMode = true;
             Log.d("DebugYeah", "[Main] NestedMode entered");
             setupNestedMode();
-        }
-        else if (guardian.getRole() == Profile.Roles.GUARDIAN) {
+        }  else if (guardian.getRole() == Profile.Roles.GUARDIAN) {
             Log.d("DebugYeah", "[Main] User is Guardian");
             setupGuardianMode();
         } else {
@@ -417,6 +439,29 @@ public class MainActivity extends Activity {
     }
 
     private void setupChildMode() {
+        sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                ((PictogramView) arg1).liftUp();
+                assumeMinimize = false;
+
+                SharedPreferences settings = getSharedPreferences(SettingsActivity.class.getName() + Integer.toString(MainActivity.selectedChild.getId()), MODE_PRIVATE);
+                int pictogramSetting = settings.getInt("pictogramSetting", 5);
+                boolean landscapeSetting = settings.getBoolean("landscapeSetting", true);
+
+                Log.d("DebugYeah", Integer.toString(pictogramSetting));
+                Log.d("DebugYeah", Boolean.toString(landscapeSetting));
+
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName("dk.aau.cs.giraf.sequenceviewer", "dk.aau.cs.giraf.sequenceviewer.MainActivity"));
+                intent.putExtra("sequenceId", sequenceAdapter.getItem(arg2).getId());
+                intent.putExtra("landscapeMode", landscapeSetting);
+                intent.putExtra("visiblePictogramCount", pictogramSetting);
+                intent.putExtra("callerType", "Zebra");
+                startActivityForResult(intent, 0);
+            }
+        });
     }
 
     private void setupNestedMode() {
@@ -457,10 +502,11 @@ public class MainActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 selectedChild = helper.profilesHelper.getProfileById((int) id);
-                childSelector.dismiss();
+                childIsSet = true;
                 ((TextView) findViewById(R.id.child_name)).setText(selectedChild.getName());
                 updateSequences();
                 setupGuardianMode();
+                childSelector.dismiss();
             }
         });
     }
@@ -495,7 +541,7 @@ public class MainActivity extends Activity {
                 ((PictogramView) view).placeDown();
             }
         }
-        if (childId != -1) {
+        if (childIsSet) {
             updateSequences();
         }
     }

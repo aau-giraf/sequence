@@ -778,9 +778,7 @@ public class SequenceActivity extends Activity {
                 showAddDialog(v);
             }
         });
-        previewButton.setOnClickListener(new ImageButton.OnClickListener()
-        {
-            //TODO: CREATE FUNCTIONALITY HERE (CALL SEQUENCEVIEWER)
+        previewButton.setOnClickListener(new ImageButton.OnClickListener() {
             @Override
             public void onClick(View v) {
                 assumeMinimize = false;

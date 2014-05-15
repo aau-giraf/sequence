@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:text="Indstillinger"
+            android:text="Indstillinger for sekvensvisning"
             android:textSize="60sp"
             android:textColor="@color/text_color" />
     </RelativeLayout>
@@ -56,7 +56,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:text="Orientering"
+                android:text="Skærm"
                 android:textSize="35sp"
                 android:textColor="@color/text_color" />
 
@@ -70,7 +70,7 @@
 
                 <dk.aau.cs.giraf.gui.GRadioButton
                     android:id="@+id/landscapeButton"
-                    android:text="Landscape"
+                    android:text="Landskab"
                     android:onClick="onOrientationClick"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
@@ -78,7 +78,7 @@
 
                 <dk.aau.cs.giraf.gui.GRadioButton
                     android:id="@+id/portraitButton"
-                    android:text="Portrait"
+                    android:text="Portræt"
                     android:onClick="onOrientationClick"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
@@ -101,7 +101,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:text="Piktogramvisning"
+                android:text="Viste piktogrammer"
                 android:textSize="35sp"
                 android:textColor="@color/text_color" />
 

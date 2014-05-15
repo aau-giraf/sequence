@@ -1,8 +1,8 @@
 package dk.aau.cs.giraf.zebra;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
@@ -12,12 +12,13 @@ import android.widget.SeekBar;
 import dk.aau.cs.giraf.gui.GComponent;
 import dk.aau.cs.giraf.gui.GSeekBar;
 import dk.aau.cs.giraf.gui.GTextView;
-import dk.aau.cs.giraf.oasis.lib.Helper;
 
 public class SettingsActivity extends Activity {
     private boolean assumeMinimize = true;
-    private int pictogramSetting = 500;
-    private boolean landscapeSetting;
+    private Integer pictogramSetting;
+    private Boolean landscapeSetting;
+    private String childId = Integer.toString(MainActivity.selectedChild.getId());
+    private SharedPreferences settings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,32 +26,26 @@ public class SettingsActivity extends Activity {
         setContentView(R.layout.activity_settings);
 
         setColors();
-        getSettings();
-        setupOrientationSetting();
-        setupPictogramSetting();
+        getSettingsByChild();
+        setupScreenSetting();
+        setupShownPictogramSetting();
     }
 
     private void setColors() {
-
         LinearLayout backgroundLayout = (LinearLayout) findViewById(R.id.parent_container);
         RelativeLayout topbarLayout = (RelativeLayout) findViewById(R.id.settings_bar);
         backgroundLayout.setBackgroundDrawable(GComponent.GetBackground(GComponent.Background.SOLID));
         topbarLayout.setBackgroundDrawable(GComponent.GetBackground(GComponent.Background.SOLID));
     }
 
-    private void getSettings() {
-        Helper helper = new Helper(this);
-
-        try {
-            helper = new Helper(this);
-        } catch (Exception e) {
-        }
-
-        //pictogramOption = ;
-        //orientationOption = ;
+    private void getSettingsByChild() {
+        //Get settings from "SettingsActivity<childId>. If not available, load standard values"
+        settings = getSharedPreferences(SettingsActivity.class.getName() + childId, MODE_PRIVATE);
+        pictogramSetting = settings.getInt("pictogramSetting", 5);
+        landscapeSetting = settings.getBoolean("landscapeSetting", true);
     }
 
-    private void setupOrientationSetting() {
+    private void setupScreenSetting() {
         RadioGroup orientationButtons = (RadioGroup) findViewById(R.id.RadioButtons);
         if (landscapeSetting == true) {
             orientationButtons.check(R.id.landscapeButton);
@@ -70,13 +65,15 @@ public class SettingsActivity extends Activity {
                 landscapeSetting = false;
                 break;
         }
-        Log.d("DebugYeah", "LandscapeOption is " + Boolean.toString(landscapeSetting));
     }
 
-    private void setupPictogramSetting() {
+    private void setupShownPictogramSetting() {
         final GSeekBar pictogramSlider = (GSeekBar) findViewById(R.id.pictogram_slider);
         final GTextView pictogramSliderText = (GTextView) findViewById(R.id.pictogram_slider_text);
+
+        //Set slider and text to initial values. Slider progress works in percent, but is divided to limit the option between 1-7
         pictogramSliderText.setText(Integer.toString(pictogramSetting) + " piktogrammer");
+        pictogramSlider.setProgress((int) Math.round(pictogramSetting*14.285714285714285714285714285714));
 
         pictogramSlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -84,28 +81,20 @@ public class SettingsActivity extends Activity {
                 pictogramSetting = (int) Math.round(progress/14.285714285714285714285714285714);
                 pictogramSliderText.setText(pictogramSetting + " piktogrammer");
             }
-
             @Override
             public void onStartTrackingTouch (SeekBar seekBar) {
-
             }
-
             @Override
             public void onStopTrackingTouch (SeekBar seekBar) {
-
             }
-
         });
     }
 
     private void saveSettings() {
-        Helper helper = new Helper(this);
-
-        try {
-            helper = new Helper(this);
-        } catch (Exception e) {
-        }
-
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putInt("pictogramSetting", pictogramSetting);
+        editor.putBoolean("landscapeSetting", landscapeSetting);
+        editor.commit();
     }
 
     private void finishActivity(){
@@ -115,15 +104,13 @@ public class SettingsActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-
         saveSettings();
         finishActivity();
     }
 
     @Override
     protected void onStop() {
-        //assumeMinimize kills the entire application if minimized
-        // in any other ways than opening Pictosearch or inserting a nested Sequence
+        //assumeMinimize kills the entire application if minimized while assumeMinimize is true
         if (assumeMinimize) {
             MainActivity.activityToKill.finish();
             finishActivity();

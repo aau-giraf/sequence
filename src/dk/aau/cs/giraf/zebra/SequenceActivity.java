@@ -186,10 +186,15 @@ public class SequenceActivity extends Activity {
             //If no changes has been made to Sequence, call SequenceViewer. Otherwise display Dialog, prompting user to save Sequence first
             @Override
             public void onClick(View v) {
-                if (isNew == false && sequence.getFramesList().equals(helper.sequenceController.getSequenceAndFrames(sequence.getId()).getFramesList())) {
-                    callSequenceViewer();
-                } else {
+
+                if (isNew) {
                     showpreviewDialog(v);
+                } else if (!sequence.getFramesList().equals(helper.sequenceController.getSequenceAndFrames(sequence.getId()).getFramesList())) {
+                    showpreviewDialog(v);
+                } else if (!sequenceTitleView.getText().equals(sequence.getName())) {
+                    showpreviewDialog(v);
+                } else {
+                    callSequenceViewer();
                 }
             }
         });

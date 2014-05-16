@@ -65,10 +65,7 @@ public class SequenceActivity extends Activity {
     public static SequenceAdapter choiceAdapter;
     private List<Frame> tempFrameList;
     private List<Pictogram> tempPictogramList = new ArrayList<Pictogram>();
-	private GButton cancelButton;
-    private GButton saveButton;
-    private GButton addButton;
-    private GButton previewButton;
+    private GButton backButton;
 	private GButton sequenceImageButton;
     private EditText sequenceTitleView;
 	private final String PICTO_ADMIN_PACKAGE = "dk.aau.cs.giraf.pictosearch";
@@ -77,6 +74,8 @@ public class SequenceActivity extends Activity {
 	private final int PICTO_SEQUENCE_IMAGE_CALL = 345;
 	private final int PICTO_EDIT_PICTOGRAM_CALL = 456;
 	private final int PICTO_NEW_PICTOGRAM_CALL = 567;
+    private final int SEQUENCE_VIEWER_CALL = 1337;
+    private final int NESTED_SEQUENCE_CALL = 40;
     public static Activity activityToKill;
     private Helper helper;
 
@@ -154,25 +153,17 @@ public class SequenceActivity extends Activity {
 
     private void setupButtons() {
         //Creates all buttons in Activity and their listeners
-        cancelButton = (GButton) findViewById(R.id.cancel_button);
-        saveButton = (GButton) findViewById(R.id.save_button);
-        addButton = (GButton) findViewById(R.id.add_button);
-        previewButton = (GButton) findViewById(R.id.preview_button);
+        GButton saveButton = (GButton) findViewById(R.id.save_button);
+        GButton addButton = (GButton) findViewById(R.id.add_button);
+        GButton previewButton = (GButton) findViewById(R.id.preview_button);
+        backButton = (GButton) findViewById(R.id.cancel_button);
         sequenceImageButton = (GButton) findViewById(R.id.sequence_image);
 
         saveButton.setOnClickListener(new ImageButton.OnClickListener() {
         //Show Dialog to save Sequence when clicking the Save Button
             @Override
             public void onClick(View v) {
-                showSaveDialog(v);
-            }
-        });
-
-        cancelButton.setOnClickListener(new ImageButton.OnClickListener() {
-        //Show Exit Dialog when clicking the Cancel Button
-            @Override
-            public void onClick(View v) {
-                showExitDialog(v);
+                createAndShowSaveDialog(v);
             }
         });
 
@@ -180,7 +171,7 @@ public class SequenceActivity extends Activity {
         //Show Add dialog when clicking the Add Button
             @Override
             public void onClick(View v) {
-                showAddDialog(v);
+                createAndShowAddDialog(v);
             }
         });
 
@@ -198,6 +189,14 @@ public class SequenceActivity extends Activity {
                 } else {
                     callSequenceViewer();
                 }
+            }
+        });
+
+        backButton.setOnClickListener(new ImageButton.OnClickListener() {
+            //Show Back Dialog when clicking the Cancel Button
+            @Override
+            public void onClick(View v) {
+                createAndShowBackDialog(v);
             }
         });
 
@@ -306,26 +305,10 @@ public class SequenceActivity extends Activity {
         }
     }
 
-    private void showSaveDialog(View v) {
-        GDialogMessage saveDialog = new GDialogMessage(v.getContext(), R.drawable.save,
-                "Gem Sekvens",
-                "Du er ved at gemme sekvensen",
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        boolean sequenceOk;
-                        sequenceOk = checkSequenceBeforeSave(v);
-                        if (sequenceOk) {
-                            finishActivity();
-                        }
-                    }
-                });
-        saveDialog.show();
-    }
-
     private boolean checkSequenceBeforeSave(View v) {
+        //Checks if Sequence is empty. If not empty, save it and return
         if (sequence.getFramesList().size()== 0) {
-            createAlertDialog(v);
+            createAndShowErrorDialog(v);
             return false;
         } else {
             saveChanges();
@@ -360,89 +343,69 @@ public class SequenceActivity extends Activity {
         }
     }
 
-    private void showExitDialog(View v) {
-        backDialog exitEditting = new backDialog(v.getContext());
-        exitEditting.show();
+    private void createAndShowSaveDialog(View v) {
+        //Creates a dialog for saving Sequence. If Sequence is saved succesfully, exit Activity
+        GDialogMessage saveDialog = new GDialogMessage(v.getContext(), R.drawable.save,
+                "Gem Sekvens",
+                "Du er ved at gemme sekvensen",
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        boolean sequenceOk;
+                        sequenceOk = checkSequenceBeforeSave(v);
+                        if (sequenceOk) {
+                            finishActivity();
+                        }
+                    }
+                });
+        saveDialog.show();
     }
 
-    private void showAddDialog(View v) {
-        addDialog addFrame = new addDialog(v.getContext());
+    private void createAndShowBackDialog(View v) {
+        //Create instance of BackDialog class and display it
+        BackDialog backDialog = new BackDialog(v.getContext());
+        backDialog.show();
+    }
+
+    private void createAndShowAddDialog(View v) {
+        //Create instance of AddDialog and display it
+        AddDialog addFrame = new AddDialog(v.getContext());
         addFrame.show();
     }
 
-    private void showChoiceDialog(View v) {
-        choiceDialog ChoiceDialog = new choiceDialog(v.getContext());
-        ChoiceDialog.show();
+    private void createAndShowChoiceDialog(View v) {
+        //Create instance of ChoiceDialog and display it
+        ChoiceDialog choiceDialog = new ChoiceDialog(v.getContext());
+        choiceDialog.show();
     }
 
-    private void showNestedSequenceDialog(View v) {
+    private void createAndShowNestedDialog(View v) {
+        //Creates a Dialog for information. Clicking OK starts MainActivity in nestedMode
         GDialogMessage nestedDialog = new GDialogMessage(v.getContext(),
+                //TODO: Find a better icon than the ic_launcher icon
                 R.drawable.ic_launcher,
                 "Åbner sekvensvalg",
                 "Et nyt vindue åbnes, hvor du kan vælge en anden sekvens at indsætte",
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        isInEditMode = false;
                         assumeMinimize = false;
+
+                        //Put required Intents to set up Nested Mode
                         Intent intent = new Intent(getApplication(), MainActivity.class);
                         intent.putExtra("insertSequence", true);
                         intent.putExtra("currentGuardianID", guardian.getId());
                         intent.putExtra("currentChildID", childId);
-                        startActivityForResult(intent, 1);
-                        isInEditMode = true;
+                        startActivityForResult(intent, NESTED_SEQUENCE_CALL);
                     }
                 });
 
         nestedDialog.show();
     }
 
-    private class backDialog extends GDialog {
-
-        public backDialog(Context context) {
-
-            super(context);
-
-            this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.exit_sequence_dialog,null));
-
-            GButton saveChanges = (GButton) findViewById(R.id.save_changes);
-            GButton discardChanges = (GButton) findViewById(R.id.discard_changes);
-            GButton returntoEditting = (GButton) findViewById(R.id.return_to_editting);
-
-            saveChanges.setOnClickListener(new GButton.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    boolean sequenceOk;
-                    sequenceOk = checkSequenceBeforeSave(v);
-                    dismiss();
-                    if (sequenceOk) {
-                        finishActivity();
-                    }
-                }
-            });
-
-            discardChanges.setOnClickListener(new GButton.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    dismiss();
-                    finishActivity();
-                }
-            });
-
-            returntoEditting.setOnClickListener(new GButton.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    dismiss();
-                }
-            });
-        }
-    }
-
-    private void createAlertDialog(View v) {
-        final GDialogAlert alertDialog = new GDialogAlert(v.getContext(), R.drawable.delete,
+    private void createAndShowErrorDialog(View v) {
+        //Creates alertDialog to display error. Clicking Ok dismisses the Dialog
+        GDialogAlert alertDialog = new GDialogAlert(v.getContext(), R.drawable.delete,
                 "Fejl",
                 "Du kan ikke gemme en tom Sekvens",
                 new View.OnClickListener(){
@@ -452,232 +415,96 @@ public class SequenceActivity extends Activity {
         alertDialog.show();
     }
 
-    private class addDialog extends GDialog {
-
-        private addDialog(Context context) {
-            super(context);
-
-            this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.add_frame_dialog,null));
-
-            GButton getSequence = (GButton) findViewById(R.id.get_sequence);
-            GButton getPictogram = (GButton) findViewById(R.id.get_pictogram);
-            GButton getChoice = (GButton) findViewById(R.id.get_choice);
-
-            getSequence.setOnClickListener(new GButton.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    showNestedSequenceDialog(v);
-                    dismiss();
-                }
-            });
-            getPictogram.setOnClickListener(new GButton.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    callPictoAdmin(PICTO_NEW_PICTOGRAM_CALL);
-                    dismiss();
-                }
-            });
-            getChoice.setOnClickListener(new GButton.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    choiceMode = true;
-                    dismiss();
-                    showChoiceDialog(v);
-                }
-            });
-        }
-    }
-
-    private class choiceDialog extends GDialog {
-
-        private choiceDialog(Context context) {
-            super(context);
-
-            choice.getFramesList().clear();
-            if ( pictogramEditPos != -1 ) {
-                for (int i = 0; i < adapter.getItem(pictogramEditPos).getPictogramList().size(); i++)
-                {
-                    Frame frame = new Frame();
-                    frame.setPictogramId(adapter.getItem(pictogramEditPos).getPictogramList().get(i).getId());
-                    choice.addFrame(frame);
-                }
-            }
-
-            this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.choice_dialog,null));
-
-            GButton saveChoice = (GButton) findViewById(R.id.save_choice);
-            GButton discardChoice = (GButton) findViewById(R.id.discard_choice);
-
-            //Adapter to display a list of pictograms in the choice dialog
-            choiceAdapter = setupchoiceAdapter();
-
-            saveChoice.setOnClickListener(new GButton.OnClickListener(){
-
-                @Override
-                public void onClick(View v) {
-                    tempFrameList = sequence.getFramesList();
-                    Frame frame = new Frame();
-                    if(tempPictogramList == null) {
-                        //TODO: Display message that user can not save empty choice.
-                        return;
-                    }
-                    frame.setPictogramList(tempPictogramList);
-                    frame.setPictogramId(tempPictogramList.get(0).getId());
-
-
-                    if (pictogramEditPos == -1){
-                        sequence.addFrame(frame);
-                        pictogramEditPos = tempFrameList.size()-1;
-                    } else {
-                        sequence.getFramesList().get(pictogramEditPos).setPictogramList(tempPictogramList);
-                    }
-                    adapter.notifyDataSetChanged();
-                    choiceMode = false;
-                    pictogramEditPos = -1;
-                    dismiss();
-                }
-            });
-            discardChoice.setOnClickListener(new GButton.OnClickListener(){
-                @Override
-                public void onClick(View v) {
-                    choiceMode = false;
-                    dismiss();
-                }
-            });
-            setupChoiceGroup(choiceAdapter);
-        }
-
-        private SequenceViewGroup setupChoiceGroup(
-                final SequenceAdapter adapter) {
-            final SequenceViewGroup choiceGroup = (SequenceViewGroup) findViewById(R.id.choice_view_group);
-            choiceGroup.setEditModeEnabled(isInEditMode);
-            choiceGroup.setAdapter(adapter);
-
-            // Handle rearrange
-            choiceGroup
-                    .setOnRearrangeListener(new SequenceViewGroup.OnRearrangeListener() {
-                        @Override
-                        public void onRearrange(int indexFrom, int indexTo) {
-                            adapter.notifyDataSetChanged();
-                        }
-                    });
-
-
-
-            // Handle new view
-            choiceGroup
-                    .setOnNewButtonClickedListener(new OnNewButtonClickedListener() {
-                        @Override
-                        public void onNewButtonClicked() {
-                            final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.choice_view_group);
-                            sequenceGroup.liftUpAddNewButton();
-
-                            callPictoAdmin(PICTO_NEW_PICTOGRAM_CALL);
-                        }
-                    });
-
-            choiceGroup.setOnItemClickListener(new OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapter, View view,
-                                        int position, long id) {
-                    pictogramEditPos = position;
-                    callPictoAdmin(PICTO_EDIT_PICTOGRAM_CALL);
-                }
-            });
-
-
-        return choiceGroup;
-        }
-    }
-
 	private SequenceViewGroup setupSequenceViewGroup(final SequenceAdapter adapter) {
+        //The SequenceViewGroup class takes care of most of the required functionality, including size properties, dragging and rearranging
+
+        //Set up adapter to display the Sequence
 		final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup);
 		sequenceGroup.setEditModeEnabled(isInEditMode);
 		sequenceGroup.setAdapter(adapter);
 
-		// Handle rearrange
-		sequenceGroup
-				.setOnRearrangeListener(new SequenceViewGroup.OnRearrangeListener() {
-					@Override
-					public void onRearrange(int indexFrom, int indexTo) {
-						adapter.notifyDataSetChanged();
-					}
-				});
-
-		// Handle new view
-		sequenceGroup
-				.setOnNewButtonClickedListener(new OnNewButtonClickedListener() {
+		//When clicking the big "+", lift up the view and show the Add Dialog
+		sequenceGroup.setOnNewButtonClickedListener(new OnNewButtonClickedListener() {
 					@Override
 					public void onNewButtonClicked() {
 						final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup);
 						sequenceGroup.liftUpAddNewButton();
-                        showAddDialog(sequenceGroup);
+                        createAndShowAddDialog(sequenceGroup);
 					}
 				});
 
+        //If clicking an item, save the position, save the Frame, and find out what kind of Frame it is. Then perform relevant action
 		sequenceGroup.setOnItemClickListener(new OnItemClickListener() {
 			@Override
-			public void onItemClick(AdapterView<?> adapter, View view,
-					int position, long id) {
+			public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+
+                //Save Frame and Position
 				pictogramEditPos = position;
+                Frame frame = sequence.getFramesList().get(position);
 
                 //Perform action depending on the type of pictogram clicked.
-                Frame frame = sequence.getFramesList().get(position);
                 checkFrameMode(frame, view);
 			}
 		});
+
+        //Handle Rearrange
+        sequenceGroup.setOnRearrangeListener(new SequenceViewGroup.OnRearrangeListener() {
+            @Override
+            public void onRearrange(int indexFrom, int indexTo) {
+                adapter.notifyDataSetChanged();
+            }
+        });
 
 		return sequenceGroup;
 	}
 
 	private SequenceAdapter setupAdapter() {
+        //Sets up the adapter for the Sequence to display
 		final SequenceAdapter adapter = new SequenceAdapter(this, sequence);
 
-		// Setup delete handler.
+		//Adds a Delete Icon to all Frames which deletes the relevant Frame on click.
 		adapter.setOnAdapterGetViewListener(new OnAdapterGetViewListener() {
 			@Override
 			public void onAdapterGetView(final int position, final View view) {
-				if (view instanceof PictogramView) {
-					PictogramView pictoView = (PictogramView) view;
-					pictoView
-							.setOnDeleteClickListener(new OnDeleteClickListener() {
-								@Override
-								public void onDeleteClick() {
-                                    sequence.getFramesList().remove(position);
-									adapter.notifyDataSetChanged();
-								}
-							});
-				}
-			}
+                if (view instanceof PictogramView) {
+                    //Cast view to PictogramView so the onDeleteClickListener can be set
+                    PictogramView v = (PictogramView) view;
+                    v.setOnDeleteClickListener(new OnDeleteClickListener() {
+                        @Override
+                        public void onDeleteClick() {
+                            //Remove frame and update Adapter
+                            sequence.getFramesList().remove(position);
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+                }
+            }
 		});
-
 		return adapter;
 	}
 
-    private SequenceAdapter setupchoiceAdapter() {
+    private SequenceAdapter setupChoiceAdapter() {
+        //Sets up the adapter for the Choice Frames
         final SequenceAdapter adapter = new SequenceAdapter(this, choice);
 
-        // Setup delete handler.
+        //Adds a Delete Icon to all Frames which deletes the relevant Frame on click.
         adapter.setOnAdapterGetViewListener(new OnAdapterGetViewListener() {
             @Override
             public void onAdapterGetView(final int position, final View view) {
                 if (view instanceof PictogramView) {
-                    PictogramView pictoView = (PictogramView) view;
-                    pictoView
-                            .setOnDeleteClickListener(new OnDeleteClickListener() {
-                                @Override
-                                public void onDeleteClick() {
-                                    choice.getFramesList().remove(position);
-                                    adapter.notifyDataSetChanged();
-                                }
-                            });
+                    //Cast view to PictogramView so the onDeleteClickListener can be set
+                    PictogramView v = (PictogramView) view;
+                    v.setOnDeleteClickListener(new OnDeleteClickListener() {
+                        @Override
+                        public void onDeleteClick() {
+                            //Remove frame and update Adapter
+                            choice.getFramesList().remove(position);
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
                 }
             }
         });
-
         return adapter;
     }
 
@@ -685,10 +512,7 @@ public class SequenceActivity extends Activity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
-		// Remove the highlight from the add pictogram button
-		final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup);
-		sequenceGroup.placeDownAddNewButton();
-
+        //If Activity Result is OK, call relevant method depending on the RequestCode used to launch Activity with
 		if (resultCode == RESULT_OK) {
 			switch (requestCode) {
 
@@ -701,38 +525,53 @@ public class SequenceActivity extends Activity {
 				    break;
 
 			    case PICTO_NEW_PICTOGRAM_CALL:
+                    // Remove the highlighting from the add pictogram button
+                    final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup);
+                    sequenceGroup.placeDownAddNewButton();
+
 				    OnNewPictogramResult(data);
 				    break;
 
-                case 1:
+                case NESTED_SEQUENCE_CALL:
                     onNestedSequenceResult(data);
                     break;
 
-
-			default:
-				break;
+			    default:
+				    break;
 			}
 		}
 	}
 
     private void onNestedSequenceResult(Intent data){
-        int id = data.getExtras().getInt("nestedSequenceId");
+        //Get the Nested Sequence Id from Extras
+        int nestedSequenceId = data.getExtras().getInt("nestedSequenceId");
 
+        //If Nested Sequence was inserted on new position, save in a new Frame in the Sequence
         if (pictogramEditPos == -1) {
+            //Create new Frame and set relevant Data
             Frame frame = new Frame();
-            frame.setNestedSequence(id);
+            frame.setNestedSequence(nestedSequenceId);
+
+            //Create helper to give the Frame the first Image from the Nested Sequence (Used for display)
             try {
                 helper = new Helper(getBaseContext());
             } catch (Exception e) {
             }
-            frame.setPictogramId(helper.sequenceController.getSequenceById(id).getPictogramId());
+
+            frame.setPictogramId(helper.sequenceController.getSequenceById(nestedSequenceId).getPictogramId());
+
+            //Add Frame to the Sequence
             sequence.addFrame(frame);
         }
+        //If Nested Sequence was inserted on an existing Frame, set the first Image from the Nested Sequence and overwrite Frame.
         else {
-            sequence.getFramesList().get(pictogramEditPos).setNestedSequence(id);
-            sequence.getFramesList().get(pictogramEditPos).setPictogramId(helper.sequenceController.getSequenceById(id).getPictogramId());
+            sequence.getFramesList().get(pictogramEditPos).setNestedSequence(nestedSequenceId);
+            sequence.getFramesList().get(pictogramEditPos).setPictogramId(helper.sequenceController.getSequenceById(nestedSequenceId).getPictogramId());
+
+            //Reset the position to edit on
             pictogramEditPos = -1;
         }
+        //Update adapter with the new Data
         adapter.notifyDataSetChanged();
     }
 
@@ -841,7 +680,7 @@ public class SequenceActivity extends Activity {
         intent.putExtra("landscapeMode", landscapeSetting);
         intent.putExtra("visiblePictogramCount", pictogramSetting);
         intent.putExtra("callerType", "Zebra");
-        startActivityForResult(intent, 2);
+        startActivityForResult(intent, SEQUENCE_VIEWER_CALL);
     }
 
     private void showpreviewDialog(View v) {
@@ -869,7 +708,7 @@ public class SequenceActivity extends Activity {
     @Override
     public void onBackPressed() {
         if (isInEditMode) {
-            cancelButton.performClick();
+            backButton.performClick();
         } else {
             super.onBackPressed();
         }
@@ -893,12 +732,197 @@ public class SequenceActivity extends Activity {
     private void checkFrameMode(Frame frame, View v) {
 
         if (frame.getNestedSequence() != 0) {
-            showNestedSequenceDialog(v);
+            createAndShowNestedDialog(v);
 
         } else if (frame.getPictogramList().size() > 0) {
-            showChoiceDialog(v);
+            createAndShowChoiceDialog(v);
         } else {
             callPictoAdmin(PICTO_EDIT_PICTOGRAM_CALL);
             }
         }
+
+    private class AddDialog extends GDialog {
+
+        private AddDialog(Context context) {
+            super(context);
+
+            this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.add_frame_dialog,null));
+
+            GButton getSequence = (GButton) findViewById(R.id.get_sequence);
+            GButton getPictogram = (GButton) findViewById(R.id.get_pictogram);
+            GButton getChoice = (GButton) findViewById(R.id.get_choice);
+
+            getSequence.setOnClickListener(new GButton.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    createAndShowNestedDialog(v);
+                    dismiss();
+                }
+            });
+            getPictogram.setOnClickListener(new GButton.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    callPictoAdmin(PICTO_NEW_PICTOGRAM_CALL);
+                    dismiss();
+                }
+            });
+            getChoice.setOnClickListener(new GButton.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    choiceMode = true;
+                    dismiss();
+                    createAndShowChoiceDialog(v);
+                }
+            });
+        }
+    }
+
+    private class ChoiceDialog extends GDialog {
+
+        private ChoiceDialog(Context context) {
+            super(context);
+
+            choice.getFramesList().clear();
+            if ( pictogramEditPos != -1 ) {
+                for (int i = 0; i < adapter.getItem(pictogramEditPos).getPictogramList().size(); i++)
+                {
+                    Frame frame = new Frame();
+                    frame.setPictogramId(adapter.getItem(pictogramEditPos).getPictogramList().get(i).getId());
+                    choice.addFrame(frame);
+                }
+            }
+
+            this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.choice_dialog,null));
+
+            GButton saveChoice = (GButton) findViewById(R.id.save_choice);
+            GButton discardChoice = (GButton) findViewById(R.id.discard_choice);
+
+            //Adapter to display a list of pictograms in the choice dialog
+            choiceAdapter = setupChoiceAdapter();
+
+            saveChoice.setOnClickListener(new GButton.OnClickListener(){
+
+                @Override
+                public void onClick(View v) {
+                    tempFrameList = sequence.getFramesList();
+                    Frame frame = new Frame();
+                    if(tempPictogramList == null) {
+                        //TODO: Display message that user can not save empty choice.
+                        return;
+                    }
+                    frame.setPictogramList(tempPictogramList);
+                    frame.setPictogramId(tempPictogramList.get(0).getId());
+
+
+                    if (pictogramEditPos == -1){
+                        sequence.addFrame(frame);
+                        pictogramEditPos = tempFrameList.size()-1;
+                    } else {
+                        sequence.getFramesList().get(pictogramEditPos).setPictogramList(tempPictogramList);
+                    }
+                    adapter.notifyDataSetChanged();
+                    choiceMode = false;
+                    pictogramEditPos = -1;
+                    dismiss();
+                }
+            });
+            discardChoice.setOnClickListener(new GButton.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    choiceMode = false;
+                    dismiss();
+                }
+            });
+            setupChoiceGroup(choiceAdapter);
+        }
+
+        private SequenceViewGroup setupChoiceGroup(
+                final SequenceAdapter adapter) {
+            final SequenceViewGroup choiceGroup = (SequenceViewGroup) findViewById(R.id.choice_view_group);
+            choiceGroup.setEditModeEnabled(isInEditMode);
+            choiceGroup.setAdapter(adapter);
+
+            // Handle rearrange
+            choiceGroup
+                    .setOnRearrangeListener(new SequenceViewGroup.OnRearrangeListener() {
+                        @Override
+                        public void onRearrange(int indexFrom, int indexTo) {
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+
+
+
+            // Handle new view
+            choiceGroup
+                    .setOnNewButtonClickedListener(new OnNewButtonClickedListener() {
+                        @Override
+                        public void onNewButtonClicked() {
+                            final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.choice_view_group);
+                            sequenceGroup.liftUpAddNewButton();
+
+                            callPictoAdmin(PICTO_NEW_PICTOGRAM_CALL);
+                        }
+                    });
+
+            choiceGroup.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapter, View view,
+                                        int position, long id) {
+                    pictogramEditPos = position;
+                    callPictoAdmin(PICTO_EDIT_PICTOGRAM_CALL);
+                }
+            });
+
+
+            return choiceGroup;
+        }
+    }
+
+    private class BackDialog extends GDialog {
+
+        public BackDialog(Context context) {
+
+            super(context);
+
+            this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.exit_sequence_dialog,null));
+
+            GButton saveChanges = (GButton) findViewById(R.id.save_changes);
+            GButton discardChanges = (GButton) findViewById(R.id.discard_changes);
+            GButton cancel = (GButton) findViewById(R.id.return_to_editting);
+
+            saveChanges.setOnClickListener(new GButton.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    boolean sequenceOk;
+                    sequenceOk = checkSequenceBeforeSave(v);
+                    dismiss();
+                    if (sequenceOk) {
+                        finishActivity();
+                    }
+                }
+            });
+
+            discardChanges.setOnClickListener(new GButton.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    dismiss();
+                    finishActivity();
+                }
+            });
+
+            cancel.setOnClickListener(new GButton.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    dismiss();
+                }
+            });
+        }
+    }
 }

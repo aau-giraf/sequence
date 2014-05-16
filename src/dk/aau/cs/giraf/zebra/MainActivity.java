@@ -234,117 +234,6 @@ public class MainActivity extends Activity {
         copyDialog.show();
     }
 
-    private class deletingSequencesDialog extends GDialog {
-
-        public deletingSequencesDialog(final Context context) {
-            //Dialog where user can sort Sequences to delete
-            super(context);
-            this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.deleting_sequences,null));
-
-            //Set up two GridViews for the Delete operation
-            copyAdapter = new SequenceListAdapter(this.getContext(), sequences);
-            copyGrid = (GGridView) findViewById(R.id.existing_sequences);
-            copyGrid.setAdapter(copyAdapter);
-            setCopyGridItemClickListener(copyGrid);
-
-            pasteAdapter = new SequenceListAdapter(this.getContext(), tempSequenceList);
-            pasteGrid = (GGridView) findViewById(R.id.empty_sequences);
-            pasteGrid.setAdapter(pasteAdapter);
-            setPasteGridItemClickListener(pasteGrid);
-
-            //Set up Delete and Back Buttons
-            GButton popupDelete = (GButton) findViewById(R.id.popup_accept);
-            GButton popupBack = (GButton) findViewById(R.id.popup_back);
-
-            popupDelete.setOnClickListener(new GButton.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    //Delete all selected Sequences and update the main Sequence Grid
-                    for (Sequence seq : tempSequenceList) {
-                        try {
-                            helper = new Helper(context);
-                        } catch (Exception e) {
-                        }
-                        helper.sequenceController.removeSequence(seq);
-                    }
-                    updateSequences();
-                    dismiss();
-                }
-            });
-
-            popupBack.setOnClickListener(new GButton.OnClickListener() {
-                //Cancel and close Dialog
-                @Override
-                public void onClick(View v) {
-                    dismiss();
-                }
-            });
-        }
-    }
-
-    private class copyingSequencesDialog extends GDialog {
-
-        public copyingSequencesDialog(Context context) {
-            //Dialog where user can pick Sequences to copy to other Children
-            super(context);
-            this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.copying_sequences, null));
-
-            //Creates helper to fetch data from the Database
-            try {
-                helper = new Helper(context);
-            } catch (Exception e) {
-            }
-
-            //Set up two GridViews for the Copy operation
-            copyAdapter = new SequenceListAdapter(this.getContext(), sequences);
-            copyGrid = (GGridView) findViewById(R.id.existing_sequences);
-            copyGrid.setAdapter(copyAdapter);
-            setCopyGridItemClickListener(copyGrid);
-
-            pasteAdapter = new SequenceListAdapter(this.getContext(), tempSequenceList);
-            pasteGrid = (GGridView) findViewById(R.id.empty_sequences);
-            pasteGrid.setAdapter(pasteAdapter);
-            setPasteGridItemClickListener(pasteGrid);
-
-            //Set up Buttons
-            GButton popupCopy = (GButton) findViewById(R.id.popup_copy_accept);
-            GButton popupBack = (GButton) findViewById(R.id.popup_copy_back);
-
-            //Create a MultiProfileSelector given a fresh list of Profiles to store chosen profiles in
-            List<Profile> children = new ArrayList<Profile>();
-
-            final GMultiProfileSelector childSelector = new GMultiProfileSelector(context, helper.profilesHelper.getChildrenByGuardian(guardian), children);
-            childSelector.setMyOnCloseListener(new GMultiProfileSelector.onCloseListener() {
-                //When closing the MultiProileSelector, copy all chosen Sequences to all chosen Children
-                @Override
-                public void onClose(List<Profile> selectedProfiles) {
-                    for (Profile p : selectedProfiles){
-                        for (Sequence s: tempSequenceList) {
-                            helper.sequenceController.copySequenceAndFrames(s, p);
-                        }
-                    }
-                }
-            });
-
-            popupCopy.setOnClickListener(new GButton.OnClickListener() {
-            //Show the MultiProfileSelector when clicking the Copy Button
-                @Override
-                public void onClick(View v) {
-                    childSelector.show();
-                }
-            });
-
-            popupBack.setOnClickListener(new GButton.OnClickListener() {
-            //Cancel and close when clicking the Back Button
-                @Override
-                public void onClick(View v) {
-                    dismiss();
-                }
-            });
-        }
-    }
-
     private void setCopyGridItemClickListener(GridView copyGrid) {
         //When clicking a Sequence in the CopyGrid (Left Grid), add to temporary list and the PasteGrid (Right Grid)
         clearTempLists();
@@ -561,5 +450,116 @@ public class MainActivity extends Activity {
             assumeMinimize = true;
         }
         super.onStop();
+    }
+
+    private class deletingSequencesDialog extends GDialog {
+
+        public deletingSequencesDialog(final Context context) {
+            //Dialog where user can sort Sequences to delete
+            super(context);
+            this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.deleting_sequences,null));
+
+            //Set up two GridViews for the Delete operation
+            copyAdapter = new SequenceListAdapter(this.getContext(), sequences);
+            copyGrid = (GGridView) findViewById(R.id.existing_sequences);
+            copyGrid.setAdapter(copyAdapter);
+            setCopyGridItemClickListener(copyGrid);
+
+            pasteAdapter = new SequenceListAdapter(this.getContext(), tempSequenceList);
+            pasteGrid = (GGridView) findViewById(R.id.empty_sequences);
+            pasteGrid.setAdapter(pasteAdapter);
+            setPasteGridItemClickListener(pasteGrid);
+
+            //Set up Delete and Back Buttons
+            GButton popupDelete = (GButton) findViewById(R.id.popup_accept);
+            GButton popupBack = (GButton) findViewById(R.id.popup_back);
+
+            popupDelete.setOnClickListener(new GButton.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    //Delete all selected Sequences and update the main Sequence Grid
+                    for (Sequence seq : tempSequenceList) {
+                        try {
+                            helper = new Helper(context);
+                        } catch (Exception e) {
+                        }
+                        helper.sequenceController.removeSequence(seq);
+                    }
+                    updateSequences();
+                    dismiss();
+                }
+            });
+
+            popupBack.setOnClickListener(new GButton.OnClickListener() {
+                //Cancel and close Dialog
+                @Override
+                public void onClick(View v) {
+                    dismiss();
+                }
+            });
+        }
+    }
+
+    private class copyingSequencesDialog extends GDialog {
+
+        public copyingSequencesDialog(Context context) {
+            //Dialog where user can pick Sequences to copy to other Children
+            super(context);
+            this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.copying_sequences, null));
+
+            //Creates helper to fetch data from the Database
+            try {
+                helper = new Helper(context);
+            } catch (Exception e) {
+            }
+
+            //Set up two GridViews for the Copy operation
+            copyAdapter = new SequenceListAdapter(this.getContext(), sequences);
+            copyGrid = (GGridView) findViewById(R.id.existing_sequences);
+            copyGrid.setAdapter(copyAdapter);
+            setCopyGridItemClickListener(copyGrid);
+
+            pasteAdapter = new SequenceListAdapter(this.getContext(), tempSequenceList);
+            pasteGrid = (GGridView) findViewById(R.id.empty_sequences);
+            pasteGrid.setAdapter(pasteAdapter);
+            setPasteGridItemClickListener(pasteGrid);
+
+            //Set up Buttons
+            GButton popupCopy = (GButton) findViewById(R.id.popup_copy_accept);
+            GButton popupBack = (GButton) findViewById(R.id.popup_copy_back);
+
+            //Create a MultiProfileSelector given a fresh list of Profiles to store chosen profiles in
+            List<Profile> children = new ArrayList<Profile>();
+
+            final GMultiProfileSelector childSelector = new GMultiProfileSelector(context, helper.profilesHelper.getChildrenByGuardian(guardian), children);
+            childSelector.setMyOnCloseListener(new GMultiProfileSelector.onCloseListener() {
+                //When closing the MultiProileSelector, copy all chosen Sequences to all chosen Children
+                @Override
+                public void onClose(List<Profile> selectedProfiles) {
+                    for (Profile p : selectedProfiles){
+                        for (Sequence s: tempSequenceList) {
+                            helper.sequenceController.copySequenceAndFrames(s, p);
+                        }
+                    }
+                }
+            });
+
+            popupCopy.setOnClickListener(new GButton.OnClickListener() {
+                //Show the MultiProfileSelector when clicking the Copy Button
+                @Override
+                public void onClick(View v) {
+                    childSelector.show();
+                }
+            });
+
+            popupBack.setOnClickListener(new GButton.OnClickListener() {
+                //Cancel and close when clicking the Back Button
+                @Override
+                public void onClick(View v) {
+                    dismiss();
+                }
+            });
+        }
     }
 }

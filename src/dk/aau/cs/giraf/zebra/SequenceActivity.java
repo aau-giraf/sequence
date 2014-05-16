@@ -48,8 +48,8 @@ import dk.aau.cs.giraf.oasis.lib.models.Pictogram;
 
 public class SequenceActivity extends Activity {
 
-    private Profile selectedChild;
     private Profile guardian;
+    private Profile selectedChild;
     private boolean isInEditMode;
     private boolean isNew;
     private boolean assumeMinimize = true;
@@ -98,7 +98,7 @@ public class SequenceActivity extends Activity {
 
     private void loadIntents() {
         Bundle extras = getIntent().getExtras();
-        childId = extras.getInt("profileId");
+        childId = extras.getInt("childId");
         sequenceId = extras.getInt("sequenceId");
         guardianId = extras.getInt("guardianId");
         isNew = extras.getBoolean("new");

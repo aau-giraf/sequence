@@ -31,6 +31,9 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.oasis.lib.models.Sequence;
 
 public class MainActivity extends Activity {
+
+    private Profile guardian;
+    private Profile selectedChild;
     private boolean nestedMode;
     private boolean assumeMinimize = true;
     private boolean childIsSet = false;
@@ -43,11 +46,9 @@ public class MainActivity extends Activity {
     private List<Sequence> sequences = new ArrayList<Sequence>();
     private List<Sequence> tempSequenceList = new ArrayList<Sequence>();
     private List<View> tempViewList = new ArrayList<View>();
-    public static Profile selectedChild;
     public static Activity activityToKill;
     private int childId;
     private Helper helper;
-    private Profile guardian;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +116,7 @@ public class MainActivity extends Activity {
                 //Launches settingsActivity
                 assumeMinimize = false;
                 Intent intent = new Intent(getApplication(), SettingsActivity.class);
+                intent.putExtra("childId", selectedChild.getId());
                 startActivity(intent);
             }
         });
@@ -446,7 +448,7 @@ public class MainActivity extends Activity {
                 assumeMinimize = false;
 
                 //Load Preferences
-                SharedPreferences settings = getSharedPreferences(SettingsActivity.class.getName() + Integer.toString(MainActivity.selectedChild.getId()), MODE_PRIVATE);
+                SharedPreferences settings = getSharedPreferences(SettingsActivity.class.getName() + Integer.toString(selectedChild.getId()), MODE_PRIVATE);
                 int pictogramSetting = settings.getInt("pictogramSetting", 5);
                 boolean landscapeSetting = settings.getBoolean("landscapeSetting", true);
 
@@ -509,7 +511,7 @@ public class MainActivity extends Activity {
         //Sets up relevant intents and starts SequenceActivity
         assumeMinimize = false;
         Intent intent = new Intent(getApplication(), SequenceActivity.class);
-        intent.putExtra("profileId", selectedChild.getId());
+        intent.putExtra("childId", selectedChild.getId());
         intent.putExtra("guardianId", guardian.getId());
         intent.putExtra("editMode", true);
         intent.putExtra("new", isNew);

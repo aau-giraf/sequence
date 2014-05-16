@@ -18,7 +18,7 @@ public class SettingsActivity extends Activity {
     private boolean assumeMinimize = true;
     private Integer pictogramSetting;
     private Boolean landscapeSetting;
-    private String childId = Integer.toString(MainActivity.selectedChild.getId());
+    private String childId;
     private SharedPreferences settings;
 
     @Override
@@ -27,6 +27,7 @@ public class SettingsActivity extends Activity {
         setContentView(R.layout.activity_settings);
 
         setColors();
+        getChildFromIntent();
         getSettingsByChild();
         setupScreenSetting();
         setupShownPictogramSetting();
@@ -37,6 +38,11 @@ public class SettingsActivity extends Activity {
         RelativeLayout topbarLayout = (RelativeLayout) findViewById(R.id.settings_bar);
         backgroundLayout.setBackgroundDrawable(GComponent.GetBackground(GComponent.Background.SOLID));
         topbarLayout.setBackgroundDrawable(GComponent.GetBackground(GComponent.Background.SOLID));
+    }
+
+    private void getChildFromIntent(){
+        //Get ChildId as String from Extras
+        childId = Integer.toString(getIntent().getExtras().getInt("childId"));
     }
 
     private void getSettingsByChild() {

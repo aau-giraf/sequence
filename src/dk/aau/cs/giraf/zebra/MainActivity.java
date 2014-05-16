@@ -82,7 +82,6 @@ public class MainActivity extends Activity {
         copyButton.setVisibility(View.INVISIBLE);
         settingsButton.setVisibility(View.INVISIBLE);
         childSelectButton.setVisibility(View.INVISIBLE);
-        exitButton.setVisibility(View.INVISIBLE);
 
         addButton.setOnClickListener(new OnClickListener() {
             //Enter SequenceActivity when clicking the Add Button

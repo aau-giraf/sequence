@@ -247,8 +247,24 @@ public class SequenceActivity extends Activity {
         sequenceTitleView.setOnFocusChangeListener(new OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    hideSoftKeyboardFromView(sequenceTitleView);
+                EditText sequenceTitle = (EditText) findViewById(R.id.sequence_title);
+                if (hasFocus) {
+                    // Enforces that the sequenceTitleView can not get larger than parent
+                    // For some reason the parent view overlaps with buttons. Therefore the width have to be 200 less than parent.
+                    // TODO: Figure our why. Probably an issue with activity_sequence.xml
+                    View container = findViewById(R.id.titles_container);
+                    int width = container.getWidth();
+                    sequenceTitleView.setMaxWidth(width-200);
+
+                    //Makes the hint text from the SequenceTitle transparent if sequenceTitle is blank
+                    if (sequenceTitle.getText().toString().equals("")) {
+                        sequenceTitle.setHintTextColor(Color.TRANSPARENT);
+                    }
+                } else {
+                    // Hides the keyboard and reverts hint color when sequenceTitle is not active
+                    InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    in.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    sequenceTitle.setHintTextColor(Color.parseColor("#55624319"));
                 }
             }
         });
@@ -281,37 +297,6 @@ public class SequenceActivity extends Activity {
                 createClearFocusListener(innerView);
             }
         }
-    }
-
-    private void hideSoftKeyboardFromView(View view) {
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-
-        sequenceTitleView.setOnFocusChangeListener(new OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                EditText sequenceTitle = (EditText) findViewById(R.id.sequence_title);
-                if (hasFocus) {
-
-                    // Enforces that the sequenceTitleView can not get larger than parent
-                    // For some reason the parent view overlaps with buttons. Therefore the width have to be 200 less than parent.
-                    // TODO: Figure our why. Probably an issue with activity_sequence.xml
-                    View container = findViewById(R.id.titles_container);
-                    int width = container.getWidth();
-                    sequenceTitleView.setMaxWidth(width-200);
-
-                    //Makes the hint text from the SequenceTitle transparent if sequenceTitle is blank
-                    if (sequenceTitle.getText().toString().equals("")) {
-                        sequenceTitle.setHintTextColor(Color.TRANSPARENT);
-                    }
-                } else {
-                    // Hides the keyboard and reverts hint color when sequenceTitle is not active
-                    InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    in.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                    sequenceTitle.setHintTextColor(Color.parseColor("#55624319"));
-                }
-            }
-        });
     }
 
     private void saveChanges() {

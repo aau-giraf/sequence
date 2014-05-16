@@ -1,6 +1,7 @@
 package dk.aau.cs.giraf.zebra;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -35,6 +36,7 @@ import java.util.List;
 import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GComponent;
 import dk.aau.cs.giraf.gui.GDialog;
+import dk.aau.cs.giraf.gui.GDialogAlert;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Frame;
@@ -281,7 +283,7 @@ public class SequenceActivity extends Activity {
         childName.setText(selectedChild.getName());
     }
 
-    public void createClearFocusListener(View view) {
+    private void createClearFocusListener(View view) {
         // Create listener to remove focus from EditText when something else is touched
         if (!(view instanceof EditText)) {
             view.setOnTouchListener(new View.OnTouchListener() {
@@ -304,17 +306,41 @@ public class SequenceActivity extends Activity {
         }
     }
 
-    private void saveChanges() {
+    private void showSaveDialog(View v) {
+        GDialogMessage saveDialog = new GDialogMessage(v.getContext(), R.drawable.save,
+                "Gem Sekvens",
+                "Du er ved at gemme sekvensen",
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        boolean sequenceOk;
+                        sequenceOk = checkSequenceBeforeSave(v);
+                        if (sequenceOk) {
+                            finishActivity();
+                        }
+                    }
+                });
+        saveDialog.show();
+    }
 
+    private boolean checkSequenceBeforeSave(View v) {
+        if (sequence.getFramesList().size()== 0) {
+            createAlertDialog(v);
+            return false;
+        } else {
+            saveChanges();
+            return true;
+        }
+    }
+
+    private void saveChanges() {
+        //Create helper to use Database Helpers
         try {
             helper = new Helper(this);
         } catch (Exception e) {
         }
 
-        if (sequence.getFramesList().size()== 0) {
-            //TODO: Display message that user is about to try saving an empty sequence.
-            return;
-        }
+        //Save name from Title to the Sequence
         sequence.setName(sequenceTitleView.getText().toString());
 
         //Set PosX of every frame to save the order in which the frames should be shown.
@@ -322,47 +348,34 @@ public class SequenceActivity extends Activity {
             sequence.getFramesList().get(i).setPosX(i);
         }
 
+        //If Sequence is new, set relevant properties and insert to Database
         if (isNew) {
             sequence.setProfileId(selectedChild.getId());
             sequence.setSequenceType(Sequence.SequenceType.SEQUENCE);
             helper.sequenceController.insertSequenceAndFrames(sequence);
         }
+        //If Sequence exists, modify in Database
         else {
             helper.sequenceController.modifySequenceAndFrames(sequence);
         }
-	}
-
-    public void showSaveDialog(View v) {
-        GDialogMessage saveDialog = new GDialogMessage(v.getContext(),
-                R.drawable.ic_launcher,
-                "Gem Sekvens",
-                "Du er ved at gemme sekvensen",
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        saveChanges();
-                        finishActivity();
-                    }
-                });
-        saveDialog.show();
     }
 
-    public void showExitDialog(View v) {
+    private void showExitDialog(View v) {
         backDialog exitEditting = new backDialog(v.getContext());
         exitEditting.show();
     }
 
-    public void showAddDialog(View v) {
+    private void showAddDialog(View v) {
         addDialog addFrame = new addDialog(v.getContext());
         addFrame.show();
     }
 
-    public void showChoiceDialog(View v) {
+    private void showChoiceDialog(View v) {
         choiceDialog ChoiceDialog = new choiceDialog(v.getContext());
         ChoiceDialog.show();
     }
 
-    public void showNestedSequenceDialog(View v) {
+    private void showNestedSequenceDialog(View v) {
         GDialogMessage nestedDialog = new GDialogMessage(v.getContext(),
                 R.drawable.ic_launcher,
                 "Åbner sekvensvalg",
@@ -384,7 +397,7 @@ public class SequenceActivity extends Activity {
         nestedDialog.show();
     }
 
-    public class backDialog extends GDialog {
+    private class backDialog extends GDialog {
 
         public backDialog(Context context) {
 
@@ -400,8 +413,12 @@ public class SequenceActivity extends Activity {
 
                 @Override
                 public void onClick(View v) {
-                    SequenceActivity.this.saveChanges();
-                    finishActivity();
+                    boolean sequenceOk;
+                    sequenceOk = checkSequenceBeforeSave(v);
+                    dismiss();
+                    if (sequenceOk) {
+                        finishActivity();
+                    }
                 }
             });
 
@@ -409,7 +426,7 @@ public class SequenceActivity extends Activity {
 
                 @Override
                 public void onClick(View v) {
-                    //TODO: Something leaks here. Figure out what. (See logcat)
+                    dismiss();
                     finishActivity();
                 }
             });
@@ -424,9 +441,20 @@ public class SequenceActivity extends Activity {
         }
     }
 
-    public class addDialog extends GDialog {
+    private void createAlertDialog(View v) {
+        final GDialogAlert alertDialog = new GDialogAlert(v.getContext(), R.drawable.delete,
+                "Fejl",
+                "Du kan ikke gemme en tom Sekvens",
+                new View.OnClickListener(){
+                    @Override public void onClick(View v) {
+                    }
+                });
+        alertDialog.show();
+    }
 
-        public addDialog(Context context) {
+    private class addDialog extends GDialog {
+
+        private addDialog(Context context) {
             super(context);
 
             this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.add_frame_dialog,null));
@@ -463,9 +491,9 @@ public class SequenceActivity extends Activity {
         }
     }
 
-    public class choiceDialog extends GDialog {
+    private class choiceDialog extends GDialog {
 
-        public choiceDialog(Context context) {
+        private choiceDialog(Context context) {
             super(context);
 
             choice.getFramesList().clear();
@@ -823,12 +851,16 @@ public class SequenceActivity extends Activity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v){
-                        saveChanges();
-                        callSequenceViewer();
+                        boolean sequenceOk;
+                        sequenceOk = checkSequenceBeforeSave(v);
+                        if (sequenceOk) {
+                            callSequenceViewer();
+                        }
                     }
                 });
         previewDialog.show();
     }
+
     private void finishActivity(){
         assumeMinimize = false;
         finish();

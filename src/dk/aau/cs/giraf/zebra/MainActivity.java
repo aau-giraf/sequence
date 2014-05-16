@@ -209,7 +209,7 @@ public class MainActivity extends Activity {
         updateSequences();
     }
 
-    public void updateSequences() {
+    private void updateSequences() {
         //Updates the list of Sequences by clearing and (re)loading a Childs Sequences from the Database
         tempSequenceList.clear();
 
@@ -224,17 +224,17 @@ public class MainActivity extends Activity {
         sequenceGrid.setAdapter(sequenceAdapter);
     }
 
-    public void showDeleteDialog(View v) {
+    private void showDeleteDialog(View v) {
         deletingSequencesDialog deleteDialog = new deletingSequencesDialog(v.getContext());
         deleteDialog.show();
     }
 
-    public void showCopyDialog(View v) {
+    private void showCopyDialog(View v) {
         copyingSequencesDialog copyDialog = new copyingSequencesDialog(v.getContext());
         copyDialog.show();
     }
 
-    public class deletingSequencesDialog extends GDialog {
+    private class deletingSequencesDialog extends GDialog {
 
         public deletingSequencesDialog(final Context context) {
             //Dialog where user can sort Sequences to delete
@@ -283,7 +283,7 @@ public class MainActivity extends Activity {
         }
     }
 
-    public class copyingSequencesDialog extends GDialog {
+    private class copyingSequencesDialog extends GDialog {
 
         public copyingSequencesDialog(Context context) {
             //Dialog where user can pick Sequences to copy to other Children

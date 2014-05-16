@@ -39,6 +39,7 @@ import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Frame;
+import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.zebra.PictogramView.OnDeleteClickListener;
 import dk.aau.cs.giraf.zebra.SequenceAdapter.OnAdapterGetViewListener;
 import dk.aau.cs.giraf.zebra.SequenceViewGroup.OnNewButtonClickedListener;
@@ -47,12 +48,14 @@ import dk.aau.cs.giraf.oasis.lib.models.Pictogram;
 
 public class SequenceActivity extends Activity {
 
+    private Profile selectedChild;
+    private Profile guardian;
     private boolean isInEditMode;
     private boolean isNew;
     private boolean assumeMinimize = true;
     public static boolean choiceMode = false;
 	private int guardianId;
-    private int profileId;
+    private int childId;
     private int sequenceId;
     private int pictogramEditPos = -1;
 	public static Sequence sequence;
@@ -85,72 +88,31 @@ public class SequenceActivity extends Activity {
         activityToKill = this;
 
 		loadIntents();
+        loadProfiles();
         loadSequence();
         setColors();
         setupFramesGrid();
         setupButtons();
-		initializeTopBar();
-
-		sequenceImageButton = (GButton) findViewById(R.id.sequence_image);
-
-		if (sequence.getPictogramId() == 0) {
-            Drawable d = getResources().getDrawable(R.drawable.add_sequence_picture);
-            sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
-		} else {
-            try {
-                helper = new Helper(this);
-            } catch (Exception e) {
-            }
-            Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(sequence.getPictogramId()).getImage());
-            sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
-		}
-
-		sequenceImageButton.setOnClickListener(new ImageView.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				if (isInEditMode) {
-					callPictoAdmin(PICTO_SEQUENCE_IMAGE_CALL);
-				}
-			}
-		});
-
-		sequenceTitleView.setOnFocusChangeListener(new OnFocusChangeListener() {
-
-			@Override
-			public void onFocusChange(View v, boolean hasFocus) {
-
-                EditText sequenceTitle = (EditText) findViewById(R.id.sequence_title);
-				if (hasFocus) {
-
-                    // Enforces that the sequenceTitleView can not get larger than parent
-                    // For some reason the parent view overlaps with buttons. Therefore the width have to be 200 less than parent.
-                    // TODO: Figure our why. Probably an issue with activity_sequence.xml
-                    View container = findViewById(R.id.titles_container);
-                    int width = container.getWidth();
-                    sequenceTitleView.setMaxWidth(width-200);
-
-                    //Makes the hint text from the SequenceTitle transparent if sequenceTitle is blank
-                    if (sequenceTitle.getText().toString().equals("")) {
-                        sequenceTitle.setHintTextColor(Color.TRANSPARENT);
-                    }
-				} else {
-					// Hides the keyboard and reverts hint color when sequenceTitle is not active
-					InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-					in.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                    sequenceTitle.setHintTextColor(Color.parseColor("#55624319"));
-				}
-			}
-		});
+		setupTopBar();
 	}
 
     private void loadIntents() {
         Bundle extras = getIntent().getExtras();
-        profileId = extras.getInt("profileId");
+        childId = extras.getInt("profileId");
         sequenceId = extras.getInt("sequenceId");
         guardianId = extras.getInt("guardianId");
         isNew = extras.getBoolean("new");
         isInEditMode = extras.getBoolean("editMode");
+    }
+
+    private void loadProfiles() {
+        //Create helper to load Child from Database
+        try {
+            helper = new Helper(this);
+        } catch (Exception e) {
+        }
+        selectedChild = helper.profilesHelper.getProfileById(childId);
+        guardian = helper.profilesHelper.getProfileById(guardianId);
     }
 
     private void loadSequence() {
@@ -195,6 +157,7 @@ public class SequenceActivity extends Activity {
         saveButton = (GButton) findViewById(R.id.save_button);
         addButton = (GButton) findViewById(R.id.add_button);
         previewButton = (GButton) findViewById(R.id.preview_button);
+        sequenceImageButton = (GButton) findViewById(R.id.sequence_image);
 
         saveButton.setOnClickListener(new ImageButton.OnClickListener() {
         //Show Dialog to save Sequence when clicking the Save Button
@@ -231,18 +194,45 @@ public class SequenceActivity extends Activity {
                 }
             }
         });
+
+        sequenceImageButton.setOnClickListener(new ImageView.OnClickListener() {
+            //If Sequence Image Button is clicked, call PictoAdmin to select an Image for the Sequence
+            @Override
+            public void onClick(View v) {
+                if (isInEditMode) {
+                    callPictoAdmin(PICTO_SEQUENCE_IMAGE_CALL);
+                }
+            }
+        });
+
+        //If no Image has been selected or the Sequence, display the Add Sequence Picture. Otherwise load the image for the Button
+        if (sequence.getPictogramId() == 0) {
+            Drawable d = getResources().getDrawable(R.drawable.add_sequence_picture);
+            sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
+        } else {
+            try {
+                helper = new Helper(this);
+            } catch (Exception e) {
+            }
+            Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(sequence.getPictogramId()).getImage());
+            sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
+        }
     }
 
-    private void initializeTopBar() {
+    private void setupTopBar() {
+        initializeSequenceTitle();
+        initializeChildTitle();
+    }
+
+    private void initializeSequenceTitle() {
+        //Set Sequence name in Title (if any)
         sequenceTitleView = (EditText) findViewById(R.id.sequence_title);
         sequenceTitleView.setText(sequence.getName());
 
         // Create listener to remove focus when "Done" is pressed on the keyboard
-        sequenceTitleView
-                .setOnEditorActionListener(new OnEditorActionListener() {
+        sequenceTitleView.setOnEditorActionListener(new OnEditorActionListener() {
                     @Override
-                    public boolean onEditorAction(TextView v, int actionId,
-                                                  KeyEvent event) {
+                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                         if (actionId == EditorInfo.IME_ACTION_DONE) {
                             EditText editText = (EditText) findViewById(R.id.sequence_title);
                             editText.clearFocus();
@@ -251,10 +241,10 @@ public class SequenceActivity extends Activity {
                     }
                 });
 
-        // Create listeners on every view to remove focus from the EditText when touched
-        createClearFocusListeners(findViewById(R.id.parent_container));
+        // Create listener on Parent View(s) to remove focus when touched
+        createClearFocusListener(findViewById(R.id.parent_container));
 
-        // Create listener to hide the keyboard and save when the EditText loses focus
+        // Create listener to hide the keyboard when the EditText loses focus
         sequenceTitleView.setOnFocusChangeListener(new OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -263,24 +253,15 @@ public class SequenceActivity extends Activity {
                 }
             }
         });
+    }
 
+    private void initializeChildTitle() {
+        //Fetches the name of the Child and puts it in the TextView
         TextView childName = (TextView) findViewById(R.id.child_name);
-        childName.setText(MainActivity.selectedChild.getName());
+        childName.setText(selectedChild.getName());
     }
 
-    public void hideSoftKeyboardFromView(View view) {
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
-
-    /*
-       Creates listeners to remove focus from EditText when something else is
-       touched (to hide the softkeyboard)
-
-       @param view
-                  The parent container. The function runs recursively on its children
-     */
-    public void createClearFocusListeners(View view) {
+    public void createClearFocusListener(View view) {
         // Create listener to remove focus from EditText when something else is touched
         if (!(view instanceof EditText)) {
             view.setOnTouchListener(new View.OnTouchListener() {
@@ -288,7 +269,6 @@ public class SequenceActivity extends Activity {
                 public boolean onTouch(View v, MotionEvent event) {
                     EditText editText = (EditText) findViewById(R.id.sequence_title);
                     editText.clearFocus();
-
                     return false;
                 }
 
@@ -299,12 +279,43 @@ public class SequenceActivity extends Activity {
         if (view instanceof ViewGroup) {
             for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
                 View innerView = ((ViewGroup) view).getChildAt(i);
-                createClearFocusListeners(innerView);
+                createClearFocusListener(innerView);
             }
         }
     }
 
-	private void saveChanges() {
+    private void hideSoftKeyboardFromView(View view) {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+
+        sequenceTitleView.setOnFocusChangeListener(new OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                EditText sequenceTitle = (EditText) findViewById(R.id.sequence_title);
+                if (hasFocus) {
+
+                    // Enforces that the sequenceTitleView can not get larger than parent
+                    // For some reason the parent view overlaps with buttons. Therefore the width have to be 200 less than parent.
+                    // TODO: Figure our why. Probably an issue with activity_sequence.xml
+                    View container = findViewById(R.id.titles_container);
+                    int width = container.getWidth();
+                    sequenceTitleView.setMaxWidth(width-200);
+
+                    //Makes the hint text from the SequenceTitle transparent if sequenceTitle is blank
+                    if (sequenceTitle.getText().toString().equals("")) {
+                        sequenceTitle.setHintTextColor(Color.TRANSPARENT);
+                    }
+                } else {
+                    // Hides the keyboard and reverts hint color when sequenceTitle is not active
+                    InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    in.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    sequenceTitle.setHintTextColor(Color.parseColor("#55624319"));
+                }
+            }
+        });
+    }
+
+    private void saveChanges() {
 
         try {
             helper = new Helper(this);
@@ -324,7 +335,7 @@ public class SequenceActivity extends Activity {
 
         if (isNew) {
             Log.d("DebugYeah", "[SequenceActivity] Saving Sequence. Sequence is new.");
-            sequence.setProfileId(MainActivity.selectedChild.getId());
+            sequence.setProfileId(selectedChild.getId());
             sequence.setSequenceType(Sequence.SequenceType.SEQUENCE);
             helper.sequenceController.insertSequenceAndFrames(sequence);
         }
@@ -355,7 +366,6 @@ public class SequenceActivity extends Activity {
         exitEditting.show();
     }
 
-
     public void showAddDialog(View v) {
         addDialog addFrame = new addDialog(v.getContext());
         addFrame.show();
@@ -378,8 +388,8 @@ public class SequenceActivity extends Activity {
                         assumeMinimize = false;
                         Intent intent = new Intent(getApplication(), MainActivity.class);
                         intent.putExtra("insertSequence", true);
-                        intent.putExtra("currentGuardianID", guardianId);
-                        intent.putExtra("currentChildID", profileId);
+                        intent.putExtra("currentGuardianID", guardian.getId());
+                        intent.putExtra("currentChildID", childId);
                         startActivityForResult(intent, 1);
                         isInEditMode = true;
                     }
@@ -793,8 +803,8 @@ public class SequenceActivity extends Activity {
         assumeMinimize = false;
 		Intent intent = new Intent();
 		intent.setComponent(new ComponentName(PICTO_ADMIN_PACKAGE, PICTO_ADMIN_CLASS));
-		intent.putExtra("currentChildID", MainActivity.selectedChild.getId());
-		intent.putExtra("currentGuardianID", guardianId);
+		intent.putExtra("currentChildID", selectedChild.getId());
+		intent.putExtra("currentGuardianID", guardian.getId());
 		
 		if (modeId == PICTO_NEW_PICTOGRAM_CALL)
 			intent.putExtra("purpose", "multi");
@@ -807,7 +817,7 @@ public class SequenceActivity extends Activity {
     private void callSequenceViewer(){
         assumeMinimize = false;
 
-        SharedPreferences settings = getSharedPreferences(SettingsActivity.class.getName() + Integer.toString(MainActivity.selectedChild.getId()), MODE_PRIVATE);
+        SharedPreferences settings = getSharedPreferences(SettingsActivity.class.getName() + Integer.toString(selectedChild.getId()), MODE_PRIVATE);
         int pictogramSetting = settings.getInt("pictogramSetting", 5);
         boolean landscapeSetting = settings.getBoolean("landscapeSetting", true);
 

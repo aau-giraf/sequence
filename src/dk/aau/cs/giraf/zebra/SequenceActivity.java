@@ -713,6 +713,7 @@ public class SequenceActivity extends Activity {
         else {
             sequence.getFramesList().get(pictogramEditPos).setNestedSequence(id);
             sequence.getFramesList().get(pictogramEditPos).setPictogramId(helper.sequenceController.getSequenceById(id).getPictogramId());
+            pictogramEditPos = -1;
         }
         adapter.notifyDataSetChanged();
     }

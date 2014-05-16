@@ -175,10 +175,11 @@ public class MainActivity extends Activity {
         if (extras.getBoolean("insertSequence")) {
             nestedMode = true;
             setupNestedMode();
+            setChild();
         }
         //Make user pick a child and set up GuardianMode if ChildId is -1 (= Logged in as Guardian)
         else if (childId == -1) {
-            pickChild();
+            pickAndSetChild();
             setupGuardianMode();
         }
         //Else setup application for a Child
@@ -478,7 +479,7 @@ public class MainActivity extends Activity {
         });
     }
 
-    private void pickChild(){
+    private void pickAndSetChild(){
         //Create helper to fetch data from database
         try {
             helper = new Helper(this);

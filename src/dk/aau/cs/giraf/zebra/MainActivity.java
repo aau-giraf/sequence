@@ -514,7 +514,7 @@ public class MainActivity extends Activity {
         intent.putExtra("childId", selectedChild.getId());
         intent.putExtra("guardianId", guardian.getId());
         intent.putExtra("editMode", true);
-        intent.putExtra("new", isNew);
+        intent.putExtra("isNew", isNew);
         intent.putExtra("sequenceId", sequence.getId());
 
         startActivity(intent);

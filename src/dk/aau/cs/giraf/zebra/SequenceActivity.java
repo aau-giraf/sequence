@@ -9,7 +9,6 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -101,7 +100,7 @@ public class SequenceActivity extends Activity {
         childId = extras.getInt("childId");
         sequenceId = extras.getInt("sequenceId");
         guardianId = extras.getInt("guardianId");
-        isNew = extras.getBoolean("new");
+        isNew = extras.getBoolean("isNew");
         isInEditMode = extras.getBoolean("editMode");
     }
 
@@ -334,14 +333,11 @@ public class SequenceActivity extends Activity {
         }
 
         if (isNew) {
-            Log.d("DebugYeah", "[SequenceActivity] Saving Sequence. Sequence is new.");
             sequence.setProfileId(selectedChild.getId());
             sequence.setSequenceType(Sequence.SequenceType.SEQUENCE);
             helper.sequenceController.insertSequenceAndFrames(sequence);
         }
         else {
-
-            Log.d("DebugYeah", "[SequenceActivity] Saving Sequence. Sequence is old.");
             helper.sequenceController.modifySequenceAndFrames(sequence);
         }
 	}
@@ -670,7 +666,6 @@ public class SequenceActivity extends Activity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-        Log.d("DebugYeah", Integer.toString(requestCode));
 
 		// Remove the highlight from the add pictogram button
 		final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup);

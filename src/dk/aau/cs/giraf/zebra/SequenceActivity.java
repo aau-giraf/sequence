@@ -1,7 +1,6 @@
 package dk.aau.cs.giraf.zebra;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -156,7 +155,7 @@ public class SequenceActivity extends Activity {
         GButton saveButton = (GButton) findViewById(R.id.save_button);
         GButton addButton = (GButton) findViewById(R.id.add_button);
         GButton previewButton = (GButton) findViewById(R.id.preview_button);
-        backButton = (GButton) findViewById(R.id.cancel_button);
+        backButton = (GButton) findViewById(R.id.back_button);
         sequenceImageButton = (GButton) findViewById(R.id.sequence_image);
 
         saveButton.setOnClickListener(new ImageButton.OnClickListener() {

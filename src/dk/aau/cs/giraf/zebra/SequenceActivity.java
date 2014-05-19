@@ -106,20 +106,14 @@ public class SequenceActivity extends Activity {
 
     private void loadProfiles() {
         //Create helper to load Child from Database
-        try {
-            helper = new Helper(this);
-        } catch (Exception e) {
-        }
+        helper = new Helper(this);
         selectedChild = helper.profilesHelper.getProfileById(childId);
         guardian = helper.profilesHelper.getProfileById(guardianId);
     }
 
     private void loadSequence() {
         //Create helper to load data from Database (Otherwise start working on empty Sequence)
-        try {
-            helper = new Helper(this);
-        } catch (Exception e) {
-        }
+        helper = new Helper(this);
 
         //If SequenceId from intents is valid, get it from the Database
         if (sequenceId != 0) {
@@ -214,10 +208,7 @@ public class SequenceActivity extends Activity {
             Drawable d = getResources().getDrawable(R.drawable.add_sequence_picture);
             sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
         } else {
-            try {
-                helper = new Helper(this);
-            } catch (Exception e) {
-            }
+            helper = new Helper(this);
             Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(sequence.getPictogramId()).getImage());
             sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
         }
@@ -317,10 +308,7 @@ public class SequenceActivity extends Activity {
 
     private void saveChanges() {
         //Create helper to use Database Helpers
-        try {
-            helper = new Helper(this);
-        } catch (Exception e) {
-        }
+        helper = new Helper(this);
 
         //Save name from Title to the Sequence
         sequence.setName(sequenceTitleView.getText().toString());
@@ -552,10 +540,7 @@ public class SequenceActivity extends Activity {
             frame.setNestedSequence(nestedSequenceId);
 
             //Create helper to give the Frame the first Image from the Nested Sequence (Used for display)
-            try {
-                helper = new Helper(getBaseContext());
-            } catch (Exception e) {
-            }
+            helper = new Helper(getBaseContext());
 
             frame.setPictogramId(helper.sequenceController.getSequenceById(nestedSequenceId).getPictogramId());
 
@@ -611,10 +596,7 @@ public class SequenceActivity extends Activity {
 
             if (sequence.getPictogramId() == 0 && checkoutIds.length > 0) {
                 sequence.setPictogramId(checkoutIds[0]);
-                try {
-                    helper = new Helper(this);
-                } catch (Exception e) {
-                }
+                helper = new Helper(this);
                 Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(sequence.getPictogramId()).getImage());
                 sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
                 sequenceImageButton.setVisibility(View.GONE);

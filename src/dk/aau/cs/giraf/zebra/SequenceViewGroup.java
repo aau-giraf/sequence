@@ -419,11 +419,6 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 							if (startDragIndex != curDragIndexPos) {
 
                                 if (SequenceActivity.choiceMode == true) {
-                                    Helper helper;
-                                    try {
-                                        helper = new Helper(getContext());
-                                    } catch (Exception e) {
-                                    }
                                     SequenceActivity.choice.rearrangeFrame(startDragIndex, curDragIndexPos);
                                 } else {
                                     SequenceActivity.sequence.rearrangeFrame(startDragIndex, curDragIndexPos);

@@ -34,20 +34,27 @@ public class MainActivity extends Activity {
 
     private Profile guardian;
     private Profile selectedChild;
+
     private boolean nestedMode;
     private boolean assumeMinimize = true;
     private boolean childIsSet = false;
+
     private GridView sequenceGrid;
     private GridView copyGrid;
     private GridView pasteGrid;
+
     private SequenceListAdapter sequenceAdapter;
     private SequenceListAdapter copyAdapter;
     private SequenceListAdapter pasteAdapter;
+
     private List<Sequence> sequences = new ArrayList<Sequence>();
     private List<Sequence> tempSequenceList = new ArrayList<Sequence>();
     private List<View> tempViewList = new ArrayList<View>();
+
     public static Activity activityToKill;
+
     private int childId;
+
     private Helper helper;
 
     @Override
@@ -69,19 +76,13 @@ public class MainActivity extends Activity {
     }
 
     private void setupButtons() {
-        //Creates all buttons in Activity and their listeners. Initially they are invisible
+        //Creates all buttons in Activity and their listeners. Initially they are invisible (Defined in XML)
         GButton addButton = (GButton) findViewById(R.id.add_button);
         GButtonTrash deleteButton = (GButtonTrash)findViewById(R.id.delete_button);
         GButton copyButton = (GButton) findViewById(R.id.copy_button);
         GButtonSettings settingsButton = (GButtonSettings)findViewById(R.id.settings_button);
         GButton childSelectButton = (GButton) findViewById(R.id.relog_button);
         GButton exitButton = (GButton) findViewById(R.id.exit_button);
-
-        addButton.setVisibility(View.INVISIBLE);
-        deleteButton.setVisibility(View.INVISIBLE);
-        copyButton.setVisibility(View.INVISIBLE);
-        settingsButton.setVisibility(View.INVISIBLE);
-        childSelectButton.setVisibility(View.INVISIBLE);
 
         addButton.setOnClickListener(new OnClickListener() {
             //Enter SequenceActivity when clicking the Add Button
@@ -150,10 +151,7 @@ public class MainActivity extends Activity {
 
     private void setupModeFromIntents() {
         //Create helper to fetch data from database
-        try {
-            helper = new Helper(this);
-        } catch (Exception e) {
-        }
+        helper = new Helper(this);
 
         //Fetches intents (from Launcher or SequenceActivity)
         Bundle extras = getIntent().getExtras();
@@ -199,10 +197,7 @@ public class MainActivity extends Activity {
 
     private void setChild() {
         //Creates helper to fetch data from the Database
-        try {
-            helper = new Helper(this);
-        } catch (Exception e) {
-        }
+        helper = new Helper(this);
         //Save Child locally and update relevant information for application
         selectedChild = helper.profilesHelper.getProfileById(childId);
         ((TextView) findViewById(R.id.child_name)).setText(selectedChild.getName());
@@ -214,10 +209,7 @@ public class MainActivity extends Activity {
         tempSequenceList.clear();
 
         //Creates helper to fetch data from the Database
-        try {
-            helper = new Helper(this);
-        } catch (Exception e) {
-        }
+        helper = new Helper(this);
 
         sequences = helper.sequenceController.getSequencesAndFramesByProfileIdAndType(selectedChild.getId(), Sequence.SequenceType.SEQUENCE);
         sequenceAdapter = new SequenceListAdapter(this, sequences);
@@ -369,10 +361,7 @@ public class MainActivity extends Activity {
 
     private void pickAndSetChild(){
         //Create helper to fetch data from database
-        try {
-            helper = new Helper(this);
-        } catch (Exception e) {
-        }
+        helper = new Helper(this);
 
         //Create ProfileSelector to make Guardian select Child
         final GProfileSelector childSelector = new GProfileSelector(this, guardian, null, false);
@@ -480,10 +469,7 @@ public class MainActivity extends Activity {
                 public void onClick(View v) {
                     //Delete all selected Sequences and update the main Sequence Grid
                     for (Sequence seq : tempSequenceList) {
-                        try {
-                            helper = new Helper(context);
-                        } catch (Exception e) {
-                        }
+                        helper = new Helper(context);
                         helper.sequenceController.removeSequence(seq);
                     }
                     updateSequences();
@@ -509,10 +495,7 @@ public class MainActivity extends Activity {
             this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.copying_sequences, null));
 
             //Creates helper to fetch data from the Database
-            try {
-                helper = new Helper(context);
-            } catch (Exception e) {
-            }
+            helper = new Helper(context);
 
             //Set up two GridViews for the Copy operation
             copyAdapter = new SequenceListAdapter(this.getContext(), sequences);

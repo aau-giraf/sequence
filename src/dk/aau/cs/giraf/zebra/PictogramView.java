@@ -153,10 +153,7 @@ public class PictogramView extends LinearLayout {
 	}
 
 	public void setImageFromId(int id) {
-        try {
-            helper = new Helper(getContext());
-        } catch (Exception e) {
-        }
+        helper = new Helper(getContext());
 		pictogram.setImageBitmap(helper.pictogramHelper.getPictogramById(id).getImage());
 	}
 	

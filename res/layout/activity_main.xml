@@ -39,6 +39,7 @@
             android:layout_alignLeft="@id/exit_button"
             android:layout_centerVertical="true"
             android:layout_marginLeft="100dp"
+            android:visibility="invisible"
             />
 
         <dk.aau.cs.giraf.gui.GButtonSettings
@@ -49,6 +50,7 @@
             android:layout_alignLeft="@+id/relog_button"
             android:layout_centerVertical="true"
             android:layout_marginLeft="100dp"
+            android:visibility="invisible"
             />
 
 
@@ -71,6 +73,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="15dp"
+            android:visibility="invisible"
             />
 
         <dk.aau.cs.giraf.gui.GButtonTrash
@@ -81,6 +84,7 @@
             android:layout_alignRight="@id/add_button"
             android:layout_centerVertical="true"
             android:layout_marginRight="100dp"
+            android:visibility="invisible"
             />
 
             <dk.aau.cs.giraf.gui.GButton
@@ -92,6 +96,7 @@
             android:layout_alignRight="@id/delete_button"
             android:layout_centerVertical="true"
             android:layout_marginRight="100dp"
+            android:visibility="invisible"
             />
 
 

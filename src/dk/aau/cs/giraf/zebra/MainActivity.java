@@ -198,6 +198,7 @@ public class MainActivity extends Activity {
     private void setChild() {
         //Creates helper to fetch data from the Database
         helper = new Helper(this);
+        
         //Save Child locally and update relevant information for application
         selectedChild = helper.profilesHelper.getProfileById(childId);
         ((TextView) findViewById(R.id.child_name)).setText(selectedChild.getName());

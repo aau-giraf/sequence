@@ -5,10 +5,14 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -27,6 +31,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -37,6 +43,7 @@ import dk.aau.cs.giraf.gui.GComponent;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogAlert;
 import dk.aau.cs.giraf.gui.GDialogMessage;
+import dk.aau.cs.giraf.gui.GRadioButton;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Frame;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
@@ -77,6 +84,8 @@ public class SequenceActivity extends Activity {
     private final int NESTED_SEQUENCE_CALL = 40;
     public static Activity activityToKill;
     private Helper helper;
+    private GDialog printAlignmentDialog;
+    private File[] file;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -149,6 +158,7 @@ public class SequenceActivity extends Activity {
         GButton saveButton = (GButton) findViewById(R.id.save_button);
         GButton addButton = (GButton) findViewById(R.id.add_button);
         GButton previewButton = (GButton) findViewById(R.id.preview_button);
+        GButton printButton = (GButton) findViewById(R.id.print_button);
         backButton = (GButton) findViewById(R.id.back_button);
         sequenceImageButton = (GButton) findViewById(R.id.sequence_image);
 
@@ -182,6 +192,13 @@ public class SequenceActivity extends Activity {
                 } else {
                     callSequenceViewer();
                 }
+            }
+        });
+
+        printButton.setOnClickListener(new ImageButton.OnClickListener() {
+            @Override
+        public void onClick(View v) {
+                SequenceActivity.this.openPrintAlignmentDialogBox();
             }
         });
 
@@ -304,6 +321,202 @@ public class SequenceActivity extends Activity {
             saveChanges();
             return true;
         }
+    }
+
+    /**
+     * Combines all pictograms in a number of bitmaps either horizontally or vertically.
+     * @param direction Can be either "horizontal" or "vertical". Determines the direction in which the pictograms will be added.
+     * @return An array of bitmaps containing pictograms.
+     */
+    private Bitmap[] combineFrames(String direction){
+
+        int frameDimens = 200;
+        int numframes = sequence.getFramesList().size();
+
+        // Adjust spacing and offSet to have optimal number of pics / page.
+        int spacing = 18;
+        float offSet = 35f;
+
+        int totalSeqLengthInPixels = ((frameDimens+spacing)*numframes);
+
+        // Dimensions of pictograms in mm when printed.
+        int printedDimens = 30;
+
+        int a4height = (int) ((297.0/printedDimens)*frameDimens);
+        int a4width = (int) ((210.0/printedDimens)*frameDimens);
+
+        float center = (float)(a4width/2-frameDimens/2);
+
+        int numberOfCanvases = (int) Math.ceil(totalSeqLengthInPixels/(a4height-offSet));
+        int numberPicsPerLine = (int)Math.floor((a4height-offSet)/(totalSeqLengthInPixels/numframes));
+        int numberOfPicsAdded = 0;
+
+        List<Canvas> comboImage = new ArrayList<Canvas>();
+
+        Bitmap[] combinedSequence = new Bitmap[numberOfCanvases];
+
+        for(int i = 0; i < numberOfCanvases; i++) {
+
+            if(direction == "vertical") {
+                combinedSequence[i] = Bitmap.createBitmap(a4width, a4height, Bitmap.Config.RGB_565);
+                comboImage.add(i, new Canvas(combinedSequence[i]));
+
+                float offSetTemp = offSet;
+                for (int ii = 0; ii < numberPicsPerLine && numberOfPicsAdded < numframes; ii++) {
+                    Bitmap bm = helper.pictogramHelper.getPictogramById(sequence.getFramesList().get(ii).getPictogramId()).getImage();
+                    bm = Bitmap.createScaledBitmap(bm, frameDimens, frameDimens, false);
+                    comboImage.get(i).drawBitmap(bm, center, offSetTemp, null);
+                    offSetTemp += frameDimens + spacing;
+                    numberOfPicsAdded++;
+                }
+            }
+            else {
+                // Swapped height and width to "turn the paper".
+                combinedSequence[i] = Bitmap.createBitmap(a4height, a4width, Bitmap.Config.RGB_565);
+                comboImage.add(i, new Canvas(combinedSequence[i]));
+
+                float offSetTemp = offSet;
+                for (int ii = 0; ii < numberPicsPerLine && numberOfPicsAdded < numframes; ii++) {
+                    Bitmap bm = helper.pictogramHelper.getPictogramById(sequence.getFramesList().get(ii).getPictogramId()).getImage();
+                    bm = Bitmap.createScaledBitmap(bm, frameDimens, frameDimens, false);
+                    comboImage.get(i).drawBitmap(bm, offSetTemp, center, null);
+                    offSetTemp += frameDimens + spacing;
+                    numberOfPicsAdded++;
+                }
+            }
+        }
+
+        return combinedSequence;
+    }
+
+    public void printSequence(View v) {GRadioButton verticalButton = (GRadioButton) printAlignmentDialog.findViewById(R.id.vertical);
+        Bitmap[] combinedSequence;
+
+        //Warn the user and stop if trying to print empty sequence.
+        if(sequence.getFramesList().size() == 0) {
+            //TODO: Display message that it is not possible to print empty Sequence
+            printAlignmentDialog.dismiss();
+            return;
+        }
+
+        if (verticalButton.isChecked())
+            combinedSequence = combineFrames("vertical");
+        else
+            combinedSequence = combineFrames("horizontal");
+
+        // Set debug-email in class variable "debugEmail" when debugging!
+        String email = guardian.getEmail();
+        String message;
+        if(combinedSequence.length == 1) {
+            message = "Print det vedhæftede billede som helsidet billede på A4-størrelse papir for 3x3 cm piktogrammer.";
+        } else {
+            message = "Print de vedhæftede billeder som helsidede billeder på A4-størrelse papir for 3x3 cm piktogrammer.";
+        }
+
+        try {
+            //TODO: Convert text to ArrayList of CharSequence to display properly. See logcat for info
+            sendSequenceToEmail(combinedSequence, email, "Sekvens: " + sequenceTitleView.getText(), message);
+        }catch (Exception e) {
+            //TODO: Display error message that email could not be sent
+        }
+    }
+
+    public void openPrintAlignmentDialogBox() {
+        printAlignmentDialog = new GDialog(this, LayoutInflater.from(this).inflate(R.layout.dialog_print_alignment, null));
+        printAlignmentDialog.show();
+    }
+
+    /**
+     * Based on: http://stackoverflow.com/questions/15662258/how-to-save-a-bitmap-on-internal-storage
+     *
+     * @param fileName
+     * @return file
+     */
+    private File[] getOutputMediaFile(String[] fileName, int numOfImages){
+        // To be safe, you should check that the SDCard is mounted
+        // using Environment.getExternalStorageState() before doing this.
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
+                + "/Android/data/"
+                + getApplicationContext().getPackageName()
+                + "/Files");
+
+        // This location works best if you want the created images to be shared
+        // between applications and persist after your app has been uninstalled.
+
+        // Create the storage directory if it does not exist
+        if (! mediaStorageDir.exists()){
+            if (! mediaStorageDir.mkdirs()){
+                return null;
+            }
+        }
+        // Create a media file name
+        File mediaFile[] = new File[numOfImages];
+
+        for(int i = 0; i < numOfImages; i++)
+        {
+            mediaFile[i] = new File(mediaStorageDir.getPath() + File.separator + fileName[i]);
+        }
+
+        return mediaFile;
+    }
+
+    public void sendSequenceToEmail(Bitmap[] seqImage, String emailAddress, String subject, String message){
+
+        int numOfImages = seqImage.length;
+        String[] filename = new String[numOfImages];
+
+
+        for(int i = 0; i < numOfImages; i++)
+        {
+            filename[i] = "Sekvens del " + (i+1) + " af " + numOfImages + ".png";
+        }
+
+        file = getOutputMediaFile(filename, numOfImages);
+
+        try{
+            for(int i = 0; i < numOfImages; i++)
+            {
+                FileOutputStream out = new FileOutputStream(file[i]);
+                seqImage[i].compress(Bitmap.CompressFormat.PNG, 90, out);
+                out.close();
+            }
+        }
+        catch(Exception e){
+        }
+
+        ArrayList<Uri> fileUris = new ArrayList<Uri>();
+
+        for(int i = 0; i < numOfImages; i++) {
+            fileUris.add(Uri.fromFile(file[i]));
+        }
+
+        Intent email = new Intent(Intent.ACTION_SEND_MULTIPLE);
+        email.setType("message/rfc822");//("image/jpeg");
+        email.putExtra(Intent.EXTRA_EMAIL, new String[]{emailAddress});
+        email.putExtra(Intent.EXTRA_SUBJECT, subject);
+        email.putExtra(Intent.EXTRA_TEXT, message);
+        email.putParcelableArrayListExtra(Intent.EXTRA_STREAM, fileUris);
+
+        try{
+            startActivity(Intent.createChooser(email, "Vælg en email-klient"));
+        }catch (android.content.ActivityNotFoundException ex) {
+            //TODO: Display error message that email client could not be found
+        }
+        printAlignmentDialog.dismiss();
+    }
+
+    public void verticalRButtonClicked(View v){
+        GRadioButton radioButton = (GRadioButton) printAlignmentDialog.findViewById(R.id.horizontal);
+        radioButton.setChecked(false);
+    }
+
+    public void horizontalRButtonClicked(View v){
+        GRadioButton radioButton = (GRadioButton) printAlignmentDialog.findViewById(R.id.vertical);
+        radioButton.setChecked(false);
+    }
+
+    public void dialogPrintAlignmentCancel(View v){
+        printAlignmentDialog.dismiss();
     }
 
     private void saveChanges() {
@@ -565,8 +778,7 @@ public class SequenceActivity extends Activity {
 
         //If no pictures are returned, assume user canceled and nothing is supposed to change.
         if (checkoutIds.length == 0 || checkoutIds == null) {
-                checkoutIds = new int[]{1,2,3,4};
-           // return;
+           return;
         }
         if (choiceMode) {
 

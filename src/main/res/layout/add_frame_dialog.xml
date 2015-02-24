@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/GDialogMessage_frame">
+
+    <RelativeLayout
+        android:id="@+id/GDialogMessage_topWrapper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        >
+
+        <TextView
+            android:id="@+id/add_frame_headline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:textSize="30dp"
+            android:textStyle="bold"
+            android:text="Indsæt"
+            android:layout_centerHorizontal="true"
+            />
+
+        <TextView
+            android:id="@+id/add_frame_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:layout_below="@id/add_frame_headline"
+            android:text="Vælg hvad du vil indsætte"
+            android:layout_centerHorizontal="true"
+            />
+
+    </RelativeLayout>
+    <LinearLayout
+        android:id="@+id/GDialog_button_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="25dp"
+        android:layout_below="@id/GDialogMessage_topWrapper"
+        android:layout_centerHorizontal="true" >
+
+        <dk.aau.cs.giraf.gui.GButton
+            android:id="@+id/get_sequence"
+            android:text="Sekvens"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginRight="15dp"
+
+            />
+
+        <dk.aau.cs.giraf.gui.GButton
+            android:id="@+id/get_pictogram"
+            android:text="Pictogram"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginRight="15dp"
+            />
+
+        <dk.aau.cs.giraf.gui.GButton
+            android:id="@+id/get_choice"
+            android:text="Valg"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            />
+
+    </LinearLayout>
+
+</RelativeLayout>

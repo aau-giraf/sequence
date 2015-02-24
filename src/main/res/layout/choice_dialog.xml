@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:svg="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/GDialogMessage_frame">
+
+    <RelativeLayout
+        android:id="@+id/GDialogMessage_topWrapper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        >
+
+        <TextView
+            android:id="@+id/add_frame_headline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:textSize="30dp"
+            android:textStyle="bold"
+            android:text="Valg"
+            android:layout_centerHorizontal="true"
+            />
+    </RelativeLayout>
+    <HorizontalScrollView
+        android:id="@+id/GDialog_image_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="0dp"
+        android:overScrollMode="always"
+        android:padding="0dp"
+        android:fadeScrollbars="false">
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <dk.aau.cs.giraf.zebra.SequenceViewGroup
+                android:id="@+id/choice_view_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginTop="30dp"
+                svg:horizontalSpacing="20dp"
+                svg:itemHeight="@dimen/activity_main_picto_size"
+                svg:itemWidth="@dimen/activity_main_picto_size"
+                android:background="@layout/main_picto_container_bg"
+                android:layout_gravity="center_vertical">
+
+            </dk.aau.cs.giraf.zebra.SequenceViewGroup>
+        </FrameLayout>
+
+    </HorizontalScrollView>
+    <LinearLayout
+        android:id="@+id/GDialog_button_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="25dp"
+        android:layout_below="@id/GDialog_image_layout"
+        android:layout_centerHorizontal="true" >
+
+        <dk.aau.cs.giraf.gui.GButton
+            android:id="@+id/save_choice"
+            android:text="Gem"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginRight="15dp"
+
+            />
+
+        <dk.aau.cs.giraf.gui.GButton
+            android:id="@+id/discard_choice"
+            android:text="Fortryd"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginRight="15dp"
+            />
+
+    </LinearLayout>
+
+</RelativeLayout>

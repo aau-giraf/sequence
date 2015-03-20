@@ -210,7 +210,7 @@ public class MainActivity extends GirafActivity {
         
         //Save Child locally and update relevant information for application
         selectedChild = helper.profilesHelper.getProfileById(childId);
-        this.setActionBarTitle(selectedChild.getName());
+        this.setActionBarTitle(getResources().getString(R.string.app_name) + " - " + selectedChild.getName());
         updateSequences();
     }
 

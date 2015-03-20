@@ -1,9 +1,3 @@
 [submodule "pictogram-lib"]
 	path = pictogram-lib
 	url = http://cs-cust06-int.cs.aau.dk/git-ro/pictogram-lib.git
-[submodule "GIRAF_Components"]
-	path = GIRAF_Components
-	url = http://cs-cust06-int.cs.aau.dk/git-ro/giraf-component.git
-[submodule "giraf-component"]
-	path = giraf-component
-	url = http://cs-cust06-int.cs.aau.dk/git-ro/giraf-component

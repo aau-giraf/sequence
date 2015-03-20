@@ -18,6 +18,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.view.LayoutInflater;
 
+import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GButtonSettings;
 import dk.aau.cs.giraf.gui.GButtonTrash;
@@ -26,11 +27,12 @@ import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GGridView;
 import dk.aau.cs.giraf.gui.GMultiProfileSelector;
 import dk.aau.cs.giraf.gui.GProfileSelector;
+import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.oasis.lib.models.Sequence;
 
-public class MainActivity extends Activity {
+public class MainActivity extends GirafActivity {
 
     private Profile guardian;
     private Profile selectedChild;
@@ -57,15 +59,36 @@ public class MainActivity extends Activity {
 
     private Helper helper;
 
+    // Initialize buttons
+    private GirafButton changeUserButton;
+    private GirafButton settingsButton;
+    private GirafButton addButton;
+    private GirafButton copyButton;
+    private GirafButton deleteButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Creating buttons
+        settingsButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_settings));
+        changeUserButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_change_user));
+        addButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_add));
+        copyButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_copy));
+        deleteButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_delete));
+
         setupSequenceGridView();
         setupButtons();
         setupModeFromIntents();
         setColors();
+
+        // Adding buttons
+        addGirafButtonToActionBar(changeUserButton, LEFT);
+        addGirafButtonToActionBar(settingsButton, LEFT);
+        addGirafButtonToActionBar(addButton, RIGHT);
+        addGirafButtonToActionBar(copyButton, RIGHT);
+        addGirafButtonToActionBar(deleteButton, RIGHT);
     }
 
     private void setupSequenceGridView() {
@@ -77,12 +100,6 @@ public class MainActivity extends Activity {
 
     private void setupButtons() {
         //Creates all buttons in Activity and their listeners. Initially they are invisible (Defined in XML)
-        GButton addButton = (GButton) findViewById(R.id.add_button);
-        GButtonTrash deleteButton = (GButtonTrash)findViewById(R.id.delete_button);
-        GButton copyButton = (GButton) findViewById(R.id.copy_button);
-        GButtonSettings settingsButton = (GButtonSettings)findViewById(R.id.settings_button);
-        GButton childSelectButton = (GButton) findViewById(R.id.relog_button);
-        GButton exitButton = (GButton) findViewById(R.id.exit_button);
 
         addButton.setOnClickListener(new OnClickListener() {
             //Enter SequenceActivity when clicking the Add Button
@@ -109,6 +126,7 @@ public class MainActivity extends Activity {
             }
         });
 
+        // Click event for settings button
         settingsButton.setOnClickListener(new OnClickListener() {
             //Open SettingsActivity when clicking the Settings Button
             @Override
@@ -121,7 +139,8 @@ public class MainActivity extends Activity {
             }
         });
 
-        childSelectButton.setOnClickListener(new OnClickListener() {
+        // Click event for change user button
+        changeUserButton.setOnClickListener(new OnClickListener() {
             //Open Child Selector when pressing the Child Select Button
             @Override
             public void onClick(View v) {
@@ -137,14 +156,6 @@ public class MainActivity extends Activity {
                         childSelector.dismiss();
                     }
                 });
-            }
-        });
-
-        exitButton.setOnClickListener(new OnClickListener() {
-        //Exit application when pressing the Exit Button
-            @Override
-            public void onClick(View v) {
-                finishActivity();
             }
         });
     }
@@ -190,9 +201,7 @@ public class MainActivity extends Activity {
     private void setColors() {
         //Sets up application colors using colors from GIRAF_Components
         LinearLayout backgroundLayout = (LinearLayout) findViewById(R.id.parent_container);
-        RelativeLayout topbarLayout = (RelativeLayout) findViewById(R.id.sequence_bar);
         backgroundLayout.setBackgroundDrawable(GComponent.GetBackground(GComponent.Background.SOLID));
-        topbarLayout.setBackgroundDrawable(GComponent.GetBackground(GComponent.Background.SOLID));
     }
 
     private void setChild() {
@@ -201,7 +210,7 @@ public class MainActivity extends Activity {
         
         //Save Child locally and update relevant information for application
         selectedChild = helper.profilesHelper.getProfileById(childId);
-        ((TextView) findViewById(R.id.child_name)).setText(selectedChild.getName());
+        this.setActionBarTitle(selectedChild.getName());
         updateSequences();
     }
 
@@ -303,20 +312,11 @@ public class MainActivity extends Activity {
             }
         });
 
-        //Makes adminstrative buttons visible
-        final GButton addButton = (GButton) findViewById(R.id.add_button);
-        final GButton deleteButton = (GButton) findViewById(R.id.delete_button);
-        final GButton copyButton = (GButton) findViewById(R.id.copy_button);
-        final GButton settingsButton = (GButton) findViewById(R.id.settings_button);
-        final GButton logoutButton = (GButton) findViewById(R.id.relog_button);
-        final GButton exitButton = (GButton) findViewById(R.id.exit_button);
-
         addButton.setVisibility(View.VISIBLE);
         deleteButton.setVisibility(View.VISIBLE);
         copyButton.setVisibility(View.VISIBLE);
         settingsButton.setVisibility(View.VISIBLE);
-        logoutButton.setVisibility(View.VISIBLE);
-        exitButton.setVisibility(View.VISIBLE);
+        changeUserButton.setVisibility(View.VISIBLE);
     }
 
     private void setupChildMode() {

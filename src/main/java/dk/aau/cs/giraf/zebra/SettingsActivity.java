@@ -10,11 +10,13 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 
+import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.gui.GComponent;
 import dk.aau.cs.giraf.gui.GSeekBar;
 import dk.aau.cs.giraf.gui.GTextView;
+import dk.aau.cs.giraf.gui.GirafButton;
 
-public class SettingsActivity extends Activity {
+public class SettingsActivity extends GirafActivity {
     private boolean assumeMinimize = true;
     private Integer pictogramSetting;
     private Boolean landscapeSetting;
@@ -60,7 +62,6 @@ public class SettingsActivity extends Activity {
         else {
             orientationButtons.check(R.id.portraitButton);
         }
-
     }
 
     public void onOrientationClick(View v) {
@@ -113,6 +114,7 @@ public class SettingsActivity extends Activity {
         finish();
     }
 
+    // Physical Back button
     @Override
     public void onBackPressed() {
         saveSettings();

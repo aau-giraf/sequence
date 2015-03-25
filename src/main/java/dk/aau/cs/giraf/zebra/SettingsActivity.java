@@ -114,11 +114,10 @@ public class SettingsActivity extends GirafActivity {
         finish();
     }
 
-    // Physical Back button
     @Override
     public void onBackPressed() {
         saveSettings();
-        finishActivity();
+        super.onBackPressed();
     }
 
     @Override

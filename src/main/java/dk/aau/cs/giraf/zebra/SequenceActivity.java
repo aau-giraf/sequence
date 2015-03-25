@@ -863,15 +863,9 @@ public class SequenceActivity extends Activity {
     private void callSequenceViewer(){
         assumeMinimize = false;
 
-        SharedPreferences settings = getSharedPreferences(SettingsActivity.class.getName() + Integer.toString(selectedChild.getId()), MODE_PRIVATE);
-        int pictogramSetting = settings.getInt("pictogramSetting", 5);
-        boolean landscapeSetting = settings.getBoolean("landscapeSetting", true);
-
         Intent intent = new Intent();
         intent.setComponent(new ComponentName("dk.aau.cs.giraf.sequenceviewer", "dk.aau.cs.giraf.sequenceviewer.MainActivity"));
         intent.putExtra("sequenceId", sequence.getId());
-        intent.putExtra("landscapeMode", landscapeSetting);
-        intent.putExtra("visiblePictogramCount", pictogramSetting);
         intent.putExtra("callerType", "Zebra");
         startActivityForResult(intent, SEQUENCE_VIEWER_CALL);
     }

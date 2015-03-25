@@ -61,7 +61,6 @@ public class MainActivity extends GirafActivity {
 
     // Initialize buttons
     private GirafButton changeUserButton;
-    private GirafButton settingsButton;
     private GirafButton addButton;
     private GirafButton copyButton;
     private GirafButton deleteButton;
@@ -72,7 +71,6 @@ public class MainActivity extends GirafActivity {
         setContentView(R.layout.activity_main);
 
         // Creating buttons
-        settingsButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_settings));
         changeUserButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_change_user));
         addButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_add));
         copyButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_copy));
@@ -85,7 +83,6 @@ public class MainActivity extends GirafActivity {
 
         // Adding buttons
         addGirafButtonToActionBar(changeUserButton, LEFT);
-        addGirafButtonToActionBar(settingsButton, LEFT);
         addGirafButtonToActionBar(addButton, RIGHT);
         addGirafButtonToActionBar(copyButton, RIGHT);
         addGirafButtonToActionBar(deleteButton, RIGHT);
@@ -111,10 +108,13 @@ public class MainActivity extends GirafActivity {
         });
 
         deleteButton.setOnClickListener(new OnClickListener() {
-            //Open Delete Dialog when clicking the Delete Button
+            //Open Copy Dialog when clicking the Copy Button
             @Override
             public void onClick(View v) {
-                showDeleteDialog(v);
+                Intent intent = new Intent(getApplication(), DeleteSequencesActivity.class);
+                intent.putExtra("childId", selectedChild.getId());
+                intent.putExtra("guardianId", guardian.getId());
+                startActivity(intent);
             }
         });
 
@@ -122,20 +122,11 @@ public class MainActivity extends GirafActivity {
             //Open Copy Dialog when clicking the Copy Button
             @Override
             public void onClick(View v) {
-                showCopyDialog(v);
-            }
-        });
-
-        // Click event for settings button
-        settingsButton.setOnClickListener(new OnClickListener() {
-            //Open SettingsActivity when clicking the Settings Button
-            @Override
-            public void onClick(View v) {
-                //Launches settingsActivity
-                assumeMinimize = false;
-                Intent intent = new Intent(getApplication(), SettingsActivity.class);
+                Intent intent = new Intent(getApplication(), CopySequencesActivity.class);
                 intent.putExtra("childId", selectedChild.getId());
+                intent.putExtra("guardianId", guardian.getId());
                 startActivity(intent);
+                //showCopyDialog(v);
             }
         });
 
@@ -231,11 +222,6 @@ public class MainActivity extends GirafActivity {
         deleteDialog.show();
     }
 
-    private void showCopyDialog(View v) {
-        copyingSequencesDialog copyDialog = new copyingSequencesDialog(v.getContext());
-        copyDialog.show();
-    }
-
     private void setCopyGridItemClickListener(GridView copyGrid) {
         //When clicking a Sequence in the CopyGrid (Left Grid), add to temporary list and the PasteGrid (Right Grid)
         clearTempLists();
@@ -315,13 +301,12 @@ public class MainActivity extends GirafActivity {
         addButton.setVisibility(View.VISIBLE);
         deleteButton.setVisibility(View.VISIBLE);
         copyButton.setVisibility(View.VISIBLE);
-        settingsButton.setVisibility(View.VISIBLE);
         changeUserButton.setVisibility(View.VISIBLE);
     }
 
     private void setupChildMode() {
 
-        //When clicking a Sequence, lift up the view, load Settings from Child, create Intent for SequenceViewer and launch it
+        //When clicking a Sequence, lift up the view, create Intent for SequenceViewer and launch it
         sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -329,17 +314,10 @@ public class MainActivity extends GirafActivity {
                 ((PictogramView) arg1).liftUp();
                 assumeMinimize = false;
 
-                //Load Preferences
-                SharedPreferences settings = getSharedPreferences(SettingsActivity.class.getName() + Integer.toString(selectedChild.getId()), MODE_PRIVATE);
-                int pictogramSetting = settings.getInt("pictogramSetting", 5);
-                boolean landscapeSetting = settings.getBoolean("landscapeSetting", true);
-
                 //Create Intent with relevant Extras
                 Intent intent = new Intent();
                 intent.setComponent(new ComponentName("dk.aau.cs.giraf.sequenceviewer", "dk.aau.cs.giraf.sequenceviewer.MainActivity"));
                 intent.putExtra("sequenceId", sequenceAdapter.getItem(arg2).getId());
-                intent.putExtra("landscapeMode", landscapeSetting);
-                intent.putExtra("visiblePictogramCount", pictogramSetting);
                 intent.putExtra("callerType", "Zebra");
                 startActivityForResult(intent, 2);
             }
@@ -480,65 +458,6 @@ public class MainActivity extends GirafActivity {
 
             popupBack.setOnClickListener(new GButton.OnClickListener() {
                 //Cancel and close Dialog
-                @Override
-                public void onClick(View v) {
-                    dismiss();
-                }
-            });
-        }
-    }
-
-    private class copyingSequencesDialog extends GDialog {
-
-        public copyingSequencesDialog(Context context) {
-            //Dialog where user can pick Sequences to copy to other Children
-            super(context);
-            this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.copying_sequences, null));
-
-            //Creates helper to fetch data from the Database
-            helper = new Helper(context);
-
-            //Set up two GridViews for the Copy operation
-            copyAdapter = new SequenceListAdapter(this.getContext(), sequences);
-            copyGrid = (GGridView) findViewById(R.id.existing_sequences);
-            copyGrid.setAdapter(copyAdapter);
-            setCopyGridItemClickListener(copyGrid);
-
-            pasteAdapter = new SequenceListAdapter(this.getContext(), tempSequenceList);
-            pasteGrid = (GGridView) findViewById(R.id.empty_sequences);
-            pasteGrid.setAdapter(pasteAdapter);
-            setPasteGridItemClickListener(pasteGrid);
-
-            //Set up Buttons
-            GButton popupCopy = (GButton) findViewById(R.id.popup_copy_accept);
-            GButton popupBack = (GButton) findViewById(R.id.popup_copy_back);
-
-            //Create a MultiProfileSelector given a fresh list of Profiles to store chosen profiles in
-            List<Profile> children = new ArrayList<Profile>();
-
-            final GMultiProfileSelector childSelector = new GMultiProfileSelector(context, helper.profilesHelper.getChildrenByGuardian(guardian), children);
-            childSelector.setMyOnCloseListener(new GMultiProfileSelector.onCloseListener() {
-                //When closing the MultiProileSelector, copy all chosen Sequences to all chosen Children
-                @Override
-                public void onClose(List<Profile> selectedProfiles) {
-                    for (Profile p : selectedProfiles){
-                        for (Sequence s: tempSequenceList) {
-                            helper.sequenceController.copySequenceAndFrames(s, p);
-                        }
-                    }
-                }
-            });
-
-            popupCopy.setOnClickListener(new GButton.OnClickListener() {
-                //Show the MultiProfileSelector when clicking the Copy Button
-                @Override
-                public void onClick(View v) {
-                    childSelector.show();
-                }
-            });
-
-            popupBack.setOnClickListener(new GButton.OnClickListener() {
-                //Cancel and close when clicking the Back Button
                 @Override
                 public void onClick(View v) {
                     dismiss();

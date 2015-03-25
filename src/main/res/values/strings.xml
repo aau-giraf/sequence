@@ -2,6 +2,8 @@
 <resources>
 
     <string name="app_name">Sequence</string>
+    <string name="copy_sequences">Kopier sekvenser</string>
+    <string name="delete_sequences">Slet sekvenser</string>
     <string name="no_children">Der er ingen børn</string>
     <string name="changes_saved">Ændringerne blev gemt</string>
     <string name="confirm_discarding_changes">Du er ved at </string>
@@ -24,7 +26,6 @@
     <string name="delete_sequence">Slet sekvens</string>
     <string name="Go_back">Nej</string>
     <string name="Finished">Ja</string>
-    <string name="title_activity_settings">settingsActivity</string>
     <string name="action_settings">Settings</string>
 
 </resources>

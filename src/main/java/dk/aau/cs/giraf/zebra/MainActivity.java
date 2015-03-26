@@ -7,25 +7,19 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.view.LayoutInflater;
 
 import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.gui.GButton;
-import dk.aau.cs.giraf.gui.GButtonSettings;
-import dk.aau.cs.giraf.gui.GButtonTrash;
 import dk.aau.cs.giraf.gui.GComponent;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GGridView;
-import dk.aau.cs.giraf.gui.GMultiProfileSelector;
 import dk.aau.cs.giraf.gui.GProfileSelector;
 import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.oasis.lib.Helper;
@@ -99,7 +93,7 @@ public class MainActivity extends GirafActivity {
         //Creates all buttons in Activity and their listeners. Initially they are invisible (Defined in XML)
 
         addButton.setOnClickListener(new OnClickListener() {
-            //Enter SequenceActivity when clicking the Add Button
+            //Enter AddSequencesActivity when clicking the Add Button
             @Override
             public void onClick(View v) {
                 Sequence sequence = new Sequence();
@@ -155,10 +149,10 @@ public class MainActivity extends GirafActivity {
         //Create helper to fetch data from database
         helper = new Helper(this);
 
-        //Fetches intents (from Launcher or SequenceActivity)
+        //Fetches intents (from Launcher or AddSequencesActivity)
         Bundle extras = getIntent().getExtras();
 
-        //Makes the Activity killable from SequenceActivity and (Nested) MainActivity
+        //Makes the Activity killable from AddSequencesActivity and (Nested) MainActivity
         if (extras.getBoolean("insertSequence") == false) {
             activityToKill = this;
         }
@@ -287,7 +281,7 @@ public class MainActivity extends GirafActivity {
     }
 
     private void setupGuardianMode() {
-        //Clicking a Sequence lifts up the view and leads up to entering SequenceActivity by calling enterSequence
+        //Clicking a Sequence lifts up the view and leads up to entering AddSequencesActivity by calling enterSequence
         sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -325,13 +319,13 @@ public class MainActivity extends GirafActivity {
     }
 
     private void setupNestedMode() {
-        //On clicking a Sequence, lift up the Sequence, finish Activity and send Id of Sequence as an extra back to SequenceActivity
+        //On clicking a Sequence, lift up the Sequence, finish Activity and send Id of Sequence as an extra back to AddSequencesActivity
         sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 ((PictogramView) view).liftUp();
                 Intent intent = new Intent();
-                intent.putExtra("nestedSequenceId",sequenceAdapter.getItem(position).getId());
+                intent.putExtra("nestedSequenceId", sequenceAdapter.getItem(position).getId());
                 setResult(RESULT_OK, intent);
                 finishActivity();
             }
@@ -365,9 +359,9 @@ public class MainActivity extends GirafActivity {
     }
 
     private void enterSequence(Sequence sequence, boolean isNew) {
-        //Sets up relevant intents and starts SequenceActivity
+        //Sets up relevant intents and starts AddSequencesActivity
         assumeMinimize = false;
-        Intent intent = new Intent(getApplication(), SequenceActivity.class);
+        Intent intent = new Intent(getApplication(), AddSequencesActivity.class);
         intent.putExtra("childId", selectedChild.getId());
         intent.putExtra("guardianId", guardian.getId());
         intent.putExtra("editMode", true);
@@ -409,7 +403,7 @@ public class MainActivity extends GirafActivity {
         if (assumeMinimize) {
             //If in NestedMode, kill all open Activities. If not Nested, only this Activity needs to be killed
             if (nestedMode) {
-                SequenceActivity.activityToKill.finish();
+                AddSequencesActivity.activityToKill.finish();
                 MainActivity.activityToKill.finish();
             }
             finishActivity();

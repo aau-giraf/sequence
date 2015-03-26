@@ -6,7 +6,6 @@ import android.database.DataSetObserver;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +16,6 @@ import android.view.animation.Transformation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.HorizontalScrollView;
-
-import java.util.List;
-
-import dk.aau.cs.giraf.oasis.lib.Helper;
-import dk.aau.cs.giraf.oasis.lib.models.Frame;
-import dk.aau.cs.giraf.oasis.lib.models.Sequence;
 
 /**
  * Layouts its children with fixed sizes and fixed spacing between each child in
@@ -418,10 +411,10 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 						public void onAnimationEnd(Animation animation) {
 							if (startDragIndex != curDragIndexPos) {
 
-                                if (SequenceActivity.choiceMode == true) {
-                                    SequenceActivity.choice.rearrangeFrame(startDragIndex, curDragIndexPos);
+                                if (AddSequencesActivity.choiceMode == true) {
+                                    AddSequencesActivity.choice.rearrangeFrame(startDragIndex, curDragIndexPos);
                                 } else {
-                                    SequenceActivity.sequence.rearrangeFrame(startDragIndex, curDragIndexPos);
+                                    AddSequencesActivity.sequence.rearrangeFrame(startDragIndex, curDragIndexPos);
 
                                 }
 

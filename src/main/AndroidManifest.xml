@@ -40,7 +40,7 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name=".SequenceActivity"
+            android:name=".AddSequencesActivity"
             android:screenOrientation="portrait" >
         </activity>
         <activity

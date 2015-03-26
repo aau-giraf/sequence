@@ -55,7 +55,7 @@ import dk.aau.cs.giraf.zebra.SequenceViewGroup.OnNewButtonClickedListener;
 import dk.aau.cs.giraf.oasis.lib.models.Sequence;
 import dk.aau.cs.giraf.oasis.lib.models.Pictogram;
 
-public class SequenceActivity extends GirafActivity {
+public class AddSequencesActivity extends GirafActivity {
 
     private Profile guardian;
     private Profile selectedChild;
@@ -208,7 +208,7 @@ public class SequenceActivity extends GirafActivity {
         printButton.setOnClickListener(new ImageButton.OnClickListener() {
             @Override
         public void onClick(View v) {
-                SequenceActivity.this.openPrintAlignmentDialogBox();
+                AddSequencesActivity.this.openPrintAlignmentDialogBox();
             }
         });
         */

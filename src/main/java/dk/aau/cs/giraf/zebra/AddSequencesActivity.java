@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.LayoutInflater;
@@ -20,7 +19,6 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -32,7 +30,6 @@ import dk.aau.cs.giraf.gui.GComponent;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogAlert;
 import dk.aau.cs.giraf.gui.GDialogMessage;
-import dk.aau.cs.giraf.gui.GRadioButton;
 import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Frame;
@@ -84,7 +81,7 @@ public class AddSequencesActivity extends GirafActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_sequences);
+        setContentView(R.layout.activity_add_edit_sequences);
 
         // Create buttons
         saveButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_save));
@@ -290,7 +287,6 @@ public class AddSequencesActivity extends GirafActivity {
                     editText.clearFocus();
                     return false;
                 }
-
             });
         }
 
@@ -376,10 +372,11 @@ public class AddSequencesActivity extends GirafActivity {
                 }
             }
         }
-
         return combinedSequence;
     }
 
+    // Used to print a sequence. A part of the email service.
+    /*
     public void printSequence(View v) {
         GRadioButton verticalButton = (GRadioButton) printAlignmentDialog.findViewById(R.id.vertical);
         Bitmap[] combinedSequence;
@@ -412,11 +409,14 @@ public class AddSequencesActivity extends GirafActivity {
             //TODO: Display error message that email could not be sent
         }
     }
+    */
 
+    /*
     public void openPrintAlignmentDialogBox() {
         printAlignmentDialog = new GDialog(this, LayoutInflater.from(this).inflate(R.layout.dialog_print_alignment, null));
         printAlignmentDialog.show();
     }
+    */
 
     /**
      * Based on: http://stackoverflow.com/questions/15662258/how-to-save-a-bitmap-on-internal-storage
@@ -428,9 +428,9 @@ public class AddSequencesActivity extends GirafActivity {
         // To be safe, you should check that the SDCard is mounted
         // using Environment.getExternalStorageState() before doing this.
         File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
-                + "/Android/data/"
-                + getApplicationContext().getPackageName()
-                + "/Files");
+            + "/Android/data/"
+            + getApplicationContext().getPackageName()
+            + "/Files");
 
         // This location works best if you want the created images to be shared
         // between applications and persist after your app has been uninstalled.
@@ -451,6 +451,8 @@ public class AddSequencesActivity extends GirafActivity {
         return mediaFile;
     }
 
+    // Send sequence to email feature
+    /*
     public void sendSequenceToEmail(Bitmap[] seqImage, String emailAddress, String subject, String message) {
 
         int numOfImages = seqImage.length;
@@ -492,7 +494,9 @@ public class AddSequencesActivity extends GirafActivity {
         }
         printAlignmentDialog.dismiss();
     }
+    */
 
+    /* Used in dialog_print_alignment.xml
     public void verticalRButtonClicked(View v) {
         GRadioButton radioButton = (GRadioButton) printAlignmentDialog.findViewById(R.id.horizontal);
         radioButton.setChecked(false);
@@ -506,6 +510,7 @@ public class AddSequencesActivity extends GirafActivity {
     public void dialogPrintAlignmentCancel(View v) {
         printAlignmentDialog.dismiss();
     }
+    */
 
     private void saveChanges() {
         //Create helper to use Database Helpers
@@ -570,37 +575,36 @@ public class AddSequencesActivity extends GirafActivity {
     private void createAndShowNestedDialog(View v) {
         //Creates a Dialog for information. Clicking OK starts MainActivity in nestedMode
         GDialogMessage nestedDialog = new GDialogMessage(v.getContext(),
-                //TODO: Find a better icon than the ic_launcher icon
-                R.drawable.ic_launcher,
-                "Åbner sekvensvalg",
-                "Et nyt vindue åbnes, hvor du kan vælge en anden sekvens at indsætte",
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        assumeMinimize = false;
+            //TODO: Find a better icon than the ic_launcher icon
+            R.drawable.ic_launcher,
+            "Åbner sekvensvalg",
+            "Et nyt vindue åbnes, hvor du kan vælge en anden sekvens at indsætte",
+            new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    assumeMinimize = false;
 
-                        //Put required Intents to set up Nested Mode
-                        Intent intent = new Intent(getApplication(), MainActivity.class);
-                        intent.putExtra("insertSequence", true);
-                        intent.putExtra("currentGuardianID", guardian.getId());
-                        intent.putExtra("currentChildID", childId);
-                        startActivityForResult(intent, NESTED_SEQUENCE_CALL);
-                    }
-                });
-
+                    //Put required Intents to set up Nested Mode
+                    Intent intent = new Intent(getApplication(), MainActivity.class);
+                    intent.putExtra("insertSequence", true);
+                    intent.putExtra("currentGuardianID", guardian.getId());
+                    intent.putExtra("currentChildID", childId);
+                    startActivityForResult(intent, NESTED_SEQUENCE_CALL);
+                }
+            });
         nestedDialog.show();
     }
 
     private void createAndShowErrorDialog(View v) {
         //Creates alertDialog to display error. Clicking Ok dismisses the Dialog
         GDialogAlert alertDialog = new GDialogAlert(v.getContext(), R.drawable.delete,
-                "Fejl",
-                "Du kan ikke gemme en tom Sekvens",
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                    }
-                });
+            "Fejl",
+            "Du kan ikke gemme en tom Sekvens",
+            new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                }
+            });
         alertDialog.show();
     }
 
@@ -884,9 +888,11 @@ public class AddSequencesActivity extends GirafActivity {
     @Override
     public void onBackPressed() {
         if (isInEditMode) {
-            backButton.performClick();
+            //backButton.performClick();
+            this.finish();
         } else {
-            super.onBackPressed();
+            //super.onBackPressed();
+            this.finish();
         }
     }
 
@@ -921,7 +927,6 @@ public class AddSequencesActivity extends GirafActivity {
 
         private AddDialog(Context context) {
             super(context);
-
             this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.add_frame_dialog, null));
 
             GButton getSequence = (GButton) findViewById(R.id.get_sequence);
@@ -957,7 +962,6 @@ public class AddSequencesActivity extends GirafActivity {
     }
 
     private class ChoiceDialog extends GDialog {
-
         private ChoiceDialog(Context context) {
             super(context);
 
@@ -1029,7 +1033,6 @@ public class AddSequencesActivity extends GirafActivity {
                         }
                     });
 
-
             // Handle new view
             choiceGroup
                     .setOnNewButtonClickedListener(new OnNewButtonClickedListener() {
@@ -1050,7 +1053,6 @@ public class AddSequencesActivity extends GirafActivity {
                     callPictoAdmin(PICTO_EDIT_PICTOGRAM_CALL);
                 }
             });
-
 
             return choiceGroup;
         }

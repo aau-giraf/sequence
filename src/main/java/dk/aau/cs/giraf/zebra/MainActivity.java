@@ -358,8 +358,8 @@ public class MainActivity extends GirafActivity {
         childSelector.show();
     }
 
+    //Sets up relevant intents and starts AddSequencesActivity
     private void enterSequence(Sequence sequence, boolean isNew) {
-        //Sets up relevant intents and starts AddSequencesActivity
         assumeMinimize = false;
         Intent intent = new Intent(getApplication(), AddSequencesActivity.class);
         intent.putExtra("childId", selectedChild.getId());

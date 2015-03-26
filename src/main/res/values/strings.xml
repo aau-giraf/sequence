@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
+<!-- getResources().getString(R.string.save_sequence) -->
 
     <string name="app_name">Sequence</string>
     <string name="no_children">Der er ingen børn</string>
@@ -17,13 +18,16 @@
     <string name="cancel">Annuller</string>
     <string name="exit">Afslut</string>
     <string name="save">Gem</string>
+    <string name="save_sequence">Gem sekvens</string>
+    <string name="save_sequence_desc">Du er ved at gemme sekvensen</string>
+    <string name="save_sequence_req">Du bliver nødt til at gemme sekvensen før du kan se den</string>
     <string name="dont_save">Gem ikke</string>
     <string name="back_question">Du er ved at afslutte sekvensen. Vil du gemme dine ændringer?</string>
     <string name="return_question">Du er ved at afslutte sekvensen. Er du færdig?</string>
     <string name="discard_question">Du er ved at fortryde dine ændringer. Er du sikker?</string>
     <string name="delete_sequence">Slet sekvens</string>
-    <string name="Go_back">Nej</string>
-    <string name="Finished">Ja</string>
+    <string name="go_back">Nej</string>
+    <string name="finished">Ja</string>
     <string name="title_activity_settings">settingsActivity</string>
     <string name="action_settings">Settings</string>
 

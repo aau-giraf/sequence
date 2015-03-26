@@ -558,17 +558,6 @@ public class AddSequencesActivity extends GirafActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        if (isInEditMode) {
-            //backButton.performClick();
-            this.finish();
-        } else {
-            //super.onBackPressed();
-            this.finish();
-        }
-    }
-
-    @Override
     protected void onStop() {
         /*assumeMinimize makes it possible to kill the entire application if ever minimized.
         onStop is also called when entering other Activities, which is why the assumeMinimize check is needed

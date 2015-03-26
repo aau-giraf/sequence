@@ -41,6 +41,7 @@
         </activity>
         <activity
             android:name=".AddSequencesActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait" >
         </activity>
         <activity

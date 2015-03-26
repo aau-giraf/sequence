@@ -41,14 +41,26 @@ public class CopySequencesActivity extends GirafActivity {
         // Adding buttons
         addGirafButtonToActionBar(acceptButton, RIGHT);
 
+        //
+        setupButtons();
+    }
+
+    private void setupButtons(){
+        //Creates all buttons in Activity and their listeners.
+
         acceptButton.setOnClickListener(new View.OnClickListener() {
             //Show the MultiProfileSelector when clicking the Copy Button
             @Override
             public void onClick(View v) {
+
             }
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
 
 
 

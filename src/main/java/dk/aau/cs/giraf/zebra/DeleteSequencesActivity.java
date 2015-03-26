@@ -40,12 +40,86 @@ public class DeleteSequencesActivity extends GirafActivity {
         // Adding buttons
         addGirafButtonToActionBar(acceptButton, RIGHT);
 
+        //
+        setupButtons();
+    }
+
+    private void setupButtons(){
+        //Creates all buttons in Activity and their listeners.
+
         acceptButton.setOnClickListener(new View.OnClickListener() {
             //Show the MultiProfileSelector when clicking the Copy Button
             @Override
             public void onClick(View v) {
+
             }
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
+
+
+
+
+
+
+    /*
+
+
+    OLD DELETE CODE (DO NOT DELETE
+
+
+
+
+
+    private class deletingSequencesDialog extends GDialog {
+
+        public deletingSequencesDialog(final Context context) {
+            //Dialog where user can sort Sequences to delete
+            super(context);
+            this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.deleting_sequences,null));
+
+            //Set up two GridViews for the Delete operation
+            copyAdapter = new SequenceListAdapter(this.getContext(), sequences);
+            copyGrid = (GGridView) findViewById(R.id.existing_sequences);
+            copyGrid.setAdapter(copyAdapter);
+            setCopyGridItemClickListener(copyGrid);
+
+            pasteAdapter = new SequenceListAdapter(this.getContext(), tempSequenceList);
+            pasteGrid = (GGridView) findViewById(R.id.empty_sequences);
+            pasteGrid.setAdapter(pasteAdapter);
+            setPasteGridItemClickListener(pasteGrid);
+
+            //Set up Delete and Back Buttons
+            GButton popupDelete = (GButton) findViewById(R.id.popup_accept);
+            GButton popupBack = (GButton) findViewById(R.id.popup_back);
+
+            popupDelete.setOnClickListener(new GButton.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    //Delete all selected Sequences and update the main Sequence Grid
+                    for (Sequence seq : tempSequenceList) {
+                        helper = new Helper(context);
+                        helper.sequenceController.removeSequence(seq);
+                    }
+                    updateSequences();
+                    dismiss();
+                }
+            });
+
+            popupBack.setOnClickListener(new GButton.OnClickListener() {
+                //Cancel and close Dialog
+                @Override
+                public void onClick(View v) {
+                    dismiss();
+                }
+            });
+        }
+    }
+     */
 }

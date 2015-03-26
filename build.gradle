@@ -17,7 +17,6 @@ dependencies {
     compile project(':OasisLib')
     compile project(':local-db')
     compile project(':metadata')
-    compile project(':metadata_local')
 }
 
 android {

@@ -43,7 +43,7 @@ public class SequenceAdapter extends BaseAdapter {
 	@Override
 	public boolean hasStableIds() {
 		return false;
-	};
+	}
 	
 	@Override
 	public long getItemId(int position) {

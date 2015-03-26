@@ -4,21 +4,16 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -26,7 +21,6 @@ import java.util.List;
 
 import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.gui.GButton;
-import dk.aau.cs.giraf.gui.GComponent;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogAlert;
 import dk.aau.cs.giraf.gui.GDialogMessage;
@@ -54,29 +48,22 @@ public class AddSequencesActivity extends GirafActivity {
     private int pictogramEditPos = -1;
     public static Sequence sequence;
     public static Sequence choice = new Sequence();
-    public static SequenceAdapter adapter;
-    public static SequenceAdapter choiceAdapter;
+    public SequenceAdapter adapter;
+    public SequenceAdapter choiceAdapter;
     private List<Frame> tempFrameList;
     private List<Pictogram> tempPictogramList = new ArrayList<Pictogram>();
-    private GButton backButton;
-    private GButton sequenceImageButton;
-    private EditText sequenceTitleView;
-    private final String PICTO_ADMIN_PACKAGE = "dk.aau.cs.giraf.pictosearch";
-    private final String PICTO_ADMIN_CLASS = PICTO_ADMIN_PACKAGE + "." + "PictoAdminMain";
     private final String PICTO_INTENT_CHECKOUT_ID = "checkoutIds";
     private final int PICTO_SEQUENCE_IMAGE_CALL = 345;
     private final int PICTO_EDIT_PICTOGRAM_CALL = 456;
     private final int PICTO_NEW_PICTOGRAM_CALL = 567;
     private final int SEQUENCE_VIEWER_CALL = 1337;
-    private final int NESTED_SEQUENCE_CALL = 40;
     public static Activity activityToKill;
     private Helper helper;
-    private GDialog printAlignmentDialog;
-    private File[] file;
 
     // Initialize buttons
     private GirafButton saveButton;
     private GirafButton deleteButton;
+    private GirafButton sequenceImageButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,10 +73,12 @@ public class AddSequencesActivity extends GirafActivity {
         // Create buttons
         saveButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_save));
         deleteButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_delete));
+        sequenceImageButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_help));
 
         // Adding buttons to action-bar
         addGirafButtonToActionBar(saveButton, LEFT);
         addGirafButtonToActionBar(deleteButton, RIGHT);
+        addGirafButtonToActionBar(sequenceImageButton, LEFT);
 
         //Make Activity killable
         activityToKill = this;
@@ -97,7 +86,6 @@ public class AddSequencesActivity extends GirafActivity {
         loadIntents();
         loadProfiles();
         loadSequence();
-        setColors();
         setupFramesGrid();
         setupButtons();
         setupTopBar();
@@ -138,12 +126,6 @@ public class AddSequencesActivity extends GirafActivity {
         }
     }
 
-    private void setColors() {
-        //Sets up application colors using colors from GIRAF_Components
-        LinearLayout backgroundLayout = (LinearLayout) findViewById(R.id.parent_container);
-        backgroundLayout.setBackgroundDrawable(GComponent.GetBackground(GComponent.Background.SOLID));
-    }
-
     private void setupFramesGrid() {
         // Create Adapter for the SequenceViewGroup (The Grid displaying the Sequence)
         adapter = setupAdapter();
@@ -160,55 +142,18 @@ public class AddSequencesActivity extends GirafActivity {
             }
         });
 
-        /* Add button listener
-        addButton.setOnClickListener(new ImageButton.OnClickListener(){
-        //Show Add dialog when clicking the Add Button
-            @Override
-            public void onClick(View v) {
-                createAndShowAddDialog(v);
-            }
-        });
-        */
 
-        /* Preview button listener
-        previewButton.setOnClickListener(new ImageButton.OnClickListener() {
-            //If no changes has been made to Sequence, call SequenceViewer. Otherwise display Dialog, prompting user to save Sequence first
-            @Override
-            public void onClick(View v) {
-
-                if (isNew) {
-                    showpreviewDialog(v);
-                } else if (!sequence.getFramesList().equals(helper.sequenceController.getSequenceAndFrames(sequence.getId()).getFramesList())) {
-                    showpreviewDialog(v);
-                } else if (!sequenceTitleView.getText().equals(sequence.getName())) {
-                    showpreviewDialog(v);
-                } else {
-                    callSequenceViewer();
-                }
-            }
-        });
-        */
-
-        /* Print button listener
-        printButton.setOnClickListener(new ImageButton.OnClickListener() {
-            @Override
-        public void onClick(View v) {
-                AddSequencesActivity.this.openPrintAlignmentDialogBox();
-            }
-        });
-        */
-
-        /*
         sequenceImageButton.setOnClickListener(new ImageView.OnClickListener() {
             //If Sequence Image Button is clicked, call PictoAdmin to select an Image for the Sequence
             @Override
             public void onClick(View v) {
                 if (isInEditMode) {
-                    callPictoAdmin(PICTO_SEQUENCE_IMAGE_CALL);
+                    callPictoSearch(PICTO_SEQUENCE_IMAGE_CALL);
                 }
             }
         });
 
+        /*
         //If no Image has been selected or the Sequence, display the Add Sequence Picture. Otherwise load the image for the Button
         if (sequence.getPictogramId() == 0) {
             Drawable d = getResources().getDrawable(R.drawable.add_sequence_picture);
@@ -310,214 +255,13 @@ public class AddSequencesActivity extends GirafActivity {
         }
     }
 
-    /**
-     * Combines all pictograms in a number of bitmaps either horizontally or vertically.
-     *
-     * @param direction Can be either "horizontal" or "vertical". Determines the direction in which the pictograms will be added.
-     * @return An array of bitmaps containing pictograms.
-     */
-    private Bitmap[] combineFrames(String direction) {
-
-        int frameDimens = 200;
-        int numframes = sequence.getFramesList().size();
-
-        // Adjust spacing and offSet to have optimal number of pics / page.
-        int spacing = 18;
-        float offSet = 35f;
-
-        int totalSeqLengthInPixels = ((frameDimens + spacing) * numframes);
-
-        // Dimensions of pictograms in mm when printed.
-        int printedDimens = 30;
-
-        int a4height = (int) ((297.0 / printedDimens) * frameDimens);
-        int a4width = (int) ((210.0 / printedDimens) * frameDimens);
-
-        float center = (float) (a4width / 2 - frameDimens / 2);
-
-        int numberOfCanvases = (int) Math.ceil(totalSeqLengthInPixels / (a4height - offSet));
-        int numberPicsPerLine = (int) Math.floor((a4height - offSet) / (totalSeqLengthInPixels / numframes));
-        int numberOfPicsAdded = 0;
-
-        List<Canvas> comboImage = new ArrayList<Canvas>();
-
-        Bitmap[] combinedSequence = new Bitmap[numberOfCanvases];
-
-        for (int i = 0; i < numberOfCanvases; i++) {
-
-            if (direction == "vertical") {
-                combinedSequence[i] = Bitmap.createBitmap(a4width, a4height, Bitmap.Config.RGB_565);
-                comboImage.add(i, new Canvas(combinedSequence[i]));
-
-                float offSetTemp = offSet;
-                for (int ii = 0; ii < numberPicsPerLine && numberOfPicsAdded < numframes; ii++) {
-                    Bitmap bm = helper.pictogramHelper.getPictogramById(sequence.getFramesList().get(ii).getPictogramId()).getImage();
-                    bm = Bitmap.createScaledBitmap(bm, frameDimens, frameDimens, false);
-                    comboImage.get(i).drawBitmap(bm, center, offSetTemp, null);
-                    offSetTemp += frameDimens + spacing;
-                    numberOfPicsAdded++;
-                }
-            } else {
-                // Swapped height and width to "turn the paper".
-                combinedSequence[i] = Bitmap.createBitmap(a4height, a4width, Bitmap.Config.RGB_565);
-                comboImage.add(i, new Canvas(combinedSequence[i]));
-
-                float offSetTemp = offSet;
-                for (int ii = 0; ii < numberPicsPerLine && numberOfPicsAdded < numframes; ii++) {
-                    Bitmap bm = helper.pictogramHelper.getPictogramById(sequence.getFramesList().get(ii).getPictogramId()).getImage();
-                    bm = Bitmap.createScaledBitmap(bm, frameDimens, frameDimens, false);
-                    comboImage.get(i).drawBitmap(bm, offSetTemp, center, null);
-                    offSetTemp += frameDimens + spacing;
-                    numberOfPicsAdded++;
-                }
-            }
-        }
-        return combinedSequence;
-    }
-
-    // Used to print a sequence. A part of the email service.
-    /*
-    public void printSequence(View v) {
-        GRadioButton verticalButton = (GRadioButton) printAlignmentDialog.findViewById(R.id.vertical);
-        Bitmap[] combinedSequence;
-
-        //Warn the user and stop if trying to print empty sequence.
-        if (sequence.getFramesList().size() == 0) {
-            //TODO: Display message that it is not possible to print empty Sequence
-            printAlignmentDialog.dismiss();
-            return;
-        }
-
-        if (verticalButton.isChecked())
-            combinedSequence = combineFrames("vertical");
-        else
-            combinedSequence = combineFrames("horizontal");
-
-        // Set debug-email in class variable "debugEmail" when debugging!
-        String email = guardian.getEmail();
-        String message;
-        if (combinedSequence.length == 1) {
-            message = "Print det vedhæftede billede som helsidet billede på A4-størrelse papir for 3x3 cm piktogrammer.";
-        } else {
-            message = "Print de vedhæftede billeder som helsidede billeder på A4-størrelse papir for 3x3 cm piktogrammer.";
-        }
-
-        try {
-            //TODO: Convert text to ArrayList of CharSequence to display properly. See logcat for info
-            sendSequenceToEmail(combinedSequence, email, "Sekvens: " + sequenceTitleView.getText(), message);
-        } catch (Exception e) {
-            //TODO: Display error message that email could not be sent
-        }
-    }
-    */
-
-    /*
-    public void openPrintAlignmentDialogBox() {
-        printAlignmentDialog = new GDialog(this, LayoutInflater.from(this).inflate(R.layout.dialog_print_alignment, null));
-        printAlignmentDialog.show();
-    }
-    */
-
-    /**
-     * Based on: http://stackoverflow.com/questions/15662258/how-to-save-a-bitmap-on-internal-storage
-     *
-     * @param fileName
-     * @return file
-     */
-    private File[] getOutputMediaFile(String[] fileName, int numOfImages) {
-        // To be safe, you should check that the SDCard is mounted
-        // using Environment.getExternalStorageState() before doing this.
-        File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
-            + "/Android/data/"
-            + getApplicationContext().getPackageName()
-            + "/Files");
-
-        // This location works best if you want the created images to be shared
-        // between applications and persist after your app has been uninstalled.
-
-        // Create the storage directory if it does not exist
-        if (!mediaStorageDir.exists()) {
-            if (!mediaStorageDir.mkdirs()) {
-                return null;
-            }
-        }
-        // Create a media file name
-        File mediaFile[] = new File[numOfImages];
-
-        for (int i = 0; i < numOfImages; i++) {
-            mediaFile[i] = new File(mediaStorageDir.getPath() + File.separator + fileName[i]);
-        }
-
-        return mediaFile;
-    }
-
-    // Send sequence to email feature
-    /*
-    public void sendSequenceToEmail(Bitmap[] seqImage, String emailAddress, String subject, String message) {
-
-        int numOfImages = seqImage.length;
-        String[] filename = new String[numOfImages];
-
-
-        for (int i = 0; i < numOfImages; i++) {
-            filename[i] = "Sekvens del " + (i + 1) + " af " + numOfImages + ".png";
-        }
-
-        file = getOutputMediaFile(filename, numOfImages);
-
-        try {
-            for (int i = 0; i < numOfImages; i++) {
-                FileOutputStream out = new FileOutputStream(file[i]);
-                seqImage[i].compress(Bitmap.CompressFormat.PNG, 90, out);
-                out.close();
-            }
-        } catch (Exception e) {
-        }
-
-        ArrayList<Uri> fileUris = new ArrayList<Uri>();
-
-        for (int i = 0; i < numOfImages; i++) {
-            fileUris.add(Uri.fromFile(file[i]));
-        }
-
-        Intent email = new Intent(Intent.ACTION_SEND_MULTIPLE);
-        email.setType("message/rfc822");//("image/jpeg");
-        email.putExtra(Intent.EXTRA_EMAIL, new String[]{emailAddress});
-        email.putExtra(Intent.EXTRA_SUBJECT, subject);
-        email.putExtra(Intent.EXTRA_TEXT, message);
-        email.putParcelableArrayListExtra(Intent.EXTRA_STREAM, fileUris);
-
-        try {
-            startActivity(Intent.createChooser(email, "Vælg en email-klient"));
-        } catch (android.content.ActivityNotFoundException ex) {
-            //TODO: Display error message that email client could not be found
-        }
-        printAlignmentDialog.dismiss();
-    }
-    */
-
-    /* Used in dialog_print_alignment.xml
-    public void verticalRButtonClicked(View v) {
-        GRadioButton radioButton = (GRadioButton) printAlignmentDialog.findViewById(R.id.horizontal);
-        radioButton.setChecked(false);
-    }
-
-    public void horizontalRButtonClicked(View v) {
-        GRadioButton radioButton = (GRadioButton) printAlignmentDialog.findViewById(R.id.vertical);
-        radioButton.setChecked(false);
-    }
-
-    public void dialogPrintAlignmentCancel(View v) {
-        printAlignmentDialog.dismiss();
-    }
-    */
-
     private void saveChanges() {
         //Create helper to use Database Helpers
         helper = new Helper(this);
 
         //Save name from Title to the Sequence
-        sequence.setName(sequenceTitleView.getText().toString());
+        //sequence.setName(sequenceTitleView.getText().toString());
+        sequence.setName("placeholder");
 
         //Set PosX of every frame to save the order in which the frames should be shown.
         for (int i = 0; i < sequence.getFramesList().size(); i++) {
@@ -570,29 +314,6 @@ public class AddSequencesActivity extends GirafActivity {
         //Create instance of ChoiceDialog and display it
         ChoiceDialog choiceDialog = new ChoiceDialog(v.getContext());
         choiceDialog.show();
-    }
-
-    private void createAndShowNestedDialog(View v) {
-        //Creates a Dialog for information. Clicking OK starts MainActivity in nestedMode
-        GDialogMessage nestedDialog = new GDialogMessage(v.getContext(),
-            //TODO: Find a better icon than the ic_launcher icon
-            R.drawable.ic_launcher,
-            "Åbner sekvensvalg",
-            "Et nyt vindue åbnes, hvor du kan vælge en anden sekvens at indsætte",
-            new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    assumeMinimize = false;
-
-                    //Put required Intents to set up Nested Mode
-                    Intent intent = new Intent(getApplication(), MainActivity.class);
-                    intent.putExtra("insertSequence", true);
-                    intent.putExtra("currentGuardianID", guardian.getId());
-                    intent.putExtra("currentChildID", childId);
-                    startActivityForResult(intent, NESTED_SEQUENCE_CALL);
-                }
-            });
-        nestedDialog.show();
     }
 
     private void createAndShowErrorDialog(View v) {
@@ -725,44 +446,10 @@ public class AddSequencesActivity extends GirafActivity {
                     OnNewPictogramResult(data);
                     break;
 
-                case NESTED_SEQUENCE_CALL:
-                    onNestedSequenceResult(data);
-                    break;
-
                 default:
                     break;
             }
         }
-    }
-
-    private void onNestedSequenceResult(Intent data) {
-        //Get the Nested Sequence Id from Extras
-        int nestedSequenceId = data.getExtras().getInt("nestedSequenceId");
-
-        //If Nested Sequence was inserted on new position, save in a new Frame in the Sequence
-        if (pictogramEditPos == -1) {
-            //Create new Frame and set relevant Data
-            Frame frame = new Frame();
-            frame.setNestedSequence(nestedSequenceId);
-
-            //Create helper to give the Frame the first Image from the Nested Sequence (Used for display)
-            helper = new Helper(getBaseContext());
-
-            frame.setPictogramId(helper.sequenceController.getSequenceById(nestedSequenceId).getPictogramId());
-
-            //Add Frame to the Sequence
-            sequence.addFrame(frame);
-        }
-        //If Nested Sequence was inserted on an existing Frame, set the first Image from the Nested Sequence and overwrite Frame.
-        else {
-            sequence.getFramesList().get(pictogramEditPos).setNestedSequence(nestedSequenceId);
-            sequence.getFramesList().get(pictogramEditPos).setPictogramId(helper.sequenceController.getSequenceById(nestedSequenceId).getPictogramId());
-
-            //Reset the position to edit on
-            pictogramEditPos = -1;
-        }
-        //Update adapter with the new Data
-        adapter.notifyDataSetChanged();
     }
 
     private void OnNewPictogramResult(Intent data) {
@@ -803,7 +490,7 @@ public class AddSequencesActivity extends GirafActivity {
                 sequence.setPictogramId(checkoutIds[0]);
                 helper = new Helper(this);
                 Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(sequence.getPictogramId()).getImage());
-                sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
+                //sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
                 sequenceImageButton.setVisibility(View.GONE);
                 sequenceImageButton.setVisibility(View.VISIBLE);
             }
@@ -833,15 +520,16 @@ public class AddSequencesActivity extends GirafActivity {
             return;
         sequence.setPictogramId(checkoutIds[0]);
         Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(sequence.getPictogramId()).getImage());
-        sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
+        //sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
         sequenceImageButton.setVisibility(View.GONE);
         sequenceImageButton.setVisibility(View.VISIBLE);
     }
 
-    private void callPictoAdmin(int modeId) {
+    // send an intent to start pictosearch, and returns the result from pictosearch
+    private void callPictoSearch(int modeId) {
         assumeMinimize = false;
         Intent intent = new Intent();
-        intent.setComponent(new ComponentName(PICTO_ADMIN_PACKAGE, PICTO_ADMIN_CLASS));
+        intent.setComponent(new ComponentName("dk.aau.cs.giraf.pictosearch", "dk.aau.cs.giraf.pictosearch.PictoAdminMain"));
         intent.putExtra("currentChildID", selectedChild.getId());
         intent.putExtra("currentGuardianID", guardian.getId());
 
@@ -853,6 +541,7 @@ public class AddSequencesActivity extends GirafActivity {
         startActivityForResult(intent, modeId);
     }
 
+    // method for opening the sequence viewer with a the sequence chosen.
     private void callSequenceViewer() {
         assumeMinimize = false;
 
@@ -861,23 +550,6 @@ public class AddSequencesActivity extends GirafActivity {
         intent.putExtra("sequenceId", sequence.getId());
         intent.putExtra("callerType", "Zebra");
         startActivityForResult(intent, SEQUENCE_VIEWER_CALL);
-    }
-
-    private void showpreviewDialog(View v) {
-        GDialogMessage previewDialog = new GDialogMessage(v.getContext(),
-                getResources().getString(R.string.save_sequence),
-                getResources().getString(R.string.save_sequence_req),
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        boolean sequenceOk;
-                        sequenceOk = checkSequenceBeforeSave(v);
-                        if (sequenceOk) {
-                            callSequenceViewer();
-                        }
-                    }
-                });
-        previewDialog.show();
     }
 
     private void finishActivity() {
@@ -913,13 +585,10 @@ public class AddSequencesActivity extends GirafActivity {
 
     private void checkFrameMode(Frame frame, View v) {
 
-        if (frame.getNestedSequence() != 0) {
-            createAndShowNestedDialog(v);
-
-        } else if (frame.getPictogramList().size() > 0) {
+        if (frame.getPictogramList().size() > 0) {
             createAndShowChoiceDialog(v);
         } else {
-            callPictoAdmin(PICTO_EDIT_PICTOGRAM_CALL);
+            callPictoSearch(PICTO_EDIT_PICTOGRAM_CALL);
         }
     }
 
@@ -929,23 +598,14 @@ public class AddSequencesActivity extends GirafActivity {
             super(context);
             this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.add_frame_dialog, null));
 
-            GButton getSequence = (GButton) findViewById(R.id.get_sequence);
             GButton getPictogram = (GButton) findViewById(R.id.get_pictogram);
             GButton getChoice = (GButton) findViewById(R.id.get_choice);
 
-            getSequence.setOnClickListener(new GButton.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    createAndShowNestedDialog(v);
-                    dismiss();
-                }
-            });
             getPictogram.setOnClickListener(new GButton.OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
-                    callPictoAdmin(PICTO_NEW_PICTOGRAM_CALL);
+                    callPictoSearch(PICTO_NEW_PICTOGRAM_CALL);
                     dismiss();
                 }
             });
@@ -1025,32 +685,31 @@ public class AddSequencesActivity extends GirafActivity {
             choiceGroup.setAdapter(adapter);
 
             // Handle rearrange
-            choiceGroup
-                    .setOnRearrangeListener(new SequenceViewGroup.OnRearrangeListener() {
+            choiceGroup.setOnRearrangeListener(new SequenceViewGroup.OnRearrangeListener() {
                         @Override
                         public void onRearrange(int indexFrom, int indexTo) {
                             adapter.notifyDataSetChanged();
                         }
                     });
 
-            // Handle new view
-            choiceGroup
-                    .setOnNewButtonClickedListener(new OnNewButtonClickedListener() {
+            // Handle new pictogram added to the view
+            choiceGroup.setOnNewButtonClickedListener(new OnNewButtonClickedListener() {
                         @Override
                         public void onNewButtonClicked() {
                             final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.choice_view_group);
                             sequenceGroup.liftUpAddNewButton();
 
-                            callPictoAdmin(PICTO_NEW_PICTOGRAM_CALL);
+                            callPictoSearch(PICTO_NEW_PICTOGRAM_CALL);
                         }
                     });
 
+            // Handle pictogram edit
             choiceGroup.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapter, View view,
                                         int position, long id) {
                     pictogramEditPos = position;
-                    callPictoAdmin(PICTO_EDIT_PICTOGRAM_CALL);
+                    callPictoSearch(PICTO_EDIT_PICTOGRAM_CALL);
                 }
             });
 

@@ -40,7 +40,7 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name=".AddSequencesActivity"
+            android:name=".AddEditSequencesActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" >
         </activity>

@@ -34,7 +34,7 @@ import dk.aau.cs.giraf.zebra.SequenceViewGroup.OnNewButtonClickedListener;
 import dk.aau.cs.giraf.oasis.lib.models.Sequence;
 import dk.aau.cs.giraf.oasis.lib.models.Pictogram;
 
-public class AddSequencesActivity extends GirafActivity {
+public class AddEditSequencesActivity extends GirafActivity {
 
     private Profile guardian;
     private Profile selectedChild;

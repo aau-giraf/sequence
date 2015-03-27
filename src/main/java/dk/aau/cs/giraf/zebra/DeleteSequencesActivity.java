@@ -70,7 +70,8 @@ public class DeleteSequencesActivity extends GirafActivity {
     /*
 
 
-    OLD DELETE CODE (DO NOT DELETE
+    OLD DELETE CODE
+    DO NOT DELETE
 
 
 
@@ -121,5 +122,5 @@ public class DeleteSequencesActivity extends GirafActivity {
             });
         }
     }
-     */
+    */
 }

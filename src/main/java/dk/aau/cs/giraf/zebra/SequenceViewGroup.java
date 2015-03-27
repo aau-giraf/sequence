@@ -411,10 +411,10 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 						public void onAnimationEnd(Animation animation) {
 							if (startDragIndex != curDragIndexPos) {
 
-                                if (AddSequencesActivity.choiceMode == true) {
-                                    AddSequencesActivity.choice.rearrangeFrame(startDragIndex, curDragIndexPos);
+                                if (AddEditSequencesActivity.choiceMode == true) {
+                                    AddEditSequencesActivity.choice.rearrangeFrame(startDragIndex, curDragIndexPos);
                                 } else {
-                                    AddSequencesActivity.sequence.rearrangeFrame(startDragIndex, curDragIndexPos);
+                                    AddEditSequencesActivity.sequence.rearrangeFrame(startDragIndex, curDragIndexPos);
 
                                 }
 

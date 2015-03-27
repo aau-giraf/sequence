@@ -31,7 +31,6 @@ public class MainActivity extends GirafActivity {
 
     private SequenceListAdapter sequenceAdapter;
     private List<Sequence> sequences = new ArrayList<Sequence>();
-    private List<Sequence> tempSequenceList = new ArrayList<Sequence>();
     private Helper helper;
 
     // Initialize buttons
@@ -262,7 +261,6 @@ public class MainActivity extends GirafActivity {
 
         @Override
         protected void onPreExecute() {
-            tempSequenceList.clear();
         }
 
         @Override

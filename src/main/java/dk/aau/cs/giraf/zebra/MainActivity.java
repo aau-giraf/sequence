@@ -260,10 +260,6 @@ public class MainActivity extends GirafActivity {
     public class AsyncFetchDatabase extends AsyncTask<Void, Void, Void> {
 
         @Override
-        protected void onPreExecute() {
-        }
-
-        @Override
         protected Void doInBackground(Void... params) {
             helper = new Helper(MainActivity.this);
             sequences = helper.sequenceController.getSequencesAndFramesByProfileIdAndType(selectedChild.getId(), Sequence.SequenceType.SEQUENCE);
@@ -283,7 +279,7 @@ public class MainActivity extends GirafActivity {
         // Create the AsyncTask thread used to fetch database content
         AsyncFetchDatabase fetchDatabase = new AsyncFetchDatabase();
 
-        // Removes highlighting from Sequences that might have been lifted up when selected earlier
+        // Removes highlighting from Sequences that might have been lifted up when selected before entering the sequence
         for (int i = 0; i < sequenceGrid.getChildCount(); i++) {
             View view = sequenceGrid.getChildAt(i);
 

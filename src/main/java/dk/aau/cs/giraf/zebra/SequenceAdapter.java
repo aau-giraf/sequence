@@ -58,9 +58,11 @@ public class SequenceAdapter extends BaseAdapter {
 		
 		if (convertView == null) {
 			view = new PictogramView(context, 24f);
-		} else
-			view = (PictogramView)convertView;
-		
+		}
+        else {
+            view = (PictogramView)convertView;
+        }
+
 		view.setImageFromId(frame.getPictogramId());
 		
 		if (onAdapterGetViewListener != null)

@@ -14,6 +14,16 @@
     tools:context=".SequenceActivity"
     android:focusableInTouchMode="true" >
 
+    <EditText
+        android:id="@+id/sequenceName"
+        android:hint="@string/unnamed_sequence"
+        android:layout_width="400dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:text=""
+        android:textSize="24sp"/>
+
     <HorizontalScrollView
         android:id="@+id/horizontalScrollView"
         android:layout_width="match_parent"

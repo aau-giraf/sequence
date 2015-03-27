@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
@@ -59,6 +60,7 @@ public class AddEditSequencesActivity extends GirafActivity {
     private final int SEQUENCE_VIEWER_CALL = 1337;
     private final int NESTED_SEQUENCE_CALL = 40;
     private Helper helper;
+    private EditText sequenceName;
 
     // Initialize buttons
     private GirafButton saveButton;
@@ -69,6 +71,8 @@ public class AddEditSequencesActivity extends GirafActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit_sequences);
+
+        sequenceName = (EditText) findViewById(R.id.sequenceName);
 
         // Create buttons
         saveButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_save));
@@ -86,6 +90,10 @@ public class AddEditSequencesActivity extends GirafActivity {
         setupFramesGrid();
         setupButtons();
         setupTopBar();
+
+        // Set the name of the sequence to previously written name
+        sequence = helper.sequenceController.getSequenceAndFrames(sequenceId);
+        sequenceName.setText(sequence.getName(), EditText.BufferType.EDITABLE);
     }
 
     private void loadIntents() {
@@ -256,9 +264,13 @@ public class AddEditSequencesActivity extends GirafActivity {
         //Create helper to use Database Helpers
         helper = new Helper(this);
 
-        //Save name from Title to the Sequence
-        //sequence.setName(sequenceTitleView.getText().toString());
-        sequence.setName("placeholder");
+        //Save name from sequenceName to the Sequence
+        if (sequenceName.getEditableText() == null || sequenceName.getEditableText().length() == 0) {
+            sequence.setName(getResources().getString(R.string.unnamed_sequence));
+        }
+        else {
+            sequence.setName(sequenceName.getText().toString());
+        }
 
         //Set PosX of every frame to save the order in which the frames should be shown.
         for (int i = 0; i < sequence.getFramesList().size(); i++) {
@@ -473,12 +485,11 @@ public class AddEditSequencesActivity extends GirafActivity {
         int[] checkoutIds = data.getExtras().getIntArray(
                 PICTO_INTENT_CHECKOUT_ID);
 
-        //If no pictures are returned, assume user canceled and nothing is supposed to change.
+        //If no pictures are returned, assume user cancelled and nothing is supposed to change.
         if (checkoutIds.length == 0 || checkoutIds == null) {
             return;
         }
         if (choiceMode) {
-
             for (int id : checkoutIds) {
                 Pictogram pictogram = new Pictogram();
                 pictogram.setId(id);
@@ -519,8 +530,7 @@ public class AddEditSequencesActivity extends GirafActivity {
             return;
         }
 
-        int[] checkoutIds = data.getExtras().getIntArray(
-                PICTO_INTENT_CHECKOUT_ID);
+        int[] checkoutIds = data.getExtras().getIntArray(PICTO_INTENT_CHECKOUT_ID);
 
         if (checkoutIds.length == 0) {
             return;
@@ -677,30 +687,30 @@ public class AddEditSequencesActivity extends GirafActivity {
 
             // Handle rearrange
             choiceGroup.setOnRearrangeListener(new SequenceViewGroup.OnRearrangeListener() {
-                        @Override
-                        public void onRearrange(int indexFrom, int indexTo) {
-                            adapter.notifyDataSetChanged();
-                        }
-                    });
+                @Override
+                public void onRearrange(int indexFrom, int indexTo) {
+                    adapter.notifyDataSetChanged();
+                }
+            });
 
             // Handle new pictogram added to the view
             choiceGroup.setOnNewButtonClickedListener(new OnNewButtonClickedListener() {
-                        @Override
-                        public void onNewButtonClicked() {
-                            final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.choice_view_group);
-                            sequenceGroup.liftUpAddNewButton();
+                @Override
+                public void onNewButtonClicked() {
+                    final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.choice_view_group);
+                    sequenceGroup.liftUpAddNewButton();
 
-                            callPictoSearch(PICTO_NEW_PICTOGRAM_CALL);
-                        }
-                    });
+                    callPictoSearch(PICTO_NEW_PICTOGRAM_CALL);
+                }
+            });
 
             // Handle pictogram edit
             choiceGroup.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapter, View view,
                                         int position, long id) {
-                    pictogramEditPos = position;
-                    callPictoSearch(PICTO_EDIT_PICTOGRAM_CALL);
+                pictogramEditPos = position;
+                callPictoSearch(PICTO_EDIT_PICTOGRAM_CALL);
                 }
             });
 
@@ -724,12 +734,12 @@ public class AddEditSequencesActivity extends GirafActivity {
 
                 @Override
                 public void onClick(View v) {
-                    boolean sequenceOk;
-                    sequenceOk = checkSequenceBeforeSave(v);
-                    dismiss();
-                    if (sequenceOk) {
-                        finishActivity();
-                    }
+                boolean sequenceOk;
+                sequenceOk = checkSequenceBeforeSave(v);
+                dismiss();
+                if (sequenceOk) {
+                    finishActivity();
+                }
                 }
             });
 
@@ -737,11 +747,10 @@ public class AddEditSequencesActivity extends GirafActivity {
 
                 @Override
                 public void onClick(View v) {
-                    dismiss();
-                    finishActivity();
+                dismiss();
+                finishActivity();
                 }
             });
-
             cancel.setOnClickListener(new GButton.OnClickListener() {
 
                 @Override

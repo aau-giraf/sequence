@@ -24,18 +24,14 @@ public class MainActivity extends GirafActivity {
 
     private Profile guardian;
     private Profile selectedChild;
-
     private boolean childIsSet = false;
+    private int childId;
 
     private GridView sequenceGrid;
 
     private SequenceListAdapter sequenceAdapter;
-
     private List<Sequence> sequences = new ArrayList<Sequence>();
     private List<Sequence> tempSequenceList = new ArrayList<Sequence>();
-
-    private int childId;
-
     private Helper helper;
 
     // Initialize buttons
@@ -74,11 +70,10 @@ public class MainActivity extends GirafActivity {
         sequenceGrid.setAdapter(sequenceAdapter);
     }
 
+    //Creates all buttons for the Activity and their listeners.
     private void setupButtons() {
-        //Creates all buttons for the Activity and their listeners.
-
         addButton.setOnClickListener(new OnClickListener() {
-            //Enter AddEditSequencesActivity when clicking the Add Button
+            //Open AddEditSequencesActivity when clicking the Add Button
             @Override
             public void onClick(View v) {
                 Sequence sequence = new Sequence();
@@ -162,7 +157,6 @@ public class MainActivity extends GirafActivity {
     }
 
     private synchronized void setChild() {
-
         //Creates helper to fetch data from the Database
         helper = new Helper(this);
         
@@ -171,8 +165,8 @@ public class MainActivity extends GirafActivity {
         this.setActionBarTitle(getResources().getString(R.string.app_name)); // selectedChild.getName() "Child's name code"
 
         // AsyncTask thread
-        AsyncFetchDatabase runner = new AsyncFetchDatabase();
-        runner.execute();
+        AsyncFetchDatabase fetchDatabaseSetChild = new AsyncFetchDatabase();
+        fetchDatabaseSetChild.execute();
     }
 
     private void setupGuardianMode() {
@@ -190,7 +184,6 @@ public class MainActivity extends GirafActivity {
     }
 
     private void setupChildMode() {
-
         //When clicking a Sequence, lift up the view, create Intent for SequenceViewer and launch it
         sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -235,12 +228,6 @@ public class MainActivity extends GirafActivity {
         //Create ProfileSelector to make Guardian select Child
         final GProfileSelector childSelector = new GProfileSelector(this, guardian, null, false);
 
-        //Make Guardian unable to skip past picking a Child (Guardian can not click beside window to close ProfileSelector)
-        //TODO: Pressing the back key can close the ProfileSelector. Find a fix.
-        try{childSelector.backgroundCancelsDialog(false);}
-        catch (Exception e) {}
-
-
         //When child is selected, save Child locally and update application accordingly (Title name and Sequences)
         childSelector.setOnListItemClick(new AdapterView.OnItemClickListener() {
             @Override
@@ -265,12 +252,12 @@ public class MainActivity extends GirafActivity {
         startActivity(intent);
     }
 
+    // Finishes the current activity
     private void finishActivity() {
-        //Closes Activity properly by setting assumeMinimize to false. See onStop for explanation on assumeMinimize
         finish();
     }
 
-    // AsyncTask. Used to fetch data from the database NOT in the GUI thread
+    // AsyncTask. Used to fetch data from the database in another thread which is NOT the GUI thread
     public class AsyncFetchDatabase extends AsyncTask<Void, Void, Void> {
 
         @Override
@@ -295,7 +282,7 @@ public class MainActivity extends GirafActivity {
     @Override
     protected synchronized void onResume() {
         super.onResume();
-        // AsyncTask thread
+        // Create the AsyncTask thread used to fetch database content
         AsyncFetchDatabase fetchDatabase = new AsyncFetchDatabase();
 
         // Removes highlighting from Sequences that might have been lifted up when selected earlier
@@ -306,28 +293,10 @@ public class MainActivity extends GirafActivity {
                 ((PictogramView) view).placeDown();
             }
         }
+
         //If a Child is selected at this point, update Sequences for the Child
         if (childIsSet) {
             fetchDatabase.execute();
         }
-    }
-
-    @Override
-    protected void onStop() {
-        /*assumeMinimize makes it possible to kill the entire application if ever minimized.
-        onStop is also called when entering other Activities, which is why the assumeMinimize check is needed
-        assumeMinimize is set to false every time an Activity is entered and then reset to true here so application is not killed*/
-        /*if (assumeMinimize) {
-            //If in NestedMode, kill all open Activities. If not Nested, only this Activity needs to be killed
-            if (nestedMode) {
-                AddEditSequencesActivity.activityToKill.finish();
-                MainActivity.activityToKill.finish();
-            }
-            finishActivity();
-        } else {
-            //If assumeMinimize was false, reset it to true
-            assumeMinimize = true;
-        }*/
-        super.onStop();
     }
 }

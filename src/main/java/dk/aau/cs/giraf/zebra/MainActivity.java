@@ -28,16 +28,11 @@ public class MainActivity extends GirafActivity {
     private boolean childIsSet = false;
 
     private GridView sequenceGrid;
-    private GridView copyGrid;
-    private GridView pasteGrid;
 
     private SequenceListAdapter sequenceAdapter;
-    private SequenceListAdapter copyAdapter;
-    private SequenceListAdapter pasteAdapter;
 
     private List<Sequence> sequences = new ArrayList<Sequence>();
     private List<Sequence> tempSequenceList = new ArrayList<Sequence>();
-    private List<View> tempViewList = new ArrayList<View>();
 
     private int childId;
 
@@ -70,7 +65,6 @@ public class MainActivity extends GirafActivity {
         setupSequenceGridView();
         setupButtons();
         setupModeFromIntents();
-        //setColors();
     }
 
     private void setupSequenceGridView() {
@@ -81,10 +75,10 @@ public class MainActivity extends GirafActivity {
     }
 
     private void setupButtons() {
-        //Creates all buttons in Activity and their listeners. Initially they are invisible (Defined in XML)
+        //Creates all buttons for the Activity and their listeners.
 
         addButton.setOnClickListener(new OnClickListener() {
-            //Enter AddSequencesActivity when clicking the Add Button
+            //Enter AddEditSequencesActivity when clicking the Add Button
             @Override
             public void onClick(View v) {
                 Sequence sequence = new Sequence();
@@ -139,7 +133,7 @@ public class MainActivity extends GirafActivity {
         //Create helper to fetch data from database
         helper = new Helper(this);
 
-        //Fetches intents (from Launcher or AddSequencesActivity)
+        //Fetches intents (from Launcher or AddEditSequencesActivity)
         Bundle extras = getIntent().getExtras();
 
         //Get GuardianId and ChildId from extras
@@ -167,13 +161,8 @@ public class MainActivity extends GirafActivity {
         }
     }
 
-    //private void setColors() {
-        //Sets up application colors using colors from GIRAF_Components
-        //LinearLayout backgroundLayout = (LinearLayout) findViewById(R.id.parent_container);
-        //backgroundLayout.setBackgroundDrawable(GComponent.GetBackground(GComponent.Background.SOLID));
-    //}
-
     private synchronized void setChild() {
+
         //Creates helper to fetch data from the Database
         helper = new Helper(this);
         
@@ -186,83 +175,15 @@ public class MainActivity extends GirafActivity {
         runner.execute();
     }
 
-    //private void showDeleteDialog(View v) {
-    //    deletingSequencesDialog deleteDialog = new deletingSequencesDialog(v.getContext());
-    //    deleteDialog.show();
-    //}
-
-    private void setCopyGridItemClickListener(GridView copyGrid) {
-        //When clicking a Sequence in the CopyGrid (Left Grid), add to temporary list and the PasteGrid (Right Grid)
-        clearTempLists();
-        copyGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //Check if Sequence is already in the PasteGrid. If so, do nothing
-                for (int i = 0; i < tempSequenceList.size(); i++) {
-                    if (copyAdapter.getItem(position).getId() == tempSequenceList.get(i).getId()) {
-                        return;
-                    }
-                }
-
-                //Else, add Sequence to PasteGrid and save the View which is needed to reverse the operation
-                tempSequenceList.add(copyAdapter.getItem(position));
-                tempViewList.add(copyAdapter.getView(position, view, parent));
-
-                //Make the Sequence smaller on the CopyGrid to show it has been selected
-                View v = copyAdapter.getView(position, view, parent);
-                v.setAlpha(0.2f);
-                v.setScaleY(0.85f);
-                v.setScaleX(0.85f);
-
-                //Update the PasteGrid
-                pasteAdapter.notifyDataSetChanged();
-            }
-        });
-
-    }
-
-    private void setPasteGridItemClickListener(GridView pasteGrid) {
-        //When clicking a Sequence in the PasteGrid (Right Grid), remove and remove selection from CopyGrid ( Left Grid)
-        clearTempLists();
-        pasteGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                //Find Sequence in list
-                for (int i = 0; i < tempSequenceList.size(); i++) {
-                    if (pasteAdapter.getItem(position).getId() == tempSequenceList.get(i).getId()) {
-
-                        //Remove selection in CopyGrid
-                        View v = tempViewList.get(i);
-                        v.setAlpha(0.99f);
-                        v.setScaleX(0.99f);
-                        v.setScaleY(0.99f);
-
-                        //Remove Sequence and view from lists
-                        tempSequenceList.remove(i);
-                        tempViewList.remove(i);
-
-                        //Update PasteGrid
-                        pasteAdapter.notifyDataSetChanged();
-                    }
-                }
-            }
-        });
-    }
-
-    private void clearTempLists() {
-        tempViewList.clear();
-        tempSequenceList.clear();
-    }
-
     private void setupGuardianMode() {
-        //Clicking a Sequence lifts up the view and leads up to entering AddSequencesActivity by calling enterSequence
+        //Clicking a Sequence lifts up the view and leads up to entering AddEditSequencesActivity by calling enterSequence
         sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 ((PictogramView) view).liftUp();
                 Sequence sequence = sequenceAdapter.getItem(position);
+                // Intent is not stated here, as there are two different modes - if guardian then edit mode, else if citizen then view mode
                 enterSequence(sequence, false);
             }
         });
@@ -282,6 +203,7 @@ public class MainActivity extends GirafActivity {
                 intent.setComponent(new ComponentName("dk.aau.cs.giraf.sequenceviewer", "dk.aau.cs.giraf.sequenceviewer.MainActivity"));
                 intent.putExtra("sequenceId", sequenceAdapter.getItem(arg2).getId());
                 intent.putExtra("callerType", "Zebra");
+                intent.putExtra("visiblePictogramCount", 1);
                 startActivityForResult(intent, 2);
             }
         });
@@ -293,7 +215,7 @@ public class MainActivity extends GirafActivity {
     }
 
     private void setupNestedMode() {
-        //On clicking a Sequence, lift up the Sequence, finish Activity and send Id of Sequence as an extra back to AddSequencesActivity
+        //On clicking a Sequence, lift up the Sequence, finish Activity and send Id of Sequence as an extra back to AddEditSequencesActivity
         sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -332,15 +254,14 @@ public class MainActivity extends GirafActivity {
         childSelector.show();
     }
 
-    //Sets up relevant intents and starts AddSequencesActivity
+    //Sets up relevant intents and starts AddEditSequencesActivity
     private void enterSequence(Sequence sequence, boolean isNew) {
-        Intent intent = new Intent(getApplication(), AddSequencesActivity.class);
+        Intent intent = new Intent(getApplication(), AddEditSequencesActivity.class);
         intent.putExtra("childId", selectedChild.getId());
         intent.putExtra("guardianId", guardian.getId());
         intent.putExtra("editMode", true);
         intent.putExtra("isNew", isNew);
         intent.putExtra("sequenceId", sequence.getId());
-
         startActivity(intent);
     }
 
@@ -399,7 +320,7 @@ public class MainActivity extends GirafActivity {
         /*if (assumeMinimize) {
             //If in NestedMode, kill all open Activities. If not Nested, only this Activity needs to be killed
             if (nestedMode) {
-                AddSequencesActivity.activityToKill.finish();
+                AddEditSequencesActivity.activityToKill.finish();
                 MainActivity.activityToKill.finish();
             }
             finishActivity();

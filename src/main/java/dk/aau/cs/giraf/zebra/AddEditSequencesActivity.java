@@ -460,7 +460,6 @@ public class AddEditSequencesActivity extends GirafActivity {
                     // Remove the highlighting from the add pictogram button
                     final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup);
                     sequenceGroup.placeDownAddNewButton();
-
                     OnNewPictogramResult(data);
                     break;
 
@@ -485,7 +484,6 @@ public class AddEditSequencesActivity extends GirafActivity {
                 pictogram.setId(id);
                 tempPictogramList.add(pictogram);
 
-
                 Frame frame = new Frame();
                 frame.setPictogramId(id);
                 choice.addFrame(frame);
@@ -494,9 +492,9 @@ public class AddEditSequencesActivity extends GirafActivity {
                     choice.setPictogramId(checkoutIds[0]);
                 }
             }
-
             choiceAdapter.notifyDataSetChanged();
-        } else {
+        }
+        else {
 
             for (int id : checkoutIds) {
                 Frame frame = new Frame();
@@ -517,14 +515,17 @@ public class AddEditSequencesActivity extends GirafActivity {
     }
 
     private void OnEditPictogramResult(Intent data) {
-        if (pictogramEditPos < 0)
+        if (pictogramEditPos < 0) {
             return;
+        }
 
         int[] checkoutIds = data.getExtras().getIntArray(
                 PICTO_INTENT_CHECKOUT_ID);
 
-        if (checkoutIds.length == 0)
+        if (checkoutIds.length == 0) {
             return;
+        }
+
         Frame frame = sequence.getFramesList().get(pictogramEditPos);
         frame.setPictogramId(checkoutIds[0]);
         adapter.notifyDataSetChanged();
@@ -534,11 +535,13 @@ public class AddEditSequencesActivity extends GirafActivity {
         int[] checkoutIds = data.getExtras().getIntArray(
                 PICTO_INTENT_CHECKOUT_ID);
 
-        if (checkoutIds.length == 0)
+        if (checkoutIds.length == 0) {
             return;
+        }
+
         sequence.setPictogramId(checkoutIds[0]);
-        Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(sequence.getPictogramId()).getImage());
-        //sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
+        //Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(sequence.getPictogramId()).getImage());
+        //sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(0, d, 0, 0);
         sequenceImageButton.setVisibility(View.GONE);
         sequenceImageButton.setVisibility(View.VISIBLE);
     }
@@ -550,11 +553,12 @@ public class AddEditSequencesActivity extends GirafActivity {
         intent.putExtra("currentChildID", selectedChild.getId());
         intent.putExtra("currentGuardianID", guardian.getId());
 
-        if (modeId == PICTO_NEW_PICTOGRAM_CALL)
+        if (modeId == PICTO_NEW_PICTOGRAM_CALL){
             intent.putExtra("purpose", "multi");
-        else
+        }
+        else {
             intent.putExtra("purpose", "single");
-
+        }
         startActivityForResult(intent, modeId);
     }
 
@@ -569,14 +573,6 @@ public class AddEditSequencesActivity extends GirafActivity {
 
     private void finishActivity() {
         finish();
-    }
-
-    @Override
-    protected void onStop() {
-        /*assumeMinimize makes it possible to kill the entire application if ever minimized.
-        onStop is also called when entering other Activities, which is why the assumeMinimize check is needed
-        assumeMinimize is set to false every time an Activity is entered and then reset to true here so application is not killed*/
-        super.onStop();
     }
 
     private void checkFrameMode(Frame frame, View v) {
@@ -650,7 +646,6 @@ public class AddEditSequencesActivity extends GirafActivity {
                     }
                     frame.setPictogramList(tempPictogramList);
                     frame.setPictogramId(tempPictogramList.get(0).getId());
-
 
                     if (pictogramEditPos == -1) {
                         sequence.addFrame(frame);

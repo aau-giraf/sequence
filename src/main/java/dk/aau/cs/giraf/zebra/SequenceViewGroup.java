@@ -413,7 +413,8 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 
                                 if (AddEditSequencesActivity.choiceMode == true) {
                                     AddEditSequencesActivity.choice.rearrangeFrame(startDragIndex, curDragIndexPos);
-                                } else {
+                                }
+                                else {
                                     AddEditSequencesActivity.sequence.rearrangeFrame(startDragIndex, curDragIndexPos);
 
                                 }
@@ -428,13 +429,12 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 								//This prevents lots of flicker
 
 								onLayout(true, getLeft(), getTop(), getRight(), getBottom());
-
-							} else {
+							}
+                            else {
 								//Must clear animation to prevent flicker - even though it just ended.
 								getChildAt(startDragIndex).clearAnimation();
 								layoutChild(startDragIndex);
 							}
-							
 							startDragIndex = -1;
 							isDragging = false;
 							curDragIndexPos = -1;

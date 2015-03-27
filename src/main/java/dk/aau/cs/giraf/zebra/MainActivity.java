@@ -3,22 +3,16 @@ package dk.aau.cs.giraf.zebra;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.Activity;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.LinearLayout;
-import android.view.LayoutInflater;
 
 import dk.aau.cs.giraf.activity.GirafActivity;
-import dk.aau.cs.giraf.gui.GButton;
-import dk.aau.cs.giraf.gui.GComponent;
-import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GGridView;
 import dk.aau.cs.giraf.gui.GProfileSelector;
 import dk.aau.cs.giraf.gui.GirafButton;
@@ -31,8 +25,6 @@ public class MainActivity extends GirafActivity {
     private Profile guardian;
     private Profile selectedChild;
 
-    private boolean nestedMode;
-    private boolean assumeMinimize = true;
     private boolean childIsSet = false;
 
     private GridView sequenceGrid;
@@ -46,8 +38,6 @@ public class MainActivity extends GirafActivity {
     private List<Sequence> sequences = new ArrayList<Sequence>();
     private List<Sequence> tempSequenceList = new ArrayList<Sequence>();
     private List<View> tempViewList = new ArrayList<View>();
-
-    public static Activity activityToKill;
 
     private int childId;
 
@@ -152,11 +142,6 @@ public class MainActivity extends GirafActivity {
         //Fetches intents (from Launcher or AddSequencesActivity)
         Bundle extras = getIntent().getExtras();
 
-        //Makes the Activity killable from AddSequencesActivity and (Nested) MainActivity
-        if (extras.getBoolean("insertSequence") == false) {
-            activityToKill = this;
-        }
-
         //Get GuardianId and ChildId from extras
         int guardianId = extras.getInt("currentGuardianID");
         childId = extras.getInt("currentChildID");
@@ -166,7 +151,6 @@ public class MainActivity extends GirafActivity {
 
         //Setup nestedMode if insertSequence extra is present
         if (extras.getBoolean("insertSequence")) {
-            nestedMode = true;
             setupNestedMode();
             setChild();
         }
@@ -189,26 +173,17 @@ public class MainActivity extends GirafActivity {
         //backgroundLayout.setBackgroundDrawable(GComponent.GetBackground(GComponent.Background.SOLID));
     //}
 
-    private void setChild() {
+    private synchronized void setChild() {
         //Creates helper to fetch data from the Database
         helper = new Helper(this);
         
         //Save Child locally and update relevant information for application
         selectedChild = helper.profilesHelper.getProfileById(childId);
         this.setActionBarTitle(getResources().getString(R.string.app_name)); // selectedChild.getName() "Child's name code"
-        updateSequences();
-    }
 
-    private void updateSequences() {
-        //Updates the list of Sequences by clearing and (re)loading a Childs Sequences from the Database
-        tempSequenceList.clear();
-
-        //Creates helper to fetch data from the Database
-        helper = new Helper(this);
-
-        sequences = helper.sequenceController.getSequencesAndFramesByProfileIdAndType(selectedChild.getId(), Sequence.SequenceType.SEQUENCE);
-        sequenceAdapter = new SequenceListAdapter(this, sequences);
-        sequenceGrid.setAdapter(sequenceAdapter);
+        // AsyncTask thread
+        AsyncFetchDatabase runner = new AsyncFetchDatabase();
+        runner.execute();
     }
 
     //private void showDeleteDialog(View v) {
@@ -301,7 +276,6 @@ public class MainActivity extends GirafActivity {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 ((PictogramView) arg1).liftUp();
-                assumeMinimize = false;
 
                 //Create Intent with relevant Extras
                 Intent intent = new Intent();
@@ -360,7 +334,6 @@ public class MainActivity extends GirafActivity {
 
     //Sets up relevant intents and starts AddSequencesActivity
     private void enterSequence(Sequence sequence, boolean isNew) {
-        assumeMinimize = false;
         Intent intent = new Intent(getApplication(), AddSequencesActivity.class);
         intent.putExtra("childId", selectedChild.getId());
         intent.putExtra("guardianId", guardian.getId());
@@ -373,13 +346,36 @@ public class MainActivity extends GirafActivity {
 
     private void finishActivity() {
         //Closes Activity properly by setting assumeMinimize to false. See onStop for explanation on assumeMinimize
-        assumeMinimize = false;
         finish();
     }
 
+    // AsyncTask. Used to fetch data from the database NOT in the GUI thread
+    public class AsyncFetchDatabase extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            tempSequenceList.clear();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            helper = new Helper(MainActivity.this);
+            sequences = helper.sequenceController.getSequencesAndFramesByProfileIdAndType(selectedChild.getId(), Sequence.SequenceType.SEQUENCE);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            sequenceAdapter = new SequenceListAdapter(MainActivity.this, sequences);
+            sequenceGrid.setAdapter(sequenceAdapter);
+        }
+    }
+
     @Override
-    protected void onResume() {
+    protected synchronized void onResume() {
         super.onResume();
+        // AsyncTask thread
+        AsyncFetchDatabase fetchDatabase = new AsyncFetchDatabase();
 
         // Removes highlighting from Sequences that might have been lifted up when selected earlier
         for (int i = 0; i < sequenceGrid.getChildCount(); i++) {
@@ -391,7 +387,7 @@ public class MainActivity extends GirafActivity {
         }
         //If a Child is selected at this point, update Sequences for the Child
         if (childIsSet) {
-            updateSequences();
+            fetchDatabase.execute();
         }
     }
 
@@ -400,7 +396,7 @@ public class MainActivity extends GirafActivity {
         /*assumeMinimize makes it possible to kill the entire application if ever minimized.
         onStop is also called when entering other Activities, which is why the assumeMinimize check is needed
         assumeMinimize is set to false every time an Activity is entered and then reset to true here so application is not killed*/
-        if (assumeMinimize) {
+        /*if (assumeMinimize) {
             //If in NestedMode, kill all open Activities. If not Nested, only this Activity needs to be killed
             if (nestedMode) {
                 AddSequencesActivity.activityToKill.finish();
@@ -410,7 +406,7 @@ public class MainActivity extends GirafActivity {
         } else {
             //If assumeMinimize was false, reset it to true
             assumeMinimize = true;
-        }
+        }*/
         super.onStop();
     }
 }

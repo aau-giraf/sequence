@@ -46,7 +46,7 @@ public class AddSequencesActivity extends GirafActivity {
     private Profile selectedChild;
     private boolean isInEditMode;
     private boolean isNew;
-    private boolean assumeMinimize = true;
+
     public static boolean choiceMode = false;
     private int guardianId;
     private int childId;
@@ -69,7 +69,7 @@ public class AddSequencesActivity extends GirafActivity {
     private final int PICTO_NEW_PICTOGRAM_CALL = 567;
     private final int SEQUENCE_VIEWER_CALL = 1337;
     private final int NESTED_SEQUENCE_CALL = 40;
-    public static Activity activityToKill;
+
     private Helper helper;
     private GDialog printAlignmentDialog;
     private File[] file;
@@ -90,9 +90,6 @@ public class AddSequencesActivity extends GirafActivity {
         // Adding buttons to action-bar
         addGirafButtonToActionBar(saveButton, LEFT);
         addGirafButtonToActionBar(deleteButton, RIGHT);
-
-        //Make Activity killable
-        activityToKill = this;
 
         loadIntents();
         loadProfiles();
@@ -582,14 +579,12 @@ public class AddSequencesActivity extends GirafActivity {
             new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    assumeMinimize = false;
-
-                    //Put required Intents to set up Nested Mode
-                    Intent intent = new Intent(getApplication(), MainActivity.class);
-                    intent.putExtra("insertSequence", true);
-                    intent.putExtra("currentGuardianID", guardian.getId());
-                    intent.putExtra("currentChildID", childId);
-                    startActivityForResult(intent, NESTED_SEQUENCE_CALL);
+                //Put required Intents to set up Nested Mode
+                Intent intent = new Intent(getApplication(), MainActivity.class);
+                intent.putExtra("insertSequence", true);
+                intent.putExtra("currentGuardianID", guardian.getId());
+                intent.putExtra("currentChildID", childId);
+                startActivityForResult(intent, NESTED_SEQUENCE_CALL);
                 }
             });
         nestedDialog.show();
@@ -839,7 +834,6 @@ public class AddSequencesActivity extends GirafActivity {
     }
 
     private void callPictoAdmin(int modeId) {
-        assumeMinimize = false;
         Intent intent = new Intent();
         intent.setComponent(new ComponentName(PICTO_ADMIN_PACKAGE, PICTO_ADMIN_CLASS));
         intent.putExtra("currentChildID", selectedChild.getId());
@@ -854,8 +848,6 @@ public class AddSequencesActivity extends GirafActivity {
     }
 
     private void callSequenceViewer() {
-        assumeMinimize = false;
-
         Intent intent = new Intent();
         intent.setComponent(new ComponentName("dk.aau.cs.giraf.sequenceviewer", "dk.aau.cs.giraf.sequenceviewer.MainActivity"));
         intent.putExtra("sequenceId", sequence.getId());
@@ -881,7 +873,6 @@ public class AddSequencesActivity extends GirafActivity {
     }
 
     private void finishActivity() {
-        assumeMinimize = false;
         finish();
     }
 
@@ -890,13 +881,6 @@ public class AddSequencesActivity extends GirafActivity {
         /*assumeMinimize makes it possible to kill the entire application if ever minimized.
         onStop is also called when entering other Activities, which is why the assumeMinimize check is needed
         assumeMinimize is set to false every time an Activity is entered and then reset to true here so application is not killed*/
-        if (assumeMinimize) {
-            MainActivity.activityToKill.finish();
-            finishActivity();
-        } else {
-            //If assumeMinimize was false, reset it to true
-            assumeMinimize = true;
-        }
         super.onStop();
     }
 

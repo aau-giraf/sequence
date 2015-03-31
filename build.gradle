@@ -3,12 +3,12 @@ buildscript {
     repositories {
         mavenCentral()
         maven {
-          url uri('gradleLibs/')
+            url 'http://cs-cust06-int.cs.aau.dk/artifactory/libraries'
         }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:1.0.+'
-        classpath 'dk.giraf:deployPlugin:1.0'
+        classpath 'dk.aau.cs.giraf:auto-deploy-gradle-plugin:1.0'
         classpath 'com.github.triplet.gradle:play-publisher:1.0.2'
     }
 }

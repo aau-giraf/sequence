@@ -30,6 +30,7 @@ import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogAlert;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GirafButton;
+import dk.aau.cs.giraf.gui.GirafInflateableDialog;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Frame;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
@@ -61,6 +62,10 @@ public class AddEditSequencesActivity extends GirafActivity {
     private final int PICTO_SEQUENCE_IMAGE_CALL = 345;
     private final int PICTO_EDIT_PICTOGRAM_CALL = 456;
     private final int PICTO_NEW_PICTOGRAM_CALL = 567;
+    private final String ADD_PICTOGRAM_OR_CHOICE = "ADD_PICTOGRAM_OR_CHOICE";
+    private final String SAVE_SEQUENCE = "SAVE_SEQUENCE";
+    private final String BACK_SEQUENCE = "BACK_SEQUENCE";
+    private final String CHOICE_SEQUENCE = "CHOICE_SEQUENCE";
     private final int SEQUENCE_VIEWER_CALL = 1337;
     private final int NESTED_SEQUENCE_CALL = 40;
     private Helper helper;
@@ -69,8 +74,12 @@ public class AddEditSequencesActivity extends GirafActivity {
 
     // Initialize buttons
     private GirafButton saveButton;
-    private GirafButton deleteButton;
     private GirafButton sequenceThumbnailButton;
+
+    GirafInflateableDialog choosePictogramOrChoiceDialog;
+    GirafInflateableDialog backDialog;
+    GirafInflateableDialog saveDialog;
+    GirafInflateableDialog choiceDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,13 +146,11 @@ public class AddEditSequencesActivity extends GirafActivity {
 
         // Create buttons
         saveButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_save));
-        deleteButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_delete));
         sequenceThumbnailButton = (GirafButton) findViewById(R.id.sequenceThumbnail);
         sequenceThumbnailButton.setIcon(getResources().getDrawable(R.drawable.icon_accept));
 
         // Adding buttons to action-bar
         addGirafButtonToActionBar(saveButton, LEFT);
-        addGirafButtonToActionBar(deleteButton, RIGHT);
 
         saveButton.setOnClickListener(new ImageButton.OnClickListener() {
             //Show Dialog to save Sequence when clicking the Save Button
@@ -243,62 +250,68 @@ public class AddEditSequencesActivity extends GirafActivity {
         }
     }
 
-    private void createAndShowSaveDialog(View v) {
-        //Creates a dialog for saving Sequence. If Sequence is saved succesfully, exit Activity
-        GDialogMessage saveDialog = new GDialogMessage(v.getContext(), R.drawable.save,
-        getResources().getString(R.string.save_sequence),
-        getResources().getString(R.string.save_sequence_desc),
-        new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                   boolean sequenceOk;
-                sequenceOk = checkSequenceBeforeSave(v);
-                if (sequenceOk) {
-                    finishActivity();
-                }
-            }
-        });
-        saveDialog.show();
-    }
-
-    private void createAndShowBackDialog(View v) {
-        //Create instance of BackDialog class and display it
-        BackDialog backDialog = new BackDialog(v.getContext());
-        backDialog.show();
-    }
-
+    // creates the "add pictogram or choice" view
+    // The following two methods is connected to girafbuttons in the view
     private void createAndShowAddDialog(View v) {
         //Create instance of AddDialog and display it
-        AddDialog addFrame = new AddDialog(v.getContext());
-        addFrame.show();
+        choosePictogramOrChoiceDialog = GirafInflateableDialog.newInstance(this.getString(R.string.add_pictogram_choice), this.getString(R.string.add_pictogram_choice_description), R.layout.dialog_add_pictogram_or_choice);
+        choosePictogramOrChoiceDialog.show(getSupportFragmentManager(), ADD_PICTOGRAM_OR_CHOICE);
     }
 
-    private void createAndShowChoiceDialog(View v) {
-        //Create instance of ChoiceDialog and display it
-        ChoiceDialog choiceDialog = new ChoiceDialog(v.getContext());
-        choiceDialog.show();
+    // Button to search for pictograms
+    public void getPictogramClick(View v) {
+        callPictoSearch(PICTO_NEW_PICTOGRAM_CALL);
+        choosePictogramOrChoiceDialog.dismiss();
     }
 
-    private void createAndShowNestedDialog(View v) {
-        //Creates a Dialog for information. Clicking OK starts MainActivity in nestedMode
-        GDialogMessage nestedDialog = new GDialogMessage(v.getContext(),
-            //TODO: Find a better icon than the ic_launcher icon
-            R.drawable.ic_launcher,
-            "Åbner sekvensvalg",
-            "Et nyt vindue åbnes, hvor du kan vælge en anden sekvens at indsætte",
-            new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                //Put required Intents to set up Nested Mode
-                Intent intent = new Intent(getApplication(), MainActivity.class);
-                intent.putExtra("insertSequence", true);
-                intent.putExtra("currentGuardianID", guardian.getId());
-                intent.putExtra("currentChildID", childId);
-                startActivityForResult(intent, NESTED_SEQUENCE_CALL);
-                }
-            });
-        nestedDialog.show();
+
+
+    // Button to search for pictograms, that should be used in a "choice" activity
+    public void getChoiceClick(View v) {
+        choiceMode = true;
+        createAndShowChoiceDialog(v);
+        choosePictogramOrChoiceDialog.dismiss();
     }
+
+
+    // creates the
+    // The following two methods is connected to girafbuttons in the view
+    private void createAndShowBackDialog(View v) {
+        //Create instance of AddDialog and display it
+        backDialog = GirafInflateableDialog.newInstance(this.getString(R.string.back), this.getString(R.string.back_description), R.layout.dialog_back);
+        backDialog.show(getSupportFragmentManager(), BACK_SEQUENCE);
+    }
+
+    // Button to search for pictograms
+    public void backSaveClick(View v) {
+        boolean sequenceOk;
+        sequenceOk = checkSequenceBeforeSave(v);
+        backDialog.dismiss();
+        if (sequenceOk) {
+            super.onBackPressed();
+        }
+    }
+
+    // Button to search for pictograms, that should be used in a "choice" activity
+    public void backDontSaveClick(View v) {
+        backDialog.dismiss();
+        super.onBackPressed();
+    }
+
+    // creates the
+    // The following two methods is connected to girafbuttons in the view
+    private void createAndShowSaveDialog(View v) {
+        //Create instance of AddDialog and display it
+        saveDialog = GirafInflateableDialog.newInstance(this.getString(R.string.save), this.getString(R.string.sequence_saved), R.layout.dialog_save);
+        saveDialog.show(getSupportFragmentManager(), SAVE_SEQUENCE);
+    }
+
+    // Button to search for pictograms
+    public void savedClick(View v) {
+        checkSequenceBeforeSave(v);
+        saveDialog.dismiss();
+    }
+
 
     private void createAndShowErrorDialog(View v) {
         //Creates alertDialog to display error. Clicking Ok dismisses the Dialog
@@ -526,17 +539,10 @@ public class AddEditSequencesActivity extends GirafActivity {
         startActivityForResult(intent, modeId);
     }
 
-    // method for opening the sequence viewer with a the sequence chosen.
-    private void callSequenceViewer() {
-        Intent intent = new Intent();
-        intent.setComponent(new ComponentName("dk.aau.cs.giraf.sequenceviewer", "dk.aau.cs.giraf.sequenceviewer.MainActivity"));
-        intent.putExtra("sequenceId", sequence.getId());
-        intent.putExtra("callerType", "Zebra");
-        startActivityForResult(intent, SEQUENCE_VIEWER_CALL);
-    }
-
-    private void finishActivity() {
-        finish();
+    private void createAndShowChoiceDialog(View v) {
+        //Create instance of ChoiceDialog and display it
+        ChoiceDialog choiceDialog = new ChoiceDialog(v.getContext());
+        choiceDialog.show();
     }
 
     private void checkFrameMode(Frame frame, View v) {
@@ -545,35 +551,6 @@ public class AddEditSequencesActivity extends GirafActivity {
             createAndShowChoiceDialog(v);
         } else {
             callPictoSearch(PICTO_EDIT_PICTOGRAM_CALL);
-        }
-    }
-
-    private class AddDialog extends GDialog {
-
-        private AddDialog(Context context) {
-            super(context);
-            this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.add_frame_dialog, null));
-
-            GButton getPictogram = (GButton) findViewById(R.id.get_pictogram);
-            GButton getChoice = (GButton) findViewById(R.id.get_choice);
-
-            getPictogram.setOnClickListener(new GButton.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    callPictoSearch(PICTO_NEW_PICTOGRAM_CALL);
-                    dismiss();
-                }
-            });
-            getChoice.setOnClickListener(new GButton.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    choiceMode = true;
-                    dismiss();
-                    createAndShowChoiceDialog(v);
-                }
-            });
         }
     }
 
@@ -590,7 +567,7 @@ public class AddEditSequencesActivity extends GirafActivity {
                 }
             }
 
-            this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.choice_dialog, null));
+            this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.dialog_choice, null));
 
             GButton saveChoice = (GButton) findViewById(R.id.save_choice);
             GButton discardChoice = (GButton) findViewById(R.id.discard_choice);
@@ -672,46 +649,8 @@ public class AddEditSequencesActivity extends GirafActivity {
         }
     }
 
-    private class BackDialog extends GDialog {
-
-        public BackDialog(Context context) {
-
-            super(context);
-
-            this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.exit_sequence_dialog, null));
-
-            GButton saveChanges = (GButton) findViewById(R.id.save_changes);
-            GButton discardChanges = (GButton) findViewById(R.id.discard_changes);
-            GButton cancel = (GButton) findViewById(R.id.return_to_editting);
-
-            saveChanges.setOnClickListener(new GButton.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                boolean sequenceOk;
-                sequenceOk = checkSequenceBeforeSave(v);
-                dismiss();
-                if (sequenceOk) {
-                    finishActivity();
-                }
-                }
-            });
-
-            discardChanges.setOnClickListener(new GButton.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                dismiss();
-                finishActivity();
-                }
-            });
-            cancel.setOnClickListener(new GButton.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    dismiss();
-                }
-            });
-        }
+    @Override
+    public void onBackPressed() {
+        createAndShowBackDialog(null);
     }
 }

@@ -17,7 +17,7 @@
     <string name="no">Nej</string>
     <string name="confirm_go_back">Vil du gå tilbage uden at gemme?</string>
     <string name="undo_changes">Fortryd ændringer</string>
-    <string name="cancel">Annuller</string>
+    <string name="cancel">Fortryd</string>
     <string name="exit">Afslut</string>
     <string name="save">Gem</string>
     <string name="save_sequence">Gem sekvens</string>
@@ -32,5 +32,13 @@
     <string name="finished">Ja</string>
     <string name="title_activity_settings">settingsActivity</string>
     <string name="action_settings">Settings</string>
+    <string name="pictogram">Piktogram</string>
+    <string name="choice">Valg</string>
+    <string name="add_pictogram_choice">Tilføj</string>
+    <string name="add_pictogram_choice_description">Vælg hvad Du vil tilføje.</string>
+    <string name="back">Tilbage</string>
+    <string name="back_description">Vil du gemme før du går tilbage?</string>
+    <string name="ok">Ok</string>
+    <string name="sequence_saved">Sekvensen er blevet gemt.</string>
 
 </resources>

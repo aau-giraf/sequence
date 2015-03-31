@@ -64,7 +64,7 @@ public class MainActivity extends GirafActivity {
 
     private void setupSequenceGridView() {
         //Sets the GridView and adapter to display Sequences
-        sequenceGrid = (GGridView) findViewById(R.id.sequence_grid);
+        sequenceGrid = (GridView) findViewById(R.id.sequence_grid);
         sequenceAdapter = new SequenceListAdapter(this, sequences);
         sequenceGrid.setAdapter(sequenceAdapter);
     }

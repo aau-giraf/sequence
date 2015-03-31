@@ -65,7 +65,7 @@ public class AddEditSequencesActivity extends GirafActivity {
     // Initialize buttons
     private GirafButton saveButton;
     private GirafButton deleteButton;
-    private GirafButton sequenceImageButton;
+    private GirafButton sequenceThumbnailButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,12 +77,12 @@ public class AddEditSequencesActivity extends GirafActivity {
         // Create buttons
         saveButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_save));
         deleteButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_delete));
-        sequenceImageButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_help));
+        sequenceThumbnailButton = (GirafButton) findViewById(R.id.sequenceThumbnail);
+        sequenceThumbnailButton.setIcon(getResources().getDrawable(R.drawable.icon_accept));
 
         // Adding buttons to action-bar
         addGirafButtonToActionBar(saveButton, LEFT);
         addGirafButtonToActionBar(deleteButton, RIGHT);
-        addGirafButtonToActionBar(sequenceImageButton, LEFT);
 
         loadIntents();
         loadProfiles();
@@ -148,7 +148,7 @@ public class AddEditSequencesActivity extends GirafActivity {
         });
 
 
-        sequenceImageButton.setOnClickListener(new ImageView.OnClickListener() {
+        sequenceThumbnailButton.setOnClickListener(new ImageView.OnClickListener() {
             //If Sequence Image Button is clicked, call PictoAdmin to select an Image for the Sequence
             @Override
             public void onClick(View v) {
@@ -158,17 +158,15 @@ public class AddEditSequencesActivity extends GirafActivity {
             }
         });
 
-        /*
         //If no Image has been selected or the Sequence, display the Add Sequence Picture. Otherwise load the image for the Button
         if (sequence.getPictogramId() == 0) {
             Drawable d = getResources().getDrawable(R.drawable.add_sequence_picture);
-            sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
+            sequenceThumbnailButton.setIcon(d);
         } else {
             helper = new Helper(this);
             Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(sequence.getPictogramId()).getImage());
-            sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
+            sequenceThumbnailButton.setIcon(d);
         }
-        */
     }
 
     private void setupTopBar() {
@@ -518,8 +516,8 @@ public class AddEditSequencesActivity extends GirafActivity {
                 helper = new Helper(this);
                 Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(sequence.getPictogramId()).getImage());
                 //sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
-                sequenceImageButton.setVisibility(View.GONE);
-                sequenceImageButton.setVisibility(View.VISIBLE);
+                sequenceThumbnailButton.setVisibility(View.GONE);
+                sequenceThumbnailButton.setVisibility(View.VISIBLE);
             }
             adapter.notifyDataSetChanged();
         }
@@ -552,8 +550,8 @@ public class AddEditSequencesActivity extends GirafActivity {
         sequence.setPictogramId(checkoutIds[0]);
         //Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(sequence.getPictogramId()).getImage());
         //sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(0, d, 0, 0);
-        sequenceImageButton.setVisibility(View.GONE);
-        sequenceImageButton.setVisibility(View.VISIBLE);
+        sequenceThumbnailButton.setVisibility(View.GONE);
+        sequenceThumbnailButton.setVisibility(View.VISIBLE);
     }
 
     // send an intent to start pictosearch, and returns the result from pictosearch

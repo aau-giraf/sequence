@@ -1,6 +1,5 @@
 package dk.aau.cs.giraf.zebra;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -90,10 +89,6 @@ public class AddEditSequencesActivity extends GirafActivity {
         setupFramesGrid();
         setupButtons();
         setupTopBar();
-
-        // Set the name of the sequence to previously written name
-        sequence = helper.sequenceController.getSequenceAndFrames(sequenceId);
-        sequenceName.setText(sequence.getName(), EditText.BufferType.EDITABLE);
     }
 
     private void loadIntents() {
@@ -119,6 +114,8 @@ public class AddEditSequencesActivity extends GirafActivity {
         //If SequenceId from intents is valid, get it from the Database
         if (sequenceId != 0) {
             sequence = helper.sequenceController.getSequenceAndFrames(sequenceId);
+            // Set the name of the sequence to previously written name
+            sequenceName.setText(sequence.getName(), EditText.BufferType.EDITABLE);
 
             // Orders the frames by the X coordinate
             Collections.sort(sequence.getFramesList(), new Comparator<Frame>() {
@@ -179,11 +176,9 @@ public class AddEditSequencesActivity extends GirafActivity {
     /* Editable title
     private void initializeSequenceTitle() {
         //Set Sequence name in Title (if any)
-        sequenceTitleView = (EditText) findViewById(R.id.sequence_title);
-        sequenceTitleView.setText(sequence.getName());
 
         // Create listener to remove focus when "Done" is pressed on the keyboard
-        sequenceTitleView.setOnEditorActionListener(new OnEditorActionListener() {
+        sequenceName.setOnEditorActionListener(new OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -194,24 +189,20 @@ public class AddEditSequencesActivity extends GirafActivity {
             }
         });
 
-        // Create listener on Parent View(s) to remove focus when touched
-        createClearFocusListener(findViewById(R.id.parent_container));
-
         // Create listener to hide the keyboard when the EditText loses focus
-        sequenceTitleView.setOnFocusChangeListener(new OnFocusChangeListener() {
+        sequenceName.setOnFocusChangeListener(new OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                EditText sequenceTitle = (EditText) findViewById(R.id.sequence_title);
                 if (hasFocus) {
                     //Makes the hint text from the SequenceTitle transparent if sequenceTitle is blank
-                    if (sequenceTitle.getText().toString().equals("")) {
-                        sequenceTitle.setHintTextColor(Color.TRANSPARENT);
+                    if (sequenceName.getText().toString().equals("")) {
+                        sequenceName.setHintTextColor(Color.TRANSPARENT);
                     }
                 } else {
                     // Hides the keyboard and reverts hint color when sequenceTitle is not active
                     InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     in.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                    sequenceTitle.setHintTextColor(Color.parseColor("#55624319"));
+                    sequenceName.setHintTextColor(Color.parseColor("#55624319"));
                 }
             }
         });
@@ -233,7 +224,7 @@ public class AddEditSequencesActivity extends GirafActivity {
             view.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    EditText editText = (EditText) findViewById(R.id.sequence_title);
+                    EditText editText = (EditText) findViewById(R.id.sequenceName);
                     editText.clearFocus();
                     return false;
                 }

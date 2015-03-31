@@ -17,7 +17,7 @@
         android:layout_marginTop="-6dp"
         android:baselineAligned="false">
 
-        <dk.aau.cs.giraf.gui.GGridView
+        <GridView
             android:id="@+id/sequence_grid"
             android:layout_width="0dip"
             android:layout_height="match_parent"
@@ -25,7 +25,7 @@
             android:fadeScrollbars="false"
             android:gravity="center"
             android:listSelector="#00000000"
-            android:numColumns="5"></dk.aau.cs.giraf.gui.GGridView>
+            android:numColumns="5"></GridView>
     </LinearLayout>
 
 </LinearLayout>

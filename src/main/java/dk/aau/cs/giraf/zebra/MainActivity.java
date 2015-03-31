@@ -195,7 +195,8 @@ public class MainActivity extends GirafActivity {
                 intent.setComponent(new ComponentName("dk.aau.cs.giraf.sequenceviewer", "dk.aau.cs.giraf.sequenceviewer.MainActivity"));
                 intent.putExtra("sequenceId", sequenceAdapter.getItem(arg2).getId());
                 intent.putExtra("callerType", "Zebra");
-                intent.putExtra("visiblePictogramCount", 1);
+                intent.putExtra("landscapeMode", false);
+                intent.putExtra("visiblePictogramCount", sequenceAdapter.getCount());
                 startActivityForResult(intent, 2);
             }
         });

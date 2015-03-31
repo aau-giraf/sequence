@@ -8,14 +8,11 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:1.0.+'
-        classpath 'dk.giraf:deployPlugin:1.0'
         classpath 'com.github.triplet.gradle:play-publisher:1.0.2'
     }
 }
 
 apply plugin: 'android'
-apply plugin: 'dk.giraf.deploy'
-apply plugin: 'play'
 
 dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
@@ -45,10 +42,4 @@ android {
     lintOptions {
         abortOnError false
     }
-}
-
-play {
-    serviceAccountEmail = project.playAcc.accountEmail
-    pk12File = file(project.playAcc.keyPath)
-    track = 'alpha'
 }

@@ -6,13 +6,18 @@ import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.view.inputmethod.EditorInfo;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -60,6 +65,7 @@ public class AddEditSequencesActivity extends GirafActivity {
     private final int NESTED_SEQUENCE_CALL = 40;
     private Helper helper;
     private EditText sequenceName;
+    private LinearLayout parent_container;
 
     // Initialize buttons
     private GirafButton saveButton;
@@ -71,17 +77,9 @@ public class AddEditSequencesActivity extends GirafActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit_sequences);
 
+        // Initialize XML components
         sequenceName = (EditText) findViewById(R.id.sequenceName);
-
-        // Create buttons
-        saveButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_save));
-        deleteButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_delete));
-        sequenceImageButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_help));
-
-        // Adding buttons to action-bar
-        addGirafButtonToActionBar(saveButton, LEFT);
-        addGirafButtonToActionBar(deleteButton, RIGHT);
-        addGirafButtonToActionBar(sequenceImageButton, LEFT);
+        parent_container = (LinearLayout) findViewById(R.id.parent_container);
 
         loadIntents();
         loadProfiles();
@@ -89,6 +87,7 @@ public class AddEditSequencesActivity extends GirafActivity {
         setupFramesGrid();
         setupButtons();
         setupTopBar();
+        clearFocus();
     }
 
     private void loadIntents() {
@@ -136,6 +135,16 @@ public class AddEditSequencesActivity extends GirafActivity {
 
     private void setupButtons() {
 
+        // Create buttons
+        saveButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_save));
+        deleteButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_delete));
+        sequenceImageButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_help));
+
+        // Adding buttons to action-bar
+        addGirafButtonToActionBar(saveButton, LEFT);
+        addGirafButtonToActionBar(deleteButton, RIGHT);
+        addGirafButtonToActionBar(sequenceImageButton, LEFT);
+
         saveButton.setOnClickListener(new ImageButton.OnClickListener() {
             //Show Dialog to save Sequence when clicking the Save Button
             @Override
@@ -143,7 +152,6 @@ public class AddEditSequencesActivity extends GirafActivity {
                 createAndShowSaveDialog(v);
             }
         });
-
 
         sequenceImageButton.setOnClickListener(new ImageView.OnClickListener() {
             //If Sequence Image Button is clicked, call PictoAdmin to select an Image for the Sequence
@@ -154,18 +162,6 @@ public class AddEditSequencesActivity extends GirafActivity {
                 }
             }
         });
-
-        /*
-        //If no Image has been selected or the Sequence, display the Add Sequence Picture. Otherwise load the image for the Button
-        if (sequence.getPictogramId() == 0) {
-            Drawable d = getResources().getDrawable(R.drawable.add_sequence_picture);
-            sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
-        } else {
-            helper = new Helper(this);
-            Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(sequence.getPictogramId()).getImage());
-            sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
-        }
-        */
     }
 
     private void setupTopBar() {
@@ -173,40 +169,20 @@ public class AddEditSequencesActivity extends GirafActivity {
         initializeChildTitle();
     }
 
-    /* Editable title
-    private void initializeSequenceTitle() {
-        //Set Sequence name in Title (if any)
-
-        // Create listener to remove focus when "Done" is pressed on the keyboard
-        sequenceName.setOnEditorActionListener(new OnEditorActionListener() {
+    private void clearFocus() {
+        sequenceName.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    EditText editText = (EditText) findViewById(R.id.sequence_title);
-                    editText.clearFocus();
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent event) {
+                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || actionId == EditorInfo.IME_ACTION_DONE) {
+                    InputMethodManager hideKeyboard = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    sequenceName.clearFocus();
+                    parent_container.requestFocus();
+                    hideKeyboard.hideSoftInputFromWindow(sequenceName.getWindowToken(), 0);
                 }
                 return false;
             }
         });
-
-        // Create listener to hide the keyboard when the EditText loses focus
-        sequenceName.setOnFocusChangeListener(new OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    //Makes the hint text from the SequenceTitle transparent if sequenceTitle is blank
-                    if (sequenceName.getText().toString().equals("")) {
-                        sequenceName.setHintTextColor(Color.TRANSPARENT);
-                    }
-                } else {
-                    // Hides the keyboard and reverts hint color when sequenceTitle is not active
-                    InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    in.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                    sequenceName.setHintTextColor(Color.parseColor("#55624319"));
-                }
-            }
-        });
-    }*/
+    }
 
     private void initializeChildTitle() {
         //Creates helper to fetch data from the Database
@@ -216,29 +192,6 @@ public class AddEditSequencesActivity extends GirafActivity {
         selectedChild = helper.profilesHelper.getProfileById(childId);
         this.setActionBarTitle(selectedChild.getName()); // selectedChild.getName() "Child's name code"
     }
-
-    /*
-    private void createClearFocusListener(View view) {
-        // Create listener to remove focus from EditText when something else is touched
-        if (!(view instanceof EditText)) {
-            view.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    EditText editText = (EditText) findViewById(R.id.sequenceName);
-                    editText.clearFocus();
-                    return false;
-                }
-            });
-        }
-
-        // If the view is a container, run the function recursively on the children
-        if (view instanceof ViewGroup) {
-            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
-                View innerView = ((ViewGroup) view).getChildAt(i);
-                createClearFocusListener(innerView);
-            }
-        }
-    }*/
 
     private boolean checkSequenceBeforeSave(View v) {
         //Checks if Sequence is empty. If not empty, save it and return

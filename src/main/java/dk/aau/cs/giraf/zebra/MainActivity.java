@@ -53,7 +53,7 @@ public class MainActivity extends GirafActivity {
         // Adding buttons
         addGirafButtonToActionBar(changeUserButton, LEFT);
         addGirafButtonToActionBar(addButton, RIGHT);
-        addGirafButtonToActionBar(copyButton, RIGHT);
+        //addGirafButtonToActionBar(copyButton, RIGHT);
         addGirafButtonToActionBar(deleteButton, RIGHT);
 
         // Setup additional things

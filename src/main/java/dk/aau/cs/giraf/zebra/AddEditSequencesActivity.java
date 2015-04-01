@@ -312,7 +312,7 @@ public class AddEditSequencesActivity extends GirafActivity {
         saveDialog.dismiss();
     }
 
-
+        // TODO create view for this error dialog.
     private void createAndShowErrorDialog(View v) {
         //Creates alertDialog to display error. Clicking Ok dismisses the Dialog
         GDialogAlert alertDialog = new GDialogAlert(v.getContext(), R.drawable.delete,

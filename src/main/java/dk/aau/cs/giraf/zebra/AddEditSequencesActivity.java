@@ -46,6 +46,7 @@ public class AddEditSequencesActivity extends GirafActivity {
     private Profile selectedChild;
     private boolean isInEditMode;
     private boolean isNew;
+    private boolean changesSaved = true;
 
     public static boolean choiceMode = false;
     private int guardianId;
@@ -248,6 +249,7 @@ public class AddEditSequencesActivity extends GirafActivity {
         else {
             helper.sequenceController.modifySequenceAndFrames(sequence);
         }
+        changesSaved = true;
     }
 
     // creates the "add pictogram or choice" view
@@ -278,8 +280,13 @@ public class AddEditSequencesActivity extends GirafActivity {
     // The following two methods is connected to girafbuttons in the view
     private void createAndShowBackDialog(View v) {
         //Create instance of AddDialog and display it
-        backDialog = GirafInflateableDialog.newInstance(this.getString(R.string.back), this.getString(R.string.back_description), R.layout.dialog_back);
-        backDialog.show(getSupportFragmentManager(), BACK_SEQUENCE);
+        if (changesSaved == false) {
+            backDialog = GirafInflateableDialog.newInstance(this.getString(R.string.back), this.getString(R.string.back_description), R.layout.dialog_back);
+            backDialog.show(getSupportFragmentManager(), BACK_SEQUENCE);
+        }
+        else {
+            super.onBackPressed();
+        }
     }
 
     // Button to search for pictograms

@@ -41,3 +41,8 @@ android {
         abortOnError false
     }
 }
+play {
+    serviceAccountEmail = project.playAcc.accountEmail
+    pk12File = file(project.playAcc.keyPath)
+    track = 'alpha'
+}

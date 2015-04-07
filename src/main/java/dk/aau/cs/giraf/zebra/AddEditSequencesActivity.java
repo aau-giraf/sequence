@@ -161,7 +161,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
             //Show Dialog to save Sequence when clicking the Save Button
             @Override
             public void onClick(View v) {
-                checkSequenceBeforeSave(v);
+                checkSequenceBeforeSave(v, true);
             }
         });
 
@@ -215,14 +215,19 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         this.setActionBarTitle(selectedChild.getName()); // selectedChild.getName() "Child's name code"
     }
 
-    private boolean checkSequenceBeforeSave(View v) {
+    private boolean checkSequenceBeforeSave(View v, boolean confirmation) {
         //Checks if Sequence is empty. If not empty, save it and return
         if (sequence.getFramesList().size() == 0) {
             createAndShowErrorDialog(v);
             return false;
-        } else {
+        } else if (confirmation == true) {
             saveChanges();
             createAndShowSaveDialog(v);
+            changesSaved = true;
+            return true;
+        }
+        else {
+            saveChanges();
             changesSaved = true;
             return true;
         }
@@ -295,7 +300,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
 
     // Button to search for pictograms
     public void backSaveClick(View v) {
-        checkSequenceBeforeSave(v);
+        checkSequenceBeforeSave(v, false);
         backDialog.dismiss();
         if (changesSaved == true){
             super.onBackPressed();

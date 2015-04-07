@@ -47,6 +47,7 @@ public class AddEditSequencesActivity extends GirafActivity {
     private boolean isInEditMode;
     private boolean isNew;
     private boolean changesSaved = true;
+    private String sequenceStartName;
 
     public static boolean choiceMode = false;
     private int guardianId;
@@ -232,6 +233,7 @@ public class AddEditSequencesActivity extends GirafActivity {
         }
         else {
             sequence.setName(sequenceName.getText().toString());
+            sequenceStartName = sequenceName.getText().toString();
         }
 
         //Set PosX of every frame to save the order in which the frames should be shown.
@@ -253,7 +255,7 @@ public class AddEditSequencesActivity extends GirafActivity {
     }
 
     // creates the "add pictogram or choice" view
-    // The following two methods is connected to girafbuttons in the view
+    // The following two methods is connected to girafbuttons in the xml file
     private void createAndShowAddDialog(View v) {
         //Create instance of AddDialog and display it
         choosePictogramOrChoiceDialog = GirafInflateableDialog.newInstance(this.getString(R.string.add_pictogram_choice), this.getString(R.string.add_pictogram_choice_description), R.layout.dialog_add_pictogram_or_choice);
@@ -266,8 +268,6 @@ public class AddEditSequencesActivity extends GirafActivity {
         choosePictogramOrChoiceDialog.dismiss();
     }
 
-
-
     // Button to search for pictograms, that should be used in a "choice" activity
     public void getChoiceClick(View v) {
         choiceMode = true;
@@ -275,8 +275,7 @@ public class AddEditSequencesActivity extends GirafActivity {
         choosePictogramOrChoiceDialog.dismiss();
     }
 
-
-    // creates the
+    // creates the "back dialog" if the backbutton is pressed. Only shows the dialog if there has been changes.
     // The following two methods is connected to girafbuttons in the view
     private void createAndShowBackDialog(View v) {
         //Create instance of AddDialog and display it
@@ -294,6 +293,7 @@ public class AddEditSequencesActivity extends GirafActivity {
         boolean sequenceOk;
         sequenceOk = checkSequenceBeforeSave(v);
         backDialog.dismiss();
+        changesSaved = true;
         if (sequenceOk) {
             super.onBackPressed();
         }
@@ -305,7 +305,7 @@ public class AddEditSequencesActivity extends GirafActivity {
         super.onBackPressed();
     }
 
-    // creates the
+    // creates the "save dialog", when the save button is clicked.
     // The following two methods is connected to girafbuttons in the view
     private void createAndShowSaveDialog(View v) {
         //Create instance of AddDialog and display it
@@ -370,6 +370,7 @@ public class AddEditSequencesActivity extends GirafActivity {
             @Override
             public void onRearrange(int indexFrom, int indexTo) {
                 adapter.notifyDataSetChanged();
+                changesSaved = false;
             }
         });
 
@@ -478,6 +479,7 @@ public class AddEditSequencesActivity extends GirafActivity {
                 }
             }
             choiceAdapter.notifyDataSetChanged();
+            changesSaved = false;
         }
         else {
 
@@ -489,13 +491,14 @@ public class AddEditSequencesActivity extends GirafActivity {
 
             if (sequence.getPictogramId() == 0 && checkoutIds.length > 0) {
                 sequence.setPictogramId(checkoutIds[0]);
-                helper = new Helper(this);
-                Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(sequence.getPictogramId()).getImage());
+                //helper = new Helper(this);
+                //Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(sequence.getPictogramId()).getImage());
                 //sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
-                sequenceThumbnailButton.setVisibility(View.GONE);
-                sequenceThumbnailButton.setVisibility(View.VISIBLE);
+                //sequenceThumbnailButton.setVisibility(View.GONE);
+                //sequenceThumbnailButton.setVisibility(View.VISIBLE);
             }
             adapter.notifyDataSetChanged();
+            changesSaved = false;
         }
     }
 
@@ -513,6 +516,7 @@ public class AddEditSequencesActivity extends GirafActivity {
         Frame frame = sequence.getFramesList().get(pictogramEditPos);
         frame.setPictogramId(checkoutIds[0]);
         adapter.notifyDataSetChanged();
+        changesSaved = false;
     }
 
     private void OnEditSequenceImageResult(Intent data) {
@@ -528,6 +532,7 @@ public class AddEditSequencesActivity extends GirafActivity {
         //sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(0, d, 0, 0);
         sequenceThumbnailButton.setVisibility(View.GONE);
         sequenceThumbnailButton.setVisibility(View.VISIBLE);
+        changesSaved = false;
     }
 
     // send an intent to start pictosearch, and returns the result from pictosearch

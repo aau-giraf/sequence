@@ -40,6 +40,7 @@ public class DeleteSequencesActivity extends GirafActivity {
     private SequenceListAdapter sequenceAdapter;
     private List<Sequence> sequences = new ArrayList<Sequence>();
     private Helper helper;
+    private List<Sequence> selectedSequences = new ArrayList<Sequence>();;
 
     // Initialize buttons
     private GirafButton acceptButton;
@@ -75,12 +76,24 @@ public class DeleteSequencesActivity extends GirafActivity {
 
     private void setupButtons(){
         //Creates all buttons in Activity and their listeners.
+
         acceptButton.setOnClickListener(new View.OnClickListener() {
             //Show the MultiProfileSelector when clicking the Copy Button
             @Override
             public void onClick(View v) {
-
+                // Delete all selected items
             }
+        });
+
+        sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                ((PictogramView) view).liftUp();
+                Sequence sequence = sequenceAdapter.getItem(position);
+                // Set it as selected and removable.
+            }
+            
+            // Add onItemClick to deselect an item
         });
     }
 
@@ -126,14 +139,11 @@ public class DeleteSequencesActivity extends GirafActivity {
 
 
 
+
+
     /*
-
-
     OLD DELETE CODE
     DO NOT DELETE
-
-
-
 
 
     private class deletingSequencesDialog extends GDialog {

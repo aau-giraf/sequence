@@ -40,5 +40,7 @@
     <string name="back_description">Vil du gemme før du går tilbage?</string>
     <string name="ok">Ok</string>
     <string name="sequence_saved">Sekvensen er blevet gemt.</string>
+    <string name="error">Fejl</string>
+    <string name="empty_sequence_error">Det er ikke muligt at gemme en tom sekvens.</string>
 
 </resources>

@@ -31,6 +31,7 @@ import dk.aau.cs.giraf.gui.GDialogAlert;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.gui.GirafInflateableDialog;
+import dk.aau.cs.giraf.gui.GirafNotifyDialog;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Frame;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
@@ -40,7 +41,7 @@ import dk.aau.cs.giraf.zebra.SequenceViewGroup.OnNewButtonClickedListener;
 import dk.aau.cs.giraf.oasis.lib.models.Sequence;
 import dk.aau.cs.giraf.oasis.lib.models.Pictogram;
 
-public class AddEditSequencesActivity extends GirafActivity {
+public class AddEditSequencesActivity extends GirafActivity implements GirafNotifyDialog.Notification {
 
     private Profile guardian;
     private Profile selectedChild;
@@ -67,6 +68,8 @@ public class AddEditSequencesActivity extends GirafActivity {
     private final String ADD_PICTOGRAM_OR_CHOICE = "ADD_PICTOGRAM_OR_CHOICE";
     private final String SAVE_SEQUENCE = "SAVE_SEQUENCE";
     private final String BACK_SEQUENCE = "BACK_SEQUENCE";
+    private final int EMPTY_SEQUENCE_ERROR = 1338;
+    private final String EMPTY_SEQUENCE_ERROR_TAG = "EMPTY_SEQUENCE_ERROR_TAG";
     private final String CHOICE_SEQUENCE = "CHOICE_SEQUENCE";
     private final int SEQUENCE_VIEWER_CALL = 1337;
     private final int NESTED_SEQUENCE_CALL = 40;
@@ -158,7 +161,7 @@ public class AddEditSequencesActivity extends GirafActivity {
             //Show Dialog to save Sequence when clicking the Save Button
             @Override
             public void onClick(View v) {
-                createAndShowSaveDialog(v);
+                checkSequenceBeforeSave(v);
             }
         });
 
@@ -219,6 +222,8 @@ public class AddEditSequencesActivity extends GirafActivity {
             return false;
         } else {
             saveChanges();
+            createAndShowSaveDialog(v);
+            changesSaved = true;
             return true;
         }
     }
@@ -290,11 +295,9 @@ public class AddEditSequencesActivity extends GirafActivity {
 
     // Button to search for pictograms
     public void backSaveClick(View v) {
-        boolean sequenceOk;
-        sequenceOk = checkSequenceBeforeSave(v);
+        checkSequenceBeforeSave(v);
         backDialog.dismiss();
-        changesSaved = true;
-        if (sequenceOk) {
+        if (changesSaved == true){
             super.onBackPressed();
         }
     }
@@ -315,23 +318,15 @@ public class AddEditSequencesActivity extends GirafActivity {
 
     // Button to search for pictograms
     public void savedClick(View v) {
-        checkSequenceBeforeSave(v);
         saveDialog.dismiss();
     }
 
-        // TODO create view for this error dialog.
     private void createAndShowErrorDialog(View v) {
         //Creates alertDialog to display error. Clicking Ok dismisses the Dialog
-        GDialogAlert alertDialog = new GDialogAlert(v.getContext(), R.drawable.delete,
-            "Fejl",
-            "Du kan ikke gemme en tom Sekvens",
-            new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                }
-            });
-        alertDialog.show();
+        GirafNotifyDialog alertDialog = GirafNotifyDialog.newInstance(this.getString(R.string.error), this.getString(R.string.empty_sequence_error), EMPTY_SEQUENCE_ERROR);
+        alertDialog.show(getSupportFragmentManager(), EMPTY_SEQUENCE_ERROR_TAG);
     }
+
 
     private SequenceViewGroup setupSequenceViewGroup(final SequenceAdapter adapter) {
         //The SequenceViewGroup class takes care of most of the required functionality, including size properties, dragging and rearranging
@@ -565,6 +560,19 @@ public class AddEditSequencesActivity extends GirafActivity {
             callPictoSearch(PICTO_EDIT_PICTOGRAM_CALL);
         }
     }
+
+    @Override
+    public void noticeDialog(int i) {
+        switch (i) {
+            case EMPTY_SEQUENCE_ERROR:
+
+                break;
+
+            default:
+                break;
+        }
+    }
+
 
     private class ChoiceDialog extends GDialog {
         private ChoiceDialog(Context context) {

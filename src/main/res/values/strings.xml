@@ -2,7 +2,7 @@
 <resources>
 <!-- getResources().getString(R.string.save_sequence) -->
 
-    <string name="app_name">Sequence</string>
+    <string name="app_name">Sekvens</string>
     <string name="copy_sequences">Kopier sekvenser</string>
     <string name="delete_sequences">Slet sekvenser</string>
     <string name="no_children">Der er ingen børn</string>
@@ -40,5 +40,7 @@
     <string name="back_description">Vil du gemme før du går tilbage?</string>
     <string name="ok">Ok</string>
     <string name="sequence_saved">Sekvensen er blevet gemt.</string>
+    <string name="error">Fejl</string>
+    <string name="empty_sequence_error">Det er ikke muligt at gemme en tom sekvens.</string>
 
 </resources>

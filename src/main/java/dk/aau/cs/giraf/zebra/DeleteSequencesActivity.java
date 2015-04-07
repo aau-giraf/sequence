@@ -3,13 +3,19 @@ package dk.aau.cs.giraf.zebra;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.GridView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import dk.aau.cs.giraf.activity.GirafActivity;
@@ -17,13 +23,25 @@ import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GGridView;
 import dk.aau.cs.giraf.gui.GMultiProfileSelector;
+import dk.aau.cs.giraf.gui.GProfileSelector;
 import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.oasis.lib.Helper;
+import dk.aau.cs.giraf.oasis.lib.models.Frame;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.oasis.lib.models.Sequence;
 
 
 public class DeleteSequencesActivity extends GirafActivity {
+
+    private Profile selectedChild;
+    private int childId;
+
+    private GridView sequenceGrid;
+    private SequenceListAdapter sequenceAdapter;
+    private List<Sequence> sequences = new ArrayList<Sequence>();
+    private Helper helper;
+    private List<Sequence> selectedSequences = new ArrayList<Sequence>();;
+
     // Initialize buttons
     private GirafButton acceptButton;
 
@@ -32,6 +50,7 @@ public class DeleteSequencesActivity extends GirafActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_delete_sequences);
 
+        // Set top-bar title
         this.setActionBarTitle(getResources().getString(R.string.delete_sequences));
 
         // Creating buttons
@@ -40,8 +59,19 @@ public class DeleteSequencesActivity extends GirafActivity {
         // Adding buttons
         addGirafButtonToActionBar(acceptButton, RIGHT);
 
-        //
+        // Setup additional content
+        setupSequenceGridView();
         setupButtons();
+        loadIntents();
+        loadProfiles();
+        setChild();
+    }
+
+    private void setupSequenceGridView() {
+        //Sets the GridView and adapter to display Sequences
+        sequenceGrid = (GridView) findViewById(R.id.sequence_grid);
+        sequenceAdapter = new SequenceListAdapter(this, sequences);
+        sequenceGrid.setAdapter(sequenceAdapter);
     }
 
     private void setupButtons(){
@@ -51,34 +81,72 @@ public class DeleteSequencesActivity extends GirafActivity {
             //Show the MultiProfileSelector when clicking the Copy Button
             @Override
             public void onClick(View v) {
-
+                // Delete all selected items
             }
+        });
+
+        sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                ((PictogramView) view).liftUp();
+                Sequence sequence = sequenceAdapter.getItem(position);
+                // Set it as selected and removable.
+            }
+            
+            // Add onItemClick to deselect an item
         });
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
+    private void loadIntents() {
+        Bundle extras = getIntent().getExtras();
+        childId = extras.getInt("childId");
     }
 
+    private void loadProfiles() {
+        //Create helper to load Child from Database
+        helper = new Helper(this);
+        selectedChild = helper.profilesHelper.getProfileById(childId);
+    }
 
+    // AsyncTask. Used to fetch data from the database in another thread which is NOT the GUI thread
+    public class AsyncFetchDatabase extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            helper = new Helper(DeleteSequencesActivity.this);
+            sequences = helper.sequenceController.getSequencesAndFramesByProfileIdAndType(selectedChild.getId(), Sequence.SequenceType.SEQUENCE);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            sequenceAdapter = new SequenceListAdapter(DeleteSequencesActivity.this, sequences);
+            sequenceGrid.setAdapter(sequenceAdapter);
+        }
+    }
+
+    private synchronized void setChild() {
+        //Creates helper to fetch data from the Database
+        helper = new Helper(this);
+
+        //Save Child locally and update relevant information for application
+        selectedChild = helper.profilesHelper.getProfileById(childId);
+
+        // AsyncTask thread
+        AsyncFetchDatabase fetchDatabaseSetChild = new AsyncFetchDatabase();
+        fetchDatabaseSetChild.execute();
+    }
 
 
 
 
 
     /*
-
-
     OLD DELETE CODE
     DO NOT DELETE
 
 
-
-
-
     private class deletingSequencesDialog extends GDialog {
-
         public deletingSequencesDialog(final Context context) {
             //Dialog where user can sort Sequences to delete
             super(context);

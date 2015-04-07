@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,6 +26,8 @@ import dk.aau.cs.giraf.gui.GGridView;
 import dk.aau.cs.giraf.gui.GMultiProfileSelector;
 import dk.aau.cs.giraf.gui.GProfileSelector;
 import dk.aau.cs.giraf.gui.GirafButton;
+import dk.aau.cs.giraf.gui.GirafConfirmDialog;
+import dk.aau.cs.giraf.gui.GirafInflateableDialog;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Frame;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
@@ -40,7 +43,10 @@ public class DeleteSequencesActivity extends GirafActivity {
     private SequenceListAdapter sequenceAdapter;
     private List<Sequence> sequences = new ArrayList<Sequence>();
     private Helper helper;
-    private List<Sequence> selectedSequences = new ArrayList<Sequence>();;
+    private final String DELETE_SEQUENCES = "DELETE_SEQUENCES";
+    private List<Sequence> selectedSequences = new ArrayList<Sequence>();
+
+    GirafInflateableDialog acceptDeleteDialog;
 
     // Initialize buttons
     private GirafButton acceptButton;
@@ -74,14 +80,43 @@ public class DeleteSequencesActivity extends GirafActivity {
         sequenceGrid.setAdapter(sequenceAdapter);
     }
 
+    // Button to accept delete of sequences
+    public void DeleteClick(View v) {
+        acceptDeleteDialog.dismiss();
+        // Delete all selected items
+        for (Sequence seq : selectedSequences) {
+            helper = new Helper(getApplicationContext());
+            helper.sequenceController.removeSequence(seq);
+        }
+        // Go back to main Activity
+        finish();
+    }
+
+    // Button to cancel delete of sequences
+    public void dontDeleteClick(View v) {
+        acceptDeleteDialog.dismiss();
+        // Go back to main Activity
+        finish();
+    }
+
     private void setupButtons(){
         //Creates all buttons in Activity and their listeners.
 
         acceptButton.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
-                // Delete all selected items
+                if (selectedSequences.size() > 0){
+                    acceptDeleteDialog = GirafInflateableDialog.newInstance(
+                            getApplicationContext().getString(R.string.delete_sequences),
+                            getApplicationContext().getString(R.string.delete_these) + " "
+                                    + selectedSequences.size() + " "
+                                    + getApplicationContext().getString(R.string.marked_sequences),
+                            R.layout.dialog_delete);
+                    acceptDeleteDialog.show(getSupportFragmentManager(), DELETE_SEQUENCES);
+                }
+                else{
+                    finish();
+                }
             }
         });
 
@@ -90,22 +125,17 @@ public class DeleteSequencesActivity extends GirafActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 
-                ((PictogramView) view).liftUp();
-                // Fix i 3. sprint så der kan slettes
-                /*if ()
-                {
-                    ((PictogramView) view).liftUp();
-                }
-                else if ()
-                {
-                    ((PictogramView) view).placeDown();
-                }*/
-
                 Sequence sequence = sequenceAdapter.getItem(position);
-                // Set it as selected and removable.
+
+                if(selectedSequences.contains(sequence)){
+                    ((PictogramView) view).placeDown();
+                    selectedSequences.remove(sequence);
+                }
+                else {
+                    ((PictogramView) view).liftUp();
+                    selectedSequences.add(sequence);
+                }
             }
-            
-            // Add onItemClick to deselect an item
         });
     }
 

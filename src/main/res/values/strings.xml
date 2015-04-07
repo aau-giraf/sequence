@@ -27,7 +27,7 @@
     <string name="back_question">Du er ved at afslutte sekvensen. Vil du gemme dine ændringer?</string>
     <string name="return_question">Du er ved at afslutte sekvensen. Er du færdig?</string>
     <string name="discard_question">Du er ved at fortryde dine ændringer. Er du sikker?</string>
-    <string name="delete_sequence">Slet sekvens</string>
+    <string name="delete_sequence">Slet</string>
     <string name="go_back">Nej</string>
     <string name="finished">Ja</string>
     <string name="title_activity_settings">settingsActivity</string>
@@ -42,5 +42,8 @@
     <string name="sequence_saved">Sekvensen er blevet gemt.</string>
     <string name="error">Fejl</string>
     <string name="empty_sequence_error">Det er ikke muligt at gemme en tom sekvens.</string>
+    <string name="delete_these">Vil du slette de </string>
+    <string name="marked_sequences"> markerede sekvenser?</string>
+    <string name="delete_this_sequence">Vil du slette den markerede sekvens?</string>
 
 </resources>

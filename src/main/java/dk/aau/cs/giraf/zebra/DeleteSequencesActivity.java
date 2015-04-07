@@ -78,7 +78,7 @@ public class DeleteSequencesActivity extends GirafActivity {
         //Creates all buttons in Activity and their listeners.
 
         acceptButton.setOnClickListener(new View.OnClickListener() {
-            //Show the MultiProfileSelector when clicking the Copy Button
+
             @Override
             public void onClick(View v) {
                 // Delete all selected items
@@ -86,9 +86,21 @@ public class DeleteSequencesActivity extends GirafActivity {
         });
 
         sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+
                 ((PictogramView) view).liftUp();
+                // Fix i 3. sprint så der kan slettes
+                /*if ()
+                {
+                    ((PictogramView) view).liftUp();
+                }
+                else if ()
+                {
+                    ((PictogramView) view).placeDown();
+                }*/
+
                 Sequence sequence = sequenceAdapter.getItem(position);
                 // Set it as selected and removable.
             }

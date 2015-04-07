@@ -95,8 +95,6 @@ public class DeleteSequencesActivity extends GirafActivity {
     // Button to cancel delete of sequences
     public void dontDeleteClick(View v) {
         acceptDeleteDialog.dismiss();
-        // Go back to main Activity
-        finish();
     }
 
     private void setupButtons(){

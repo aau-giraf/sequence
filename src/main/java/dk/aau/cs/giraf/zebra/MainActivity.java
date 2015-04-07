@@ -84,7 +84,6 @@ public class MainActivity extends GirafActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplication(), DeleteSequencesActivity.class);
                 intent.putExtra("childId", selectedChild.getId());
-                intent.putExtra("guardianId", guardian.getId());
                 startActivity(intent);
             }
         });

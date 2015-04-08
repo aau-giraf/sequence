@@ -15,17 +15,16 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.Transformation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
-import android.widget.HorizontalScrollView;
 
 /**
  * Layouts its children with fixed sizes and fixed spacing between each child in
  * the horizontal dimension.
  */
-public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
+public class SequenceViewGroupPortraitAndLandscape extends AdapterView<SequenceAdapter> {
 
     private final int DEFAULT_ITEM_WIDTH = 250;
     private final int DEFAULT_ITEM_HEIGHT = 250;
-    private final int DEFAULT_HORIZONTAL_SPACING = 100;
+    private final int DEFAULT_SPACING = 100;
 
     private final int ANIMATION_TIME = 350;
     private final int DRAG_DISTANCE = 8;
@@ -63,7 +62,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
     private SequenceAdapter adapter;
     private AdapterDataSetObserver observer = new AdapterDataSetObserver();
 
-    public SequenceViewGroup(Context context, AttributeSet attrs) {
+    public SequenceViewGroupPortraitAndLandscape(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         TypedArray a = context.obtainStyledAttributes(attrs,
@@ -71,7 +70,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
         try {
             horizontalSpacing = a.getDimensionPixelSize(
                     R.styleable.SequenceViewGroup_horizontalSpacing,
-                    DEFAULT_HORIZONTAL_SPACING);
+                    DEFAULT_SPACING);
             itemWidth = a.getDimensionPixelSize(
                     R.styleable.SequenceViewGroup_itemWidth, DEFAULT_ITEM_WIDTH);
             itemHeight = a.getDimensionPixelSize(
@@ -87,7 +86,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
         addNewPictoGramView = ResourceViewFactory.getAddPictogramButton(getContext());
         addNewPictoGramView.setScaleX(PictogramView.NORMAL_SCALE);
         addNewPictoGramView.setScaleY(PictogramView.NORMAL_SCALE);
-        addNewPictoGramView.setOnClickListener(new View.OnClickListener() {
+        addNewPictoGramView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (isInEditMode && newButtonClickedListener != null)
@@ -135,7 +134,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
     }
 
     @Override
-    protected boolean checkLayoutParams(ViewGroup.LayoutParams p) {
+    protected boolean checkLayoutParams(LayoutParams p) {
         return p instanceof LayoutParams;
     }
 
@@ -193,7 +192,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
     }
 
     @Override
-    protected LayoutParams generateLayoutParams(ViewGroup.LayoutParams p) {
+    protected LayoutParams generateLayoutParams(LayoutParams p) {
         return new LayoutParams(p.width, p.height);
     }
 
@@ -702,7 +701,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
         }
 
         public AutoScroller() {
-            this.scroller = getScroller(SequenceViewGroup.this);
+            this.scroller = getScroller(SequenceViewGroupPortraitAndLandscape.this);
 
             //if (!(this.scroller instanceof HorizontalScrollView))
             //    throw new IllegalStateException("Parent of SequenceViewGroup must be HorizontalScrollView");
@@ -712,7 +711,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 
         public void reset() {
             timeBefore = -1;
-            parent = SequenceViewGroup.this;
+            parent = SequenceViewGroupPortraitAndLandscape.this;
             scroller = getScroller(parent);
             currentScrollX = scroller.getScrollX();
             currentScrollY = scroller.getScrollY();
@@ -756,7 +755,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
             scroller.scrollTo(currentScrollX + scrollAmount, currentScrollY);
             currentScrollX = scroller.getScrollX();
 
-            SequenceViewGroup.this.handleTouchMove(touchX + (currentScrollX - prevScrollX));
+            SequenceViewGroupPortraitAndLandscape.this.handleTouchMove(touchX + (currentScrollX - prevScrollX));
 
             post(this);
 

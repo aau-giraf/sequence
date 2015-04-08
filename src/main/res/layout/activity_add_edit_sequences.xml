@@ -1,45 +1,44 @@
-<LinearLayout
-    android:id="@+id/parent_container"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:svg="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:svg="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/parent_container"
 
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
     android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".SequenceActivity"
-    android:descendantFocusability="beforeDescendants"
-    android:focusableInTouchMode="true" >
+    android:background="@color/giraf_background"
+    tools:context=".SequenceActivity">
 
     <LinearLayout
-        android:layout_marginTop="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center">
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp">
 
         <dk.aau.cs.giraf.gui.GirafButton
+            android:id="@+id/sequenceThumbnail"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:id="@+id/sequenceThumbnail"
-            app:icon="@drawable/icon_accept">
-        </dk.aau.cs.giraf.gui.GirafButton>
+            app:icon="@drawable/icon_accept"></dk.aau.cs.giraf.gui.GirafButton>
 
         <EditText
             android:id="@+id/sequenceName"
-            android:hint="@string/unnamed_sequence"
             android:layout_width="400dp"
             android:layout_height="60dp"
             android:layout_gravity="center_horizontal"
             android:gravity="center"
-            android:inputType="textImeMultiLine"
+            android:hint="@string/unnamed_sequence"
             android:imeOptions="actionDone"
+            android:inputType="textImeMultiLine"
             android:text=""
-            android:textSize="24sp"/>
+            android:textSize="24sp" />
 
     </LinearLayout>
 
@@ -48,9 +47,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="0dp"
+        android:fadeScrollbars="false"
         android:overScrollMode="always"
-        android:padding="0dp"
-        android:fadeScrollbars="false">
+        android:padding="0dp">
 
         <FrameLayout
             android:layout_width="wrap_content"
@@ -60,14 +59,13 @@
                 android:id="@+id/sequenceViewGroup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"
+                android:background="@layout/main_picto_container_bg"
                 svg:horizontalSpacing="20dp"
                 svg:itemHeight="@dimen/activity_main_picto_size"
-                svg:itemWidth="@dimen/activity_main_picto_size"
-                android:background="@layout/main_picto_container_bg"
-                android:layout_gravity="center_vertical">
-            </dk.aau.cs.giraf.zebra.SequenceViewGroup>
+                svg:itemWidth="@dimen/activity_main_picto_size"></dk.aau.cs.giraf.zebra.SequenceViewGroup>
         </FrameLayout>
 
     </HorizontalScrollView>

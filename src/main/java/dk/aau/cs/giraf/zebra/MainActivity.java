@@ -13,7 +13,6 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 
 import dk.aau.cs.giraf.activity.GirafActivity;
-import dk.aau.cs.giraf.gui.GGridView;
 import dk.aau.cs.giraf.gui.GProfileSelector;
 import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.oasis.lib.Helper;
@@ -53,7 +52,6 @@ public class MainActivity extends GirafActivity {
         // Adding buttons
         addGirafButtonToActionBar(changeUserButton, LEFT);
         addGirafButtonToActionBar(addButton, RIGHT);
-        //addGirafButtonToActionBar(copyButton, RIGHT);
         addGirafButtonToActionBar(deleteButton, RIGHT);
 
         // Setup additional things
@@ -69,7 +67,7 @@ public class MainActivity extends GirafActivity {
         sequenceGrid.setAdapter(sequenceAdapter);
     }
 
-    //Creates all buttons for the Activity and their listeners.
+    // Creates all buttons for the Activity and their listeners.
     private void setupButtons() {
         addButton.setOnClickListener(new OnClickListener() {
             //Open AddEditSequencesActivity when clicking the Add Button
@@ -86,7 +84,6 @@ public class MainActivity extends GirafActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplication(), DeleteSequencesActivity.class);
                 intent.putExtra("childId", selectedChild.getId());
-                intent.putExtra("guardianId", guardian.getId());
                 startActivity(intent);
             }
         });

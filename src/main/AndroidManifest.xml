@@ -10,12 +10,10 @@
         android:targetSdkVersion="19" />
 
     <android:uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="18" />
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <android:uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="18" />
+        android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -26,7 +24,7 @@
         tools:replace="android:icon" >
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="landscape" >
             <intent-filter>
 
                 <!-- Application must have Launcher intent - Otherwise Launcher App can not recognize the application -->
@@ -37,16 +35,16 @@
         </activity>
         <activity
             android:name=".CopySequencesActivity"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="landscape" >
         </activity>
         <activity
             android:name=".AddEditSequencesActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="landscape" >
         </activity>
         <activity
             android:name=".DeleteSequencesActivity"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="landscape" >
         </activity>
     </application>
 

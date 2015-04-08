@@ -20,6 +20,7 @@ apply plugin: 'play'
 repositories {
     maven {
         url 'http://cs-cust06-int.cs.aau.dk/artifactory/libraries'
+        mavenCentral()
     }
 }
 
@@ -39,6 +40,11 @@ android {
 
     lintOptions {
         abortOnError false
+    }
+    buildTypes {
+        debug {
+            testCoverageEnabled true
+        }
     }
 }
 play {

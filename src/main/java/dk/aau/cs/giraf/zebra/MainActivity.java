@@ -134,13 +134,8 @@ public class MainActivity extends GirafActivity {
         //Save guardian locally (Fetch from Database by Id)
         guardian = helper.profilesHelper.getProfileById(guardianId);
 
-        //Setup nestedMode if insertSequence extra is present
-        if (extras.getBoolean("insertSequence")) {
-            setupNestedMode();
-            setChild();
-        }
         //Make user pick a child and set up GuardianMode if ChildId is -1 (= Logged in as Guardian)
-        else if (childId == -1) {
+        if (childId == -1) {
             pickAndSetChild();
             setupGuardianMode();
         }
@@ -202,20 +197,6 @@ public class MainActivity extends GirafActivity {
         deleteButton.setVisibility(View.INVISIBLE);
         copyButton.setVisibility(View.INVISIBLE);
         changeUserButton.setVisibility(View.INVISIBLE);
-    }
-
-    private void setupNestedMode() {
-        //On clicking a Sequence, lift up the Sequence, finish Activity and send Id of Sequence as an extra back to AddEditSequencesActivity
-        sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                ((PictogramView) view).liftUp();
-                Intent intent = new Intent();
-                intent.putExtra("nestedSequenceId", sequenceAdapter.getItem(position).getId());
-                setResult(RESULT_OK, intent);
-                finishActivity();
-            }
-        });
     }
 
     private void pickAndSetChild(){

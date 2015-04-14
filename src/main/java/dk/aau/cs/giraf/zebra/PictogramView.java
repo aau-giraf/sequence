@@ -1,6 +1,8 @@
 package dk.aau.cs.giraf.zebra;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.view.Gravity;
 import android.view.View;
@@ -163,7 +165,15 @@ public class PictogramView extends LinearLayout {
 
     public void setImageFromId(int id) {
         helper = new Helper(getContext());
-        pictogram.setImageBitmap(helper.pictogramHelper.getPictogramById(id).getImage());
+
+        // If the first element in a sequence is a choice - pick the choose icon -
+        // this leads to nullpointerexception otherwise, as errors occur when it tries to first the first element, if this is split in many. (as the choose element is)
+        if (id == 0) {
+            Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.icon_choose);
+            pictogram.setImageBitmap(bm);
+        } else {
+            pictogram.setImageBitmap(helper.pictogramHelper.getPictogramById(id).getImage());
+        }
     }
 
     public void setTitle(String newTitle) {

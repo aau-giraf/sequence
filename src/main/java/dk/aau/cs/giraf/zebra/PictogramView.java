@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageButton;
@@ -100,7 +101,6 @@ public class PictogramView extends LinearLayout {
     public void deleteModeMarked() {
         pictogram.setScaleX(LOWLIGHT_SCALE);
         pictogram.setScaleY(LOWLIGHT_SCALE);
-        deleteButton.setVisibility(View.VISIBLE);
         this.setAlpha(0.7f);
         setDeleteButtonVisible(false);
         invalidate();
@@ -109,7 +109,6 @@ public class PictogramView extends LinearLayout {
     public void deleteModeUnmarked() {
         pictogram.setScaleX(NORMAL_SCALE);
         pictogram.setScaleY(NORMAL_SCALE);
-        deleteButton.setVisibility(View.INVISIBLE);
         this.setAlpha(1.0f);
         setDeleteButtonVisible(isInEditMode);
         invalidate();

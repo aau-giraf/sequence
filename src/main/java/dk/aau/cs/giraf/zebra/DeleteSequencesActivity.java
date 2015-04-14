@@ -27,7 +27,7 @@ import dk.aau.cs.giraf.gui.GMultiProfileSelector;
 import dk.aau.cs.giraf.gui.GProfileSelector;
 import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.gui.GirafConfirmDialog;
-import dk.aau.cs.giraf.gui.GirafInflateableDialog;
+import dk.aau.cs.giraf.gui.GirafInflatableDialog;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Frame;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
@@ -46,7 +46,7 @@ public class DeleteSequencesActivity extends GirafActivity {
     private final String DELETE_SEQUENCES = "DELETE_SEQUENCES";
     private List<Sequence> selectedSequences = new ArrayList<Sequence>();
 
-    GirafInflateableDialog acceptDeleteDialog;
+    GirafInflatableDialog acceptDeleteDialog;
 
     // Initialize buttons
     private GirafButton acceptButton;
@@ -104,7 +104,7 @@ public class DeleteSequencesActivity extends GirafActivity {
             @Override
             public void onClick(View v) {
                 if (selectedSequences.size() > 0){
-                    acceptDeleteDialog = GirafInflateableDialog.newInstance(
+                    acceptDeleteDialog = GirafInflatableDialog.newInstance(
                             getApplicationContext().getString(R.string.delete_sequences),
                             getApplicationContext().getString(R.string.delete_these) + " "
                                     + selectedSequences.size() + " "

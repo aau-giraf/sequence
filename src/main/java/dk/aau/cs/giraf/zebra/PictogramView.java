@@ -101,7 +101,7 @@ public class PictogramView extends LinearLayout {
     public void deleteModeMarked() {
         pictogram.setScaleX(LOWLIGHT_SCALE);
         pictogram.setScaleY(LOWLIGHT_SCALE);
-        this.setAlpha(0.7f);
+        this.setAlpha(0.5f);
         setDeleteButtonVisible(false);
         invalidate();
     }

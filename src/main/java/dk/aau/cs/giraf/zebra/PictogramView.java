@@ -34,13 +34,11 @@ public class PictogramView extends LinearLayout {
 
     public PictogramView(Context context) {
         super(context);
-
         initialize(context, 0);
     }
 
     public PictogramView(Context context, float radius) {
         super(context);
-
         initialize(context, radius);
     }
 
@@ -95,6 +93,24 @@ public class PictogramView extends LinearLayout {
         setDeleteButtonVisible(false);
 
         return deleteButton;
+    }
+
+    public void deleteModeMarked() {
+        pictogram.setScaleX(LOWLIGHT_SCALE);
+        pictogram.setScaleY(LOWLIGHT_SCALE);
+        deleteButton.setVisibility(View.VISIBLE);
+        this.setAlpha(0.7f);
+        setDeleteButtonVisible(false);
+        invalidate();
+    }
+
+    public void deleteModeUnmarked() {
+        pictogram.setScaleX(NORMAL_SCALE);
+        pictogram.setScaleY(NORMAL_SCALE);
+        deleteButton.setVisibility(View.INVISIBLE);
+        this.setAlpha(1.0f);
+        setDeleteButtonVisible(isInEditMode);
+        invalidate();
     }
 
     public void liftUp() {

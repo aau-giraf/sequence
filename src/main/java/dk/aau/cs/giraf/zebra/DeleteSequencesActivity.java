@@ -126,11 +126,11 @@ public class DeleteSequencesActivity extends GirafActivity {
                 Sequence sequence = sequenceAdapter.getItem(position);
 
                 if(selectedSequences.contains(sequence)){
-                    ((PictogramView) view).placeDown();
+                    ((PictogramView) view).deleteModeUnmarked();
                     selectedSequences.remove(sequence);
                 }
                 else {
-                    ((PictogramView) view).liftUp();
+                    ((PictogramView) view).deleteModeMarked();
                     selectedSequences.add(sequence);
                 }
             }

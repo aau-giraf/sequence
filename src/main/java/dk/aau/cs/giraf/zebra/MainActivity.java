@@ -279,9 +279,13 @@ public class MainActivity extends GirafActivity {
             fetchDatabase.execute();
         }
     }
+}
+
+/* OLD CODE
 
     @Override
     public void onBackPressed() {
 
     }
-}
+
+ */

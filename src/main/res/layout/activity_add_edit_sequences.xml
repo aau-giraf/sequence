@@ -26,7 +26,7 @@
             android:id="@+id/sequenceThumbnail"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            app:icon="@drawable/icon_accept"></dk.aau.cs.giraf.gui.GirafButton>
+            app:icon="@drawable/icon_accept" />
 
         <EditText
             android:id="@+id/sequenceName"
@@ -52,7 +52,7 @@
         android:padding="0dp">
 
         <FrameLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent">
 
             <dk.aau.cs.giraf.zebra.SequenceViewGroup
@@ -65,7 +65,7 @@
                 android:background="@layout/main_picto_container_bg"
                 svg:horizontalSpacing="20dp"
                 svg:itemHeight="@dimen/activity_main_picto_size"
-                svg:itemWidth="@dimen/activity_main_picto_size"></dk.aau.cs.giraf.zebra.SequenceViewGroup>
+                svg:itemWidth="@dimen/activity_main_picto_size" />
         </FrameLayout>
 
     </HorizontalScrollView>

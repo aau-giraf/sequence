@@ -8,9 +8,10 @@ import android.widget.BaseAdapter;
 import dk.aau.cs.giraf.oasis.lib.models.Frame;
 import dk.aau.cs.giraf.oasis.lib.models.Sequence;
 
+/**
+ * Adapter used for sequences, in the context of the given child
+ */
 public class SequenceAdapter extends BaseAdapter {
-
-    // Adapter for list of sequences in the context of the given child
 
     private Context context;
 	private Sequence sequence;

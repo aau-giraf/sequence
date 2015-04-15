@@ -20,6 +20,7 @@ import android.widget.HorizontalScrollView;
 /**
  * Layouts its children with fixed sizes and fixed spacing between each child in
  * the horizontal dimension.
+ * Also contains the animation and effects (drag, rearrange, snap ...)
  */
 public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 

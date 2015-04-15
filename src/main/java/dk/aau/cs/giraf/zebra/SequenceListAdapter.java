@@ -8,7 +8,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import dk.aau.cs.giraf.oasis.lib.models.Sequence;
 
-//Adapter for a List of Sequences typically associated with a child
+/**
+ * Adapter for a List of Sequences typically associated with a child
+ */
 public class SequenceListAdapter extends BaseAdapter {
 	private List<Sequence> items;
 	private Context context;

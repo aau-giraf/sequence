@@ -44,15 +44,15 @@
 
     <HorizontalScrollView
         android:id="@+id/horizontalScrollView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:layout_margin="0dp"
         android:fadeScrollbars="false"
         android:overScrollMode="always"
         android:padding="0dp">
 
         <FrameLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <dk.aau.cs.giraf.zebra.SequenceViewGroup

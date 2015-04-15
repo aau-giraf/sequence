@@ -22,7 +22,7 @@ import android.widget.AdapterView;
  * the horizontal dimension.
  * Also contains the animation and effects (drag, rearrange, snap ...)
  */
-public abstract class SequenceViewGroup extends AdapterView<SequenceAdapter> {
+public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 
     private final int ANIMATION_TIME = 350;
 
@@ -744,10 +744,13 @@ public abstract class SequenceViewGroup extends AdapterView<SequenceAdapter> {
         newButtonClickedListener = listener;
     }
 
-
-
     public interface OnNewButtonClickedListener {
         public void onNewButtonClicked();
+    }
+
+    @Override
+    public void setSelection(int position) {
+
     }
 }
 
@@ -789,11 +792,6 @@ public abstract class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 
     public int getItemWidth() {
         return itemWidth;
-    }
-
-    @Override
-    public void setSelection(int position) {
-
     }
 
     public OnNewButtonClickedListener getOnNewButtonClickedListener() {

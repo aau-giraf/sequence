@@ -27,8 +27,6 @@ import java.util.List;
 import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GDialog;
-import dk.aau.cs.giraf.gui.GDialogAlert;
-import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.gui.GirafInflatableDialog;
 import dk.aau.cs.giraf.gui.GirafNotifyDialog;
@@ -100,7 +98,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         loadSequence();
         setupFramesGrid();
         setupButtons();
-        setupTopBar();
+        setupActionBar();
         clearFocus();
     }
 
@@ -152,7 +150,6 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         // Create buttons
         saveButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_save));
         sequenceThumbnailButton = (GirafButton) findViewById(R.id.sequenceThumbnail);
-        sequenceThumbnailButton.setIcon(getResources().getDrawable(R.drawable.icon_accept));
 
         // Adding buttons to action-bar
         addGirafButtonToActionBar(saveButton, LEFT);
@@ -186,9 +183,13 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         }
     }
 
-    private void setupTopBar() {
-        //initializeSequenceTitle();
-        initializeChildTitle();
+    private void setupActionBar() {
+        //Creates helper to fetch data from the Database
+        helper = new Helper(this);
+
+        //Save Child locally and update relevant information for application
+        selectedChild = helper.profilesHelper.getProfileById(childId);
+        this.setActionBarTitle(selectedChild.getName()); // selectedChild.getName() "Child's name code"
     }
 
     private void clearFocus() {
@@ -204,15 +205,6 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
                 return false;
             }
         });
-    }
-
-    private void initializeChildTitle() {
-        //Creates helper to fetch data from the Database
-        helper = new Helper(this);
-
-        //Save Child locally and update relevant information for application
-        selectedChild = helper.profilesHelper.getProfileById(childId);
-        this.setActionBarTitle(selectedChild.getName()); // selectedChild.getName() "Child's name code"
     }
 
     private boolean checkSequenceBeforeSave(View v, boolean confirmation) {
@@ -578,7 +570,6 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         }
     }
 
-
     private class ChoiceDialog extends GDialog {
         private ChoiceDialog(Context context) {
             super(context);
@@ -601,7 +592,6 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
             choiceAdapter = setupChoiceAdapter();
 
             saveChoice.setOnClickListener(new GButton.OnClickListener() {
-
                 @Override
                 public void onClick(View v) {
                     tempFrameList = sequence.getFramesList();

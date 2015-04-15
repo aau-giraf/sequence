@@ -195,7 +195,7 @@ public class PictogramView extends LinearLayout {
         helper = new Helper(getContext());
 
         // If the first element in a sequence is a choice - pick the choose icon -
-        // this leads to nullpointerexception otherwise, as errors occur when it tries to first the first element, if this is split in many. (as the choose element is)
+        // this leads to NullPointerException otherwise, as errors occur when it tries to first the first element, if this is split in many. (as the choose element is)
         if (id == 0) {
             Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.icon_choose);
             pictogram.setImageBitmap(bm);

@@ -28,7 +28,7 @@ public class MainActivity extends GirafActivity {
     private Profile guardian;
     private Profile selectedChild;
     private boolean childIsSet = false;
-    private int guardianId;
+    //private int guardianId;
     private int childId;
 
     private GridView sequenceGrid;
@@ -132,6 +132,7 @@ public class MainActivity extends GirafActivity {
         //Create helper to fetch data from database and fetches intents (from Launcher or AddEditSequencesActivity)
         helper = new Helper(this);
         Bundle extras = getIntent().getExtras();
+        int guardianId;
 
         //Get GuardianId and ChildId from extras
         guardianId = extras.getInt("currentGuardianID");
@@ -277,5 +278,10 @@ public class MainActivity extends GirafActivity {
         if (childIsSet) {
             fetchDatabase.execute();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+
     }
 }

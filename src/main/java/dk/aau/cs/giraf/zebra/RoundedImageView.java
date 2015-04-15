@@ -15,6 +15,7 @@ import android.graphics.Xfermode;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
@@ -31,7 +32,6 @@ public class RoundedImageView extends ImageView {
 	private float cornerRadius;
 	
 	RectF imageRect = new RectF();
-	Paint opacity = new Paint();
 	int height = -1;
 	int width = -1;
 	float radius;
@@ -84,7 +84,7 @@ public class RoundedImageView extends ImageView {
     }
  
     @Override
-    protected void onDraw(Canvas canvas) {
+    protected void onDraw(@NonNull Canvas canvas) {
     	int width = getWidth() - getPaddingLeft() - getPaddingRight();
     	int height = getHeight() - getPaddingTop() - getPaddingBottom();
     	Drawable maiDrawable = getDrawable();

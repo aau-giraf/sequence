@@ -7,7 +7,6 @@
     android:background="@color/giraf_background"
     tools:context="dk.aau.cs.giraf.zebra.CopySequencesActivity">
 
-
     <LinearLayout
         android:id="@+id/copying_sequences"
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -25,6 +24,7 @@
         </RelativeLayout>
         <LinearLayout
             android:id="@+id/lists_copy"
+            android:contentDescription="@string/copy_sequences_window_description"
             android:layout_width="match_parent"
             android:layout_height="450dp"
             android:orientation="horizontal">
@@ -37,15 +37,14 @@
                 android:gravity="center"
                 android:numColumns="3"
                 android:listSelector="#00000000"
-                android:fadeScrollbars="false">
-            </dk.aau.cs.giraf.gui.GGridView>
+                android:fadeScrollbars="false" />
 
             <ImageView
+                android:contentDescription="@string/copy_sequences_window_arrow"
                 android:layout_width="85dp"
                 android:layout_height="85dp"
                 android:src="@drawable/gdialogcolorselect_arrow_right"
-                android:layout_gravity="center_vertical"
-                />
+                android:layout_gravity="center_vertical"/>
 
             <dk.aau.cs.giraf.gui.GGridView
                 android:id="@+id/empty_sequences"
@@ -69,6 +68,7 @@
 
             <ImageView
                 android:id="@+id/white_thingy_two"
+                android:contentDescription="@string/empty_space"
                 android:layout_width="30dp"
                 android:layout_height="match_parent"
                 android:layout_centerHorizontal="true"/>
@@ -78,7 +78,7 @@
                 android:layout_width="180dp"
                 android:layout_height="50dp"
                 android:drawableLeft="@drawable/copy"
-                android:text="Kopier og send til"
+                android:text="@string/copy_and_send_to"
                 android:layout_alignRight="@id/white_thingy_two"
                 android:layout_marginRight="25dp"
                 android:layout_marginTop="15dp"
@@ -89,7 +89,7 @@
                 android:layout_width="180dp"
                 android:layout_height="50dp"
                 android:drawableLeft="@drawable/exit"
-                android:text="Afslut"
+                android:text="@string/exit"
                 android:layout_alignLeft="@+id/white_thingy_two"
                 android:layout_marginLeft="25dp"
                 android:layout_marginTop="15dp"

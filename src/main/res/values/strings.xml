@@ -4,6 +4,7 @@
 
     <string name="app_name">Sekvens</string>
     <string name="copy_sequences">Kopier sekvenser</string>
+    <string name="copy_and_send_to">Kopier og send til</string>
     <string name="delete_sequences">Slet sekvenser</string>
     <string name="no_children">Der er ingen børn</string>
     <string name="changes_saved">Ændringerne blev gemt</string>
@@ -45,5 +46,9 @@
     <string name="delete_these">Vil du slette de </string>
     <string name="marked_sequences"> markerede sekvenser?</string>
     <string name="delete_this_sequence">Vil du slette den markerede sekvens?</string>
+    <string name="empty_space">Tom plads mellem to knapper</string>
+    <string name="copy_sequences_window_description">Alle sekvenser samt hvilke der skal kopieres</string>
+    <string name="copy_sequences_window_arrow">Pil der viser hvilke sequenser der skal kopieres</string>
+    <string name="add_pictogram">Tilføj pictogram</string>
 
 </resources>

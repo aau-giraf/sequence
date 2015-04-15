@@ -27,13 +27,11 @@ public class PictogramView extends LinearLayout {
     public final static float LOWLIGHT_SCALE = 0.7f;
     private final static float DEFAULT_TEXT_SIZE = 18f;
 
-    private Helper helper;
     private RoundedImageView pictogram;
     private TextView title;
     private ImageButton deleteButton;
     private ImageButton editButton;
     private OnDeleteClickListener onDeleteClickListener;
-    private OnEditClickListener onEditClickListener;
 
     private boolean isInEditMode = false;
 
@@ -52,15 +50,16 @@ public class PictogramView extends LinearLayout {
         this.setLayerType(LAYER_TYPE_SOFTWARE, null);
         this.setOrientation(LinearLayout.VERTICAL);
 
-        SquaredRelativeLayout square = new SquaredRelativeLayout(context);
-        square.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        SquaredRelativeLayout squareRelLayout = new SquaredRelativeLayout(context);
+        squareRelLayout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
-        square.addView(createImageView(radius));
-        square.addView(createDeleteButton());
+        squareRelLayout.addView(createImageView(radius));
+        squareRelLayout.addView(createDeleteButton());
+        squareRelLayout.addView(createEditButton());
 
         setupOnDeleteClickHandler();
 
-        this.addView(square);
+        this.addView(squareRelLayout);
         this.addView(createTextView());
     }
 
@@ -108,6 +107,7 @@ public class PictogramView extends LinearLayout {
 
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         editButton.setLayoutParams(params);
 
         editButton.setPadding(8, 8, 8, 8);
@@ -115,9 +115,9 @@ public class PictogramView extends LinearLayout {
 
         editButton.setFocusable(false);
 
-        setDeleteButtonVisible(false);
+        setEditButtonVisible(false);
 
-        return deleteButton;
+        return editButton;
     }
 
     public void deleteModeMarked() {
@@ -182,6 +182,7 @@ public class PictogramView extends LinearLayout {
         if (editMode != isInEditMode) {
             isInEditMode = editMode;
             setDeleteButtonVisible(editMode);
+            setEditButtonVisible(editMode);
         }
     }
 
@@ -190,6 +191,7 @@ public class PictogramView extends LinearLayout {
     }
 
     public void setImageFromId(int id) {
+        Helper helper;
         helper = new Helper(getContext());
 
         // If the first element in a sequence is a choice - pick the choose icon -
@@ -224,29 +226,8 @@ public class PictogramView extends LinearLayout {
         return onDeleteClickListener;
     }
 
-    public void setupOnEditClickHandler() {
-        editButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isInEditMode && onEditClickListener != null)
-                    onEditClickListener.onEditClick();
-            }
-        });
-    }
-
-    public void setOnEditClickListener(OnEditClickListener listener) {
-        onEditClickListener = listener;
-    }
-
-    public OnEditClickListener getOnEditClickListener() {
-        return onEditClickListener;
-    }
-
     public interface OnDeleteClickListener {
         public void onDeleteClick();
     }
 
-    public interface OnEditClickListener {
-        public void onEditClick();
-    }
 }

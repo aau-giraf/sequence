@@ -36,7 +36,6 @@ import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Frame;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.zebra.PictogramView.OnDeleteClickListener;
-import dk.aau.cs.giraf.zebra.PictogramView.OnEditClickListener;
 import dk.aau.cs.giraf.zebra.SequenceAdapter.OnAdapterGetViewListener;
 import dk.aau.cs.giraf.zebra.SequenceViewGroup.OnNewButtonClickedListener;
 import dk.aau.cs.giraf.oasis.lib.models.Sequence;
@@ -346,9 +345,9 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         sequenceGroup.setOnNewButtonClickedListener(new OnNewButtonClickedListener() {
             @Override
             public void onNewButtonClicked() {
-                final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup);
-                sequenceGroup.liftUpAddNewButton();
-                createAndShowAddDialog(sequenceGroup);
+            final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup);
+            sequenceGroup.liftUpAddNewButton();
+            createAndShowAddDialog(sequenceGroup);
             }
         });
 
@@ -357,12 +356,12 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
             @Override
             public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
 
-                //Save Frame and Position
-                pictogramEditPos = position;
-                Frame frame = sequence.getFramesList().get(position);
+            //Save Frame and Position
+            pictogramEditPos = position;
+            Frame frame = sequence.getFramesList().get(position);
 
-                //Perform action depending on the type of pictogram clicked.
-                checkFrameMode(frame, view);
+            //Perform action depending on the type of pictogram clicked.
+            checkFrameMode(frame, view);
             }
         });
 
@@ -370,8 +369,8 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         sequenceGroup.setOnRearrangeListener(new SequenceViewGroup.OnRearrangeListener() {
             @Override
             public void onRearrange(int indexFrom, int indexTo) {
-                adapter.notifyDataSetChanged();
-                changesSaved = false;
+            adapter.notifyDataSetChanged();
+            changesSaved = false;
             }
         });
 
@@ -386,30 +385,18 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         adapter.setOnAdapterGetViewListener(new OnAdapterGetViewListener() {
             @Override
             public void onAdapterGetView(final int position, final View view) {
-                if (view instanceof PictogramView) {
-                    //Cast view to PictogramView so the onDeleteClickListener can be set
-                    PictogramView v = (PictogramView) view;
-                    v.setOnDeleteClickListener(new OnDeleteClickListener() {
-                        @Override
-                        public void onDeleteClick() {
-                            //Remove frame and update Adapter
-                            sequence.getFramesList().remove(position);
-                            adapter.notifyDataSetChanged();
-                        }
-                    });
-                    v.setOnEditClickListener(new OnEditClickListener() {
-                        @Override
-                        public void onEditClick() {
-
-                            //Save Frame and Position
-                            pictogramEditPos = position;
-                            Frame frame = sequence.getFramesList().get(position);
-
-                            //Perform action depending on the type of pictogram clicked.
-                            checkFrameMode(frame, view);
-                        }
-                    });
-                }
+            if (view instanceof PictogramView) {
+                //Cast view to PictogramView so the onDeleteClickListener can be set
+                PictogramView v = (PictogramView) view;
+                v.setOnDeleteClickListener(new OnDeleteClickListener() {
+                    @Override
+                    public void onDeleteClick() {
+                    //Remove frame and update Adapter
+                    sequence.getFramesList().remove(position);
+                    adapter.notifyDataSetChanged();
+                    }
+                });
+            }
             }
         });
         return adapter;
@@ -423,26 +410,18 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         adapter.setOnAdapterGetViewListener(new OnAdapterGetViewListener() {
             @Override
             public void onAdapterGetView(final int position, final View view) {
-                if (view instanceof PictogramView) {
-                    //Cast view to PictogramView so the onDeleteClickListener can be set
-                    PictogramView v = (PictogramView) view;
-                    v.setOnDeleteClickListener(new OnDeleteClickListener() {
-                        @Override
-                        public void onDeleteClick() {
-                            //Remove frame and update Adapter
-                            choice.getFramesList().remove(position);
-                            adapter.notifyDataSetChanged();
-                        }
-                    });
-                    v.setOnEditClickListener(new OnEditClickListener() {
-                        @Override
-                        public void onEditClick() {
-                            //Enter the edit mode
-                            sequence.getFramesList().remove(position);
-                            adapter.notifyDataSetChanged();
-                        }
-                    });
-                }
+            if (view instanceof PictogramView) {
+                //Cast view to PictogramView so the onDeleteClickListener can be set
+                PictogramView v = (PictogramView) view;
+                v.setOnDeleteClickListener(new OnDeleteClickListener() {
+                    @Override
+                    public void onDeleteClick() {
+                    //Remove frame and update Adapter
+                    choice.getFramesList().remove(position);
+                    adapter.notifyDataSetChanged();
+                    }
+                });
+            }
             }
         });
         return adapter;

@@ -30,12 +30,13 @@ import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogAlert;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GirafButton;
-import dk.aau.cs.giraf.gui.GirafInflateableDialog;
+import dk.aau.cs.giraf.gui.GirafInflatableDialog;
 import dk.aau.cs.giraf.gui.GirafNotifyDialog;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Frame;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.zebra.PictogramView.OnDeleteClickListener;
+import dk.aau.cs.giraf.zebra.PictogramView.OnEditClickListener;
 import dk.aau.cs.giraf.zebra.SequenceAdapter.OnAdapterGetViewListener;
 import dk.aau.cs.giraf.zebra.SequenceViewGroup.OnNewButtonClickedListener;
 import dk.aau.cs.giraf.oasis.lib.models.Sequence;
@@ -81,10 +82,10 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     private GirafButton saveButton;
     private GirafButton sequenceThumbnailButton;
 
-    GirafInflateableDialog choosePictogramOrChoiceDialog;
-    GirafInflateableDialog backDialog;
-    GirafInflateableDialog saveDialog;
-    GirafInflateableDialog choiceDialog;
+    GirafInflatableDialog choosePictogramOrChoiceDialog;
+    GirafInflatableDialog backDialog;
+    GirafInflatableDialog saveDialog;
+    GirafInflatableDialog choiceDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -268,7 +269,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     // The following two methods is connected to girafbuttons in the xml file
     private void createAndShowAddDialog(View v) {
         //Create instance of AddDialog and display it
-        choosePictogramOrChoiceDialog = GirafInflateableDialog.newInstance(this.getString(R.string.add_pictogram_choice), this.getString(R.string.add_pictogram_choice_description), R.layout.dialog_add_pictogram_or_choice);
+        choosePictogramOrChoiceDialog = GirafInflatableDialog.newInstance(this.getString(R.string.add_pictogram_choice), this.getString(R.string.add_pictogram_choice_description), R.layout.dialog_add_pictogram_or_choice);
         choosePictogramOrChoiceDialog.show(getSupportFragmentManager(), ADD_PICTOGRAM_OR_CHOICE);
     }
 
@@ -290,7 +291,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     private void createAndShowBackDialog(View v) {
         //Create instance of AddDialog and display it
         if (changesSaved == false) {
-            backDialog = GirafInflateableDialog.newInstance(this.getString(R.string.back), this.getString(R.string.back_description), R.layout.dialog_back);
+            backDialog = GirafInflatableDialog.newInstance(this.getString(R.string.back), this.getString(R.string.back_description), R.layout.dialog_back);
             backDialog.show(getSupportFragmentManager(), BACK_SEQUENCE);
         }
         else {
@@ -317,7 +318,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     // The following two methods is connected to girafbuttons in the view
     private void createAndShowSaveDialog(View v) {
         //Create instance of AddDialog and display it
-        saveDialog = GirafInflateableDialog.newInstance(this.getString(R.string.save), this.getString(R.string.sequence_saved), R.layout.dialog_save);
+        saveDialog = GirafInflatableDialog.newInstance(this.getString(R.string.save), this.getString(R.string.sequence_saved), R.layout.dialog_save);
         saveDialog.show(getSupportFragmentManager(), SAVE_SEQUENCE);
     }
 
@@ -381,7 +382,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         //Sets up the adapter for the Sequence to display
         final SequenceAdapter adapter = new SequenceAdapter(this, sequence);
 
-        //Adds a Delete Icon to all Frames which deletes the relevant Frame on click.
+        //Adds a Delete & Edit Icon to all Frames which deletes or edits the relevant Frame on click.
         adapter.setOnAdapterGetViewListener(new OnAdapterGetViewListener() {
             @Override
             public void onAdapterGetView(final int position, final View view) {
@@ -394,6 +395,18 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
                             //Remove frame and update Adapter
                             sequence.getFramesList().remove(position);
                             adapter.notifyDataSetChanged();
+                        }
+                    });
+                    v.setOnEditClickListener(new OnEditClickListener() {
+                        @Override
+                        public void onEditClick() {
+
+                            //Save Frame and Position
+                            pictogramEditPos = position;
+                            Frame frame = sequence.getFramesList().get(position);
+
+                            //Perform action depending on the type of pictogram clicked.
+                            checkFrameMode(frame, view);
                         }
                     });
                 }
@@ -418,6 +431,14 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
                         public void onDeleteClick() {
                             //Remove frame and update Adapter
                             choice.getFramesList().remove(position);
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+                    v.setOnEditClickListener(new OnEditClickListener() {
+                        @Override
+                        public void onEditClick() {
+                            //Enter the edit mode
+                            sequence.getFramesList().remove(position);
                             adapter.notifyDataSetChanged();
                         }
                     });

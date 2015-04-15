@@ -356,7 +356,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
     }
 
     @Override
-    public boolean onTouchEvent(@NonNull MotionEvent event) {
+    public boolean onTouchEvent(MotionEvent event) {
 
         //If performing drag animation then consume event to not disrupt
         if (animatingDragReposition) return true;
@@ -388,7 +388,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
                         public void onAnimationEnd(Animation animation) {
                             if (startDragIndex != curDragIndexPos) {
 
-                                if (AddEditSequencesActivity.choiceMode) {
+                                if (AddEditSequencesActivity.choiceMode == true) {
                                     AddEditSequencesActivity.choice.rearrangeFrame(startDragIndex, curDragIndexPos);
                                 } else {
                                     AddEditSequencesActivity.sequence.rearrangeFrame(startDragIndex, curDragIndexPos);
@@ -401,9 +401,9 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
                                 }
 
                                 rearrangeListener.onRearrange(startDragIndex, curDragIndexPos);
-                                //layout(getLeft(), getTop(), getRight(), getBottom());
-                                //This prevents lots of flicker
 
+                                //layout(getLeft(), getTop(), getRight(), getBottom());
+                                // Using "onLayout" instead of layout prevents lots of flicker
                                 onLayout(true, getLeft(), getTop(), getRight(), getBottom());
                             } else {
                                 //Must clear animation to prevent flicker - even though it just ended.
@@ -752,10 +752,6 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
     public void setSelection(int position) {
 
     }
-}
-
-
-/* Old code
 
     public int getHorizontalSpacing() {
         return horizontalSpacing;
@@ -797,6 +793,4 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
     public OnNewButtonClickedListener getOnNewButtonClickedListener() {
         return newButtonClickedListener;
     }
-
-
- */
+}

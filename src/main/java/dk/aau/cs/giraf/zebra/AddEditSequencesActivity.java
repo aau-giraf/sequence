@@ -60,7 +60,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     private List<Frame> tempFrameList;
     private List<Pictogram> tempPictogramList = new ArrayList<Pictogram>();
     private final String PICTO_INTENT_CHECKOUT_ID = "checkoutIds";
-    private final int PICTO_SEQUENCE_IMAGE_CALL = 345;
+    private final int PICTO_EDIT_SEQUENCE_THUMBNAIL_CALL = 345;
     private final int PICTO_EDIT_PICTOGRAM_CALL = 456;
     private final int PICTO_NEW_PICTOGRAM_CALL = 567;
     private final String ADD_PICTOGRAM_OR_CHOICE = "ADD_PICTOGRAM_OR_CHOICE";
@@ -167,16 +167,13 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
             @Override
             public void onClick(View v) {
                 if (isInEditMode) {
-                    callPictoSearch(PICTO_SEQUENCE_IMAGE_CALL);
+                    callPictoSearch(PICTO_EDIT_SEQUENCE_THUMBNAIL_CALL);
                 }
             }
         });
 
         //If no Image has been selected or the Sequence, display the Add Sequence Picture. Otherwise load the image for the Button
-        if (sequence.getPictogramId() == 0) {
-            Drawable d = getResources().getDrawable(R.drawable.add_sequence_picture);
-            sequenceThumbnailButton.setIcon(d);
-        } else {
+        if (sequence.getPictogramId() != 0) {
             helper = new Helper(this);
             Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(sequence.getPictogramId()).getImage());
             sequenceThumbnailButton.setIcon(d);
@@ -197,7 +194,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
             @Override
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent event) {
                 if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || actionId == EditorInfo.IME_ACTION_DONE) {
-                    InputMethodManager hideKeyboard = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    InputMethodManager hideKeyboard = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     sequenceName.clearFocus();
                     parent_container.requestFocus();
                     hideKeyboard.hideSoftInputFromWindow(sequenceName.getWindowToken(), 0);
@@ -217,8 +214,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
             createAndShowSaveDialog(v);
             changesSaved = true;
             return true;
-        }
-        else {
+        } else {
             saveChanges();
             changesSaved = true;
             return true;
@@ -232,8 +228,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         //Save name from sequenceName to the Sequence
         if (sequenceName.getEditableText() == null || sequenceName.getEditableText().length() == 0) {
             sequence.setName(getResources().getString(R.string.unnamed_sequence));
-        }
-        else {
+        } else {
             sequence.setName(sequenceName.getText().toString());
             sequenceStartName = sequenceName.getText().toString();
         }
@@ -284,8 +279,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         if (changesSaved == false) {
             backDialog = GirafInflatableDialog.newInstance(this.getString(R.string.back), this.getString(R.string.back_description), R.layout.dialog_back);
             backDialog.show(getSupportFragmentManager(), BACK_SEQUENCE);
-        }
-        else {
+        } else {
             super.onBackPressed();
         }
     }
@@ -294,7 +288,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     public void backSaveClick(View v) {
         checkSequenceBeforeSave(v, false);
         backDialog.dismiss();
-        if (changesSaved == true){
+        if (changesSaved == true) {
             super.onBackPressed();
         }
     }
@@ -337,9 +331,9 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         sequenceGroup.setOnNewButtonClickedListener(new OnNewButtonClickedListener() {
             @Override
             public void onNewButtonClicked() {
-            final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup);
-            sequenceGroup.liftUpAddNewButton();
-            createAndShowAddDialog(sequenceGroup);
+                final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup);
+                sequenceGroup.liftUpAddNewButton();
+                createAndShowAddDialog(sequenceGroup);
             }
         });
 
@@ -348,12 +342,12 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
             @Override
             public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
 
-            //Save Frame and Position
-            pictogramEditPos = position;
-            Frame frame = sequence.getFramesList().get(position);
+                //Save Frame and Position
+                pictogramEditPos = position;
+                Frame frame = sequence.getFramesList().get(position);
 
-            //Perform action depending on the type of pictogram clicked.
-            checkFrameMode(frame, view);
+                //Perform action depending on the type of pictogram clicked.
+                checkFrameMode(frame, view);
             }
         });
 
@@ -361,8 +355,8 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         sequenceGroup.setOnRearrangeListener(new SequenceViewGroup.OnRearrangeListener() {
             @Override
             public void onRearrange(int indexFrom, int indexTo) {
-            adapter.notifyDataSetChanged();
-            changesSaved = false;
+                adapter.notifyDataSetChanged();
+                changesSaved = false;
             }
         });
 
@@ -377,18 +371,18 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         adapter.setOnAdapterGetViewListener(new OnAdapterGetViewListener() {
             @Override
             public void onAdapterGetView(final int position, final View view) {
-            if (view instanceof PictogramView) {
-                //Cast view to PictogramView so the onDeleteClickListener can be set
-                PictogramView v = (PictogramView) view;
-                v.setOnDeleteClickListener(new OnDeleteClickListener() {
-                    @Override
-                    public void onDeleteClick() {
-                    //Remove frame and update Adapter
-                    sequence.getFramesList().remove(position);
-                    adapter.notifyDataSetChanged();
-                    }
-                });
-            }
+                if (view instanceof PictogramView) {
+                    //Cast view to PictogramView so the onDeleteClickListener can be set
+                    PictogramView v = (PictogramView) view;
+                    v.setOnDeleteClickListener(new OnDeleteClickListener() {
+                        @Override
+                        public void onDeleteClick() {
+                            //Remove frame and update Adapter
+                            sequence.getFramesList().remove(position);
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+                }
             }
         });
         return adapter;
@@ -402,18 +396,18 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         adapter.setOnAdapterGetViewListener(new OnAdapterGetViewListener() {
             @Override
             public void onAdapterGetView(final int position, final View view) {
-            if (view instanceof PictogramView) {
-                //Cast view to PictogramView so the onDeleteClickListener can be set
-                PictogramView v = (PictogramView) view;
-                v.setOnDeleteClickListener(new OnDeleteClickListener() {
-                    @Override
-                    public void onDeleteClick() {
-                    //Remove frame and update Adapter
-                    choice.getFramesList().remove(position);
-                    adapter.notifyDataSetChanged();
-                    }
-                });
-            }
+                if (view instanceof PictogramView) {
+                    //Cast view to PictogramView so the onDeleteClickListener can be set
+                    PictogramView v = (PictogramView) view;
+                    v.setOnDeleteClickListener(new OnDeleteClickListener() {
+                        @Override
+                        public void onDeleteClick() {
+                            //Remove frame and update Adapter
+                            choice.getFramesList().remove(position);
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+                }
             }
         });
         return adapter;
@@ -427,8 +421,8 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
 
-                case PICTO_SEQUENCE_IMAGE_CALL:
-                    OnEditSequenceImageResult(data);
+                case PICTO_EDIT_SEQUENCE_THUMBNAIL_CALL:
+                    OnEditSequenceThumbnailResult(data);
                     break;
 
                 case PICTO_EDIT_PICTOGRAM_CALL:
@@ -449,8 +443,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     }
 
     private void OnNewPictogramResult(Intent data) {
-        int[] checkoutIds = data.getExtras().getIntArray(
-                PICTO_INTENT_CHECKOUT_ID);
+        int[] checkoutIds = data.getExtras().getIntArray(PICTO_INTENT_CHECKOUT_ID);
 
         //If no pictures are returned, assume user cancelled and nothing is supposed to change.
         if (checkoutIds.length == 0 || checkoutIds == null) {
@@ -472,8 +465,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
             }
             choiceAdapter.notifyDataSetChanged();
             changesSaved = false;
-        }
-        else {
+        } else {
 
             for (int id : checkoutIds) {
                 Frame frame = new Frame();
@@ -483,11 +475,6 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
 
             if (sequence.getPictogramId() == 0 && checkoutIds.length > 0) {
                 sequence.setPictogramId(checkoutIds[0]);
-                //helper = new Helper(this);
-                //Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(sequence.getPictogramId()).getImage());
-                //sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
-                //sequenceThumbnailButton.setVisibility(View.GONE);
-                //sequenceThumbnailButton.setVisibility(View.VISIBLE);
             }
             adapter.notifyDataSetChanged();
             changesSaved = false;
@@ -511,19 +498,16 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         changesSaved = false;
     }
 
-    private void OnEditSequenceImageResult(Intent data) {
-        int[] checkoutIds = data.getExtras().getIntArray(
-                PICTO_INTENT_CHECKOUT_ID);
+    private void OnEditSequenceThumbnailResult(Intent data) {
+        int[] checkoutIds = data.getExtras().getIntArray(PICTO_INTENT_CHECKOUT_ID);
 
         if (checkoutIds.length == 0) {
             return;
         }
 
         sequence.setPictogramId(checkoutIds[0]);
-        //Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(sequence.getPictogramId()).getImage());
-        //sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(0, d, 0, 0);
-        sequenceThumbnailButton.setVisibility(View.GONE);
-        sequenceThumbnailButton.setVisibility(View.VISIBLE);
+        Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(sequence.getPictogramId()).getImage());
+        sequenceThumbnailButton.setIcon(d);
         changesSaved = false;
     }
 
@@ -534,10 +518,9 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         intent.putExtra("currentChildID", selectedChild.getId());
         intent.putExtra("currentGuardianID", guardian.getId());
 
-        if (modeId == PICTO_NEW_PICTOGRAM_CALL){
+        if (modeId == PICTO_NEW_PICTOGRAM_CALL) {
             intent.putExtra("purpose", "multi");
-        }
-        else {
+        } else {
             intent.putExtra("purpose", "single");
         }
         startActivityForResult(intent, modeId);
@@ -655,8 +638,8 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
                 @Override
                 public void onItemClick(AdapterView<?> adapter, View view,
                                         int position, long id) {
-                pictogramEditPos = position;
-                callPictoSearch(PICTO_EDIT_PICTOGRAM_CALL);
+                    pictogramEditPos = position;
+                    callPictoSearch(PICTO_EDIT_PICTOGRAM_CALL);
                 }
             });
 

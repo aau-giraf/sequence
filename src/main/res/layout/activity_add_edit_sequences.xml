@@ -26,7 +26,7 @@
             android:id="@+id/sequenceThumbnail"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            app:icon="@drawable/icon_accept"></dk.aau.cs.giraf.gui.GirafButton>
+            app:icon="@drawable/add_sequence_picture"></dk.aau.cs.giraf.gui.GirafButton>
 
         <EditText
             android:id="@+id/sequenceName"

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageButton;
@@ -186,10 +185,6 @@ public class PictogramView extends LinearLayout {
         }
     }
 
-    public boolean getEditModeEnabled() {
-        return isInEditMode;
-    }
-
     public void setImageFromId(int id) {
         Helper helper;
         helper = new Helper(getContext());
@@ -220,10 +215,6 @@ public class PictogramView extends LinearLayout {
 
     public void setOnDeleteClickListener(OnDeleteClickListener listener) {
         onDeleteClickListener = listener;
-    }
-
-    public OnDeleteClickListener getOnDeleteClickListener() {
-        return onDeleteClickListener;
     }
 
     public interface OnDeleteClickListener {

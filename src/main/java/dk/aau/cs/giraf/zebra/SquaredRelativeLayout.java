@@ -5,7 +5,6 @@ import android.widget.RelativeLayout;
 
 /**
  * A relative layout that will force the height to be the same as the width.
- * This is the relativelayout used when using pictograms.
  */
 public class SquaredRelativeLayout extends RelativeLayout {
 	
@@ -13,7 +12,10 @@ public class SquaredRelativeLayout extends RelativeLayout {
 		super(context);
 	}
 
-	@Override
+    // The width is used twice to ensure that the layout is squared.
+    // This results in a lint warning, which we suppress.
+	@SuppressWarnings("SuspiciousNameCombination")
+    @Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		super.onMeasure(widthMeasureSpec, widthMeasureSpec);
 	}

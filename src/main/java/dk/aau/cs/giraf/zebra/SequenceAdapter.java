@@ -80,12 +80,17 @@ public class SequenceAdapter extends BaseAdapter {
 	public void setOnAdapterGetViewListener(OnAdapterGetViewListener onCreateViewListener) {
 		this.onAdapterGetViewListener = onCreateViewListener;
 	}
-	
-	public OnAdapterGetViewListener getOnAdapterGetViewListener() {
-		return this.onAdapterGetViewListener;
-	}
-	
+
 	public interface OnAdapterGetViewListener {
 		public void onAdapterGetView(int position, View view);
 	}
 }
+
+/* OLD CODE
+
+    public OnAdapterGetViewListener getOnAdapterGetViewListener() {
+		return this.onAdapterGetViewListener;
+	}
+
+
+ */

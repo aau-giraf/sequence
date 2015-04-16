@@ -22,7 +22,7 @@
         android:layout_marginRight="15dp"
         android:onClick="DeleteClick"
         app:icon="@drawable/icon_delete"
-        app:text="@string/delete_sequence" />
+        app:text="@string/delete" />
 
     <dk.aau.cs.giraf.gui.GirafButton
         android:layout_width="wrap_content"

@@ -27,6 +27,7 @@
     <string name="discard_question">Du er ved at fortryde dine ændringer. Er du sikker?</string>
     <string name="Done_with_sequence">Færdig med sekvens</string>
     <string name="dont_save">Gem ikke</string>
+    <string name="empty_choice_error">Det er ikke muligt at gemme en tom valg aktivitet</string>
     <string name="empty_sequence_error">Det er ikke muligt at gemme en tom sekvens</string>
     <string name="empty_space">Tom plads mellem to knapper</string>
     <string name="error">Fejl</string>

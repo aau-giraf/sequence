@@ -55,9 +55,9 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     private int pictogramEditPos = -1;
     public static Sequence sequence;
     public static Sequence choice = new Sequence();
+    public Sequence tempChoiceList;
     public SequenceAdapter adapter;
     public SequenceAdapter choiceAdapter;
-    private List<Frame> tempFrameList;
     private List<Pictogram> tempPictogramList = new ArrayList<Pictogram>();
     private final String PICTO_INTENT_CHECKOUT_ID = "checkoutIds";
     private final int PICTO_EDIT_SEQUENCE_THUMBNAIL_CALL = 345;
@@ -67,6 +67,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     private final String SAVE_SEQUENCE = "SAVE_SEQUENCE";
     private final String BACK_SEQUENCE = "BACK_SEQUENCE";
     private final int EMPTY_SEQUENCE_ERROR = 1338;
+    private final int EMPTY_CHOICE_ERROR = 1586;
     private final String EMPTY_SEQUENCE_ERROR_TAG = "EMPTY_SEQUENCE_ERROR_TAG";
     private final String CHOICE_SEQUENCE = "CHOICE_SEQUENCE";
     private final int SEQUENCE_VIEWER_CALL = 1337;
@@ -207,7 +208,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     private boolean checkSequenceBeforeSave(View v, boolean confirmation) {
         //Checks if Sequence is empty. If not empty, save it and return
         if (sequence.getFramesList().size() == 0) {
-            createAndShowErrorDialog(v);
+            createAndShowErrorDialogEmptySequence(v);
             return false;
         } else if (confirmation == true) {
             saveChanges();
@@ -267,7 +268,6 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
 
     // Button to search for pictograms, that should be used in a "choice" activity
     public void getChoiceClick(View v) {
-        choiceMode = true;
         createAndShowChoiceDialog(v);
         choosePictogramOrChoiceDialog.dismiss();
     }
@@ -312,12 +312,17 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         saveDialog.dismiss();
     }
 
-    private void createAndShowErrorDialog(View v) {
+    private void createAndShowErrorDialogEmptySequence(View v) {
         //Creates alertDialog to display error. Clicking Ok dismisses the Dialog
         GirafNotifyDialog alertDialog = GirafNotifyDialog.newInstance(this.getString(R.string.error), this.getString(R.string.empty_sequence_error), EMPTY_SEQUENCE_ERROR);
         alertDialog.show(getSupportFragmentManager(), EMPTY_SEQUENCE_ERROR_TAG);
     }
 
+    private void createAndShowErrorDialogEmptyChoice(View v) {
+        //Creates alertDialog to display error. Clicking Ok dismisses the Dialog
+        GirafNotifyDialog alertDialog = GirafNotifyDialog.newInstance(this.getString(R.string.error), this.getString(R.string.empty_choice_error), EMPTY_CHOICE_ERROR);
+        alertDialog.show(getSupportFragmentManager(), EMPTY_SEQUENCE_ERROR_TAG);
+    }
 
     private SequenceViewGroup setupSequenceViewGroup(final SequenceAdapter adapter) {
         //The SequenceViewGroup class takes care of most of the required functionality, including size properties, dragging and rearranging
@@ -528,6 +533,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
 
     private void createAndShowChoiceDialog(View v) {
         //Create instance of ChoiceDialog and display it
+        choiceMode = true;
         ChoiceDialog choiceDialog = new ChoiceDialog(v.getContext());
         choiceDialog.show();
     }
@@ -577,18 +583,18 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
             saveChoice.setOnClickListener(new GButton.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    tempFrameList = sequence.getFramesList();
                     Frame frame = new Frame();
                     if (tempPictogramList == null) {
-                        //TODO: Display message that user can not save empty choice.
+                        createAndShowErrorDialogEmptyChoice(v);
                         return;
                     }
+
                     frame.setPictogramList(tempPictogramList);
                     frame.setPictogramId(tempPictogramList.get(0).getId());
 
                     if (pictogramEditPos == -1) {
                         sequence.addFrame(frame);
-                        pictogramEditPos = tempFrameList.size() - 1;
+                        pictogramEditPos = sequence.getFramesList().size() - 1;
                     } else {
                         sequence.getFramesList().get(pictogramEditPos).setPictogramList(tempPictogramList);
                     }
@@ -639,6 +645,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
                 public void onItemClick(AdapterView<?> adapter, View view,
                                         int position, long id) {
                     pictogramEditPos = position;
+                    choiceMode = true;
                     callPictoSearch(PICTO_EDIT_PICTOGRAM_CALL);
                 }
             });

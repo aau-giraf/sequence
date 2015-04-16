@@ -221,4 +221,12 @@ public class PictogramView extends LinearLayout {
         public void onDeleteClick();
     }
 
+
+    public boolean getEditModeEnabled() {
+        return isInEditMode;
+    }
+
+    public OnDeleteClickListener getOnDeleteClickListener() {
+        return onDeleteClickListener;
+    }
 }

@@ -165,6 +165,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
             @Override
             public void onClick(View v) {
                 checkSequenceBeforeSave(v, true);
+                onBackPressed();
             }
         });
 

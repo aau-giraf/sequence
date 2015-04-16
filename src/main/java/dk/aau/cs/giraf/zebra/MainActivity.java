@@ -2,19 +2,23 @@ package dk.aau.cs.giraf.zebra;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashSet;
 
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
 import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.gui.GProfileSelector;
 import dk.aau.cs.giraf.gui.GirafButton;
+import dk.aau.cs.giraf.gui.GirafInflatableDialog;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.oasis.lib.models.Sequence;
@@ -28,16 +32,18 @@ public class MainActivity extends GirafActivity {
     private Profile guardian;
     private Profile selectedChild;
     private boolean childIsSet = false;
-    //private int guardianId;
     private int childId;
+    private boolean markingMode = false;
 
     private GridView sequenceGrid;
-
     private SequenceListAdapter sequenceAdapter;
     private List<Sequence> sequences = new ArrayList<Sequence>();
+    private List<SequencePictogramViewPair> markedSequences = new ArrayList<SequencePictogramViewPair>();
     private Helper helper;
+    private final String DELETE_SEQUENCES = "DELETE_SEQUENCES";
 
     // Initialize buttons
+    GirafInflatableDialog acceptDeleteDialog;
     private GirafButton changeUserButton;
     private GirafButton addButton;
     private GirafButton copyButton;
@@ -121,9 +127,12 @@ public class MainActivity extends GirafActivity {
             //Open DeleteSequencesActivity when clicking the delete Button
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplication(), DeleteSequencesActivity.class);
-                intent.putExtra("childId", selectedChild.getId());
-                startActivity(intent);
+                acceptDeleteDialog = GirafInflatableDialog.newInstance(
+                    getApplicationContext().getString(R.string.delete_sequences),
+                    getApplicationContext().getString(R.string.delete_this) + " "
+                        + getApplicationContext().getString(R.string.marked_sequences),
+                    R.layout.dialog_delete);
+                acceptDeleteDialog.show(getSupportFragmentManager(), DELETE_SEQUENCES);
             }
         });
     }
@@ -161,12 +170,71 @@ public class MainActivity extends GirafActivity {
         sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                ((PictogramView) view).liftUp();
                 Sequence sequence = sequenceAdapter.getItem(position);
-                // Intent is not stated here, as there are two different modes - if guardian then edit mode, else if citizen then view mode
-                enterAddEditSequence(sequence, false);
+
+                if (!markingMode)
+                {
+                    ((PictogramView) view).liftUp();
+                    // Intent is not stated here, as there are two different modes - if guardian then edit mode, else if citizen then view mode
+                    enterAddEditSequence(sequence, false);
+                }
+                else
+                {
+                    if (markedSequences.contains(sequence))
+                    {
+                        unmarkSequence(sequence);
+                    }
+                    else
+                    {
+                        markSequence((PictogramView)view, sequence);
+                    }
+
+                }
             }
         });
+        sequenceGrid.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
+                markingMode = true;
+                Sequence sequence = sequenceAdapter.getItem(position);
+                markSequence((PictogramView)view, sequence);
+                deleteButton.setVisibility(View.VISIBLE);
+                addButton.setVisibility(View.GONE);
+                return true;
+            }
+        });
+    }
+
+    private void markSequence(PictogramView view, Sequence sequence) {
+        //markedSequences.add(sequence);
+        if (view != null) {
+            markedSequences.add(new SequencePictogramViewPair(sequence, view));
+            view.setBackgroundColor(getResources().getColor(R.color.giraf_button_focused_fill_start));
+        }
+    }
+
+    private void unmarkSequence(SequencePictogramViewPair pair) {
+        //markedSequences.remove(sequence);
+        if (pair != null) {
+            markedSequences.remove(pair);
+            pair.getPictogramView().setBackgroundDrawable(null);
+        }
+    }
+
+    public void deleteClick(View v) {
+        // Button to accept delete of sequences
+        acceptDeleteDialog.dismiss();
+        // Delete all selected items
+        for (Sequence seq : markedSequences) {
+            helper = new Helper(getApplicationContext());
+            helper.sequenceController.removeSequence(seq);
+        }
+        sequenceAdapter.notifyDataSetChanged(); // Den skal fixes
+    }
+
+    public void dontDeleteClick(View v) {
+        // Button to cancel delete of sequences
+        acceptDeleteDialog.dismiss();
     }
 
     // Used to select a child
@@ -194,7 +262,6 @@ public class MainActivity extends GirafActivity {
     private void setupChildMode() {
         //When clicking a Sequence, lift up the view, create Intent for SequenceViewer and launch it
         sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 ((PictogramView) arg1).liftUp();
@@ -279,13 +346,64 @@ public class MainActivity extends GirafActivity {
             fetchDatabase.execute();
         }
     }
-}
-
-/* OLD CODE
 
     @Override
     public void onBackPressed() {
+        if(markingMode)
+        {
+            //sequenceGrid = (GridView)this.findViewById(R.id.sequence_grid);
+            //sequenceGrid.getAdapter().getView()
 
+            for (Sequence sequence : markedSequences )
+            {
+                unmarkSequence(view, sequence);
+            }
+
+            deleteButton.setVisibility(View.GONE);
+            addButton.setVisibility(View.VISIBLE);
+            markingMode = false;
+        }
+        else
+        {
+            super.onBackPressed();
+        }
     }
 
- */
+    class SequencePictogramViewPair
+    {
+        private Sequence sequence;
+        private PictogramView pictogramView;
+
+        public SequencePictogramViewPair (Sequence sequence, PictogramView pictogramView) {
+            this.sequence = sequence;
+            this.pictogramView = pictogramView;
+        }
+
+        private void setPictogramView(PictogramView pictogramView)
+        {
+            this.pictogramView = pictogramView;
+        }
+
+        public Sequence getSequence() {
+            return sequence;
+        }
+
+        public PictogramView getPictogramView() {
+            return pictogramView;
+        }
+    }
+}
+
+/*
+    @Override
+    public void onBackPressed() {
+
+        // Check if there is a previously selected view and if there is no popup
+        if (selectedCategoryAndViewItem != null && getSupportFragmentManager().findFragmentByTag(CATEGORY_SETTINGS_TAG) == null) {
+            // Set the selected category to "null" and set background to in-active
+            selectedCategoryAndViewItem.getView().setBackgroundColor(this.getResources().getColor(R.color.giraf_page_indicator_inactive));
+            selectedCategoryAndViewItem = null;
+        }
+
+        super.onBackPressed();
+    }*/

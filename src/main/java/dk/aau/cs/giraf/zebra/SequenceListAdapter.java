@@ -54,7 +54,8 @@ public class SequenceListAdapter extends BaseAdapter {
 	
 	@Override
 	public long getItemId(int position) {
-        return position;
+        return items.get(position).getId();
+        //return position;
     }
 	
 	public void setEditModeEnabled(boolean editEnabled) {

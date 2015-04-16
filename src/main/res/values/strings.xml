@@ -33,6 +33,7 @@
     <string name="error">Fejl</string>
     <string name="exit">Afslut</string>
     <string name="marked_sequences"> markerede sekvenser?</string>
+    <string name="new_sequence">Ny sekvens</string>
     <string name="no">Nej</string>
     <string name="no_children">Der er ingen børn</string>
     <string name="ok">OK</string>

@@ -217,7 +217,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
 
         //Save Child locally and update relevant information for application
         selectedChild = helper.profilesHelper.getProfileById(childId);
-        this.setActionBarTitle(selectedChild.getName()); // selectedChild.getName() "Child's name code"
+        this.setActionBarTitle(getResources().getString(R.string.new_sequence)); // selectedChild.getName() "Child's name code"
     }
 
     private void clearFocus() {

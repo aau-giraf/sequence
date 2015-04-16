@@ -53,6 +53,7 @@ public class MainActivity extends GirafActivity {
         addButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_add));
         copyButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_copy));
         deleteButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_delete));
+        deleteButton.setVisibility(View.GONE);
 
         // Adding buttons to the action bar
         addGirafButtonToActionBar(changeUserButton, LEFT);
@@ -158,7 +159,6 @@ public class MainActivity extends GirafActivity {
     private void setupGuardianMode() {
         //Clicking a Sequence lifts up the view and leads up to entering AddEditSequencesActivity by calling enterAddEditSequence
         sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 ((PictogramView) view).liftUp();
@@ -223,7 +223,7 @@ public class MainActivity extends GirafActivity {
 
         //Save Child locally and update relevant information for application
         selectedChild = helper.profilesHelper.getProfileById(childId);
-        this.setActionBarTitle(getResources().getString(R.string.app_name)); // selectedChild.getName() "Child's name code"
+        this.setActionBarTitle(getResources().getString(R.string.app_name) + " - " + selectedChild.getName()); // selectedChild.getName() "Child's name code"
 
         // AsyncTask thread
         AsyncFetchDatabase fetchDatabaseSetChild = new AsyncFetchDatabase();

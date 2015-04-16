@@ -64,7 +64,7 @@ public class DeleteSequencesActivity extends GirafActivity {
     }
 
     // Button to accept delete of sequences
-    public void DeleteClick(View v) {
+    public void deleteClick(View v) {
         acceptDeleteDialog.dismiss();
         // Delete all selected items
         for (Sequence seq : selectedSequences) {

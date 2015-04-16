@@ -75,14 +75,17 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     private Helper helper;
     private EditText sequenceName;
     private LinearLayout parent_container;
+    private final String DELETE_SEQUENCES = "DELETE_SEQUENCES";
 
     // Initialize buttons
     private GirafButton saveButton;
+    private GirafButton deleteButton;
     private GirafButton sequenceThumbnailButton;
 
     GirafInflatableDialog choosePictogramOrChoiceDialog;
     GirafInflatableDialog backDialog;
     GirafInflatableDialog saveDialog;
+    GirafInflatableDialog acceptDeleteDialog;
     GirafInflatableDialog choiceDialog;
 
     @Override
@@ -150,16 +153,30 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
 
         // Create buttons
         saveButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_save));
+        deleteButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_delete));
         sequenceThumbnailButton = (GirafButton) findViewById(R.id.sequenceThumbnail);
 
         // Adding buttons to action-bar
         addGirafButtonToActionBar(saveButton, LEFT);
+        addGirafButtonToActionBar(deleteButton, RIGHT);
 
         saveButton.setOnClickListener(new ImageButton.OnClickListener() {
             //Show Dialog to save Sequence when clicking the Save Button
             @Override
             public void onClick(View v) {
                 checkSequenceBeforeSave(v, true);
+            }
+        });
+
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                acceptDeleteDialog = GirafInflatableDialog.newInstance(
+                        getApplicationContext().getString(R.string.delete_sequences),
+                        getApplicationContext().getString(R.string.delete_this) + " "
+                            + getApplicationContext().getString(R.string.sequence),
+                        R.layout.dialog_delete);
+                acceptDeleteDialog.show(getSupportFragmentManager(), DELETE_SEQUENCES);
             }
         });
 
@@ -181,13 +198,27 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         }
     }
 
+    // Button to accept delete of sequences
+    public void deleteClick(View v) {
+        acceptDeleteDialog.dismiss();
+        // Delete all selected items
+        helper = new Helper(getApplicationContext());
+        helper.sequenceController.removeSequence(sequenceId);
+        onBackPressed();
+    }
+
+    // Button to cancel delete of sequences
+    public void dontDeleteClick(View v) {
+        acceptDeleteDialog.dismiss();
+    }
+
     private void setupActionBar() {
         //Creates helper to fetch data from the Database
         helper = new Helper(this);
 
         //Save Child locally and update relevant information for application
         selectedChild = helper.profilesHelper.getProfileById(childId);
-        this.setActionBarTitle(selectedChild.getName()); // selectedChild.getName() "Child's name code"
+        this.setActionBarTitle(getResources().getString(R.string.new_sequence)); // selectedChild.getName() "Child's name code"
     }
 
     private void clearFocus() {

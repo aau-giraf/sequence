@@ -1,11 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center">
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -18,7 +11,6 @@
     <dk.aau.cs.giraf.gui.GirafButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
         android:layout_marginRight="15dp"
         android:onClick="backSaveClick"
         app:icon="@drawable/icon_save"
@@ -27,10 +19,8 @@
     <dk.aau.cs.giraf.gui.GirafButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
         android:onClick="backDontSaveClick"
         app:icon="@drawable/icon_cancel"
         app:text="@string/dont_save" />
 
 </LinearLayout>
-</RelativeLayout>

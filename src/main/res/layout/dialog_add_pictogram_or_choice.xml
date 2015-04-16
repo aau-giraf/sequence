@@ -1,36 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/add_pictogram_or_choice"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="center">
+    android:gravity="center"
+    tools:context="AddEditSequencesActivity">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/add_pictogram_or_choice"
-        android:layout_width="match_parent"
+    <dk.aau.cs.giraf.gui.GirafButton
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        tools:context="AddEditSequencesActivity">
+        android:layout_marginRight="15dp"
+        android:onClick="getPictogramClick"
+        app:icon="@drawable/icon_accept"
+        app:text="@string/pictogram" />
 
-        <dk.aau.cs.giraf.gui.GirafButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_marginRight="15dp"
-            android:onClick="getPictogramClick"
-            app:icon="@drawable/icon_accept"
-            app:text="@string/pictogram" />
+    <dk.aau.cs.giraf.gui.GirafButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="getChoiceClick"
+        app:icon="@drawable/icon_choose"
+        app:text="@string/choice" />
 
-        <dk.aau.cs.giraf.gui.GirafButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:onClick="getChoiceClick"
-            app:icon="@drawable/icon_choose"
-            app:text="@string/choice" />
-
-    </LinearLayout>
-</RelativeLayout>
+</LinearLayout>

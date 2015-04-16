@@ -10,19 +10,17 @@
         android:id="@+id/GDialogMessage_topWrapper"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        >
+        android:layout_centerHorizontal="true">
 
         <TextView
             android:id="@+id/add_frame_headline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:textSize="30dp"
+            android:textSize="30sp"
             android:textStyle="bold"
-            android:text="Valg"
-            android:layout_centerHorizontal="true"
-            />
+            android:text="@string/choice"
+            android:layout_centerHorizontal="true" />
     </RelativeLayout>
     <HorizontalScrollView
         android:id="@+id/GDialog_image_layout"
@@ -48,12 +46,10 @@
                 svg:itemHeight="@dimen/activity_main_picto_size"
                 svg:itemWidth="@dimen/activity_main_picto_size"
                 android:background="@layout/main_picto_container_bg"
-                android:layout_gravity="center_vertical">
-
-            </dk.aau.cs.giraf.zebra.SequenceViewGroup>
+                android:layout_gravity="center_vertical" />
         </FrameLayout>
-
     </HorizontalScrollView>
+
     <LinearLayout
         android:id="@+id/GDialog_button_layout"
         android:layout_width="wrap_content"
@@ -64,23 +60,17 @@
 
         <dk.aau.cs.giraf.gui.GButton
             android:id="@+id/save_choice"
-            android:text="Gem"
+            android:text="@string/save"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_marginRight="15dp"
-
-            />
+            android:layout_marginRight="15dp" />
 
         <dk.aau.cs.giraf.gui.GButton
             android:id="@+id/discard_choice"
-            android:text="Fortryd"
+            android:text="@string/cancel"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_marginRight="15dp"
-            />
-
+            android:layout_marginRight="15dp" />
     </LinearLayout>
 
 </RelativeLayout>

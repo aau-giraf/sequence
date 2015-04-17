@@ -19,7 +19,7 @@
     <dk.aau.cs.giraf.gui.GirafButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="dontDeleteClick"
+        android:onClick="cancelDeleteClick"
         app:icon="@drawable/icon_cancel"
         app:text="@string/cancel" />
 

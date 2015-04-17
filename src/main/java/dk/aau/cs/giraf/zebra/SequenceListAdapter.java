@@ -12,16 +12,45 @@ import dk.aau.cs.giraf.oasis.lib.models.Sequence;
  * Adapter for a List of Sequences typically associated with a child
  */
 public class SequenceListAdapter extends BaseAdapter {
-	private List<Sequence> items;
+	private List<SequencePictogramViewPair> items;
 	private Context context;
 	private boolean isInEditMode;
 	private OnAdapterGetViewListener onAdapterGetViewListener;
-	
-	public SequenceListAdapter(Context context, List<Sequence> items) {
-		
+    private SelectedSequenceAware selectedSequenceAware;
+
+    public interface SelectedSequenceAware {
+        boolean isSequenceMarked(Sequence sequence);
+    }
+
+	public SequenceListAdapter(Context context, List<SequencePictogramViewPair> items, SelectedSequenceAware selectedSequenceAware) {
+		this.selectedSequenceAware = selectedSequenceAware;
 		this.items = items;
 		this.context = context;
 	}
+
+    public static class SequencePictogramViewPair
+    {
+        private final Sequence sequence;
+        private PictogramView pictogramView;
+
+        public SequencePictogramViewPair (Sequence sequence, PictogramView pictogramView) {
+            this.sequence = sequence;
+            this.pictogramView = pictogramView;
+        }
+
+        private void setPictogramView(PictogramView pictogramView)
+        {
+            this.pictogramView = pictogramView;
+        }
+
+        public Sequence getSequence() {
+            return sequence;
+        }
+
+        public PictogramView getPictogramView() {
+            return pictogramView;
+        }
+    }
 
     public View getView(int position, View convertView, ViewGroup parent) {
 		PictogramView v = (PictogramView) convertView;
@@ -30,11 +59,26 @@ public class SequenceListAdapter extends BaseAdapter {
 			v = new PictogramView(context, 16f);
 		}
 		
-        Sequence sequence = items.get(position);
-        
+        final SequencePictogramViewPair sequenceViewPair = items.get(position);
+
+        final Sequence sequence = sequenceViewPair.getSequence();
+
         v.setTitle(sequence.getName());
         v.setEditModeEnabled(isInEditMode);
         v.setImageFromId(sequence.getPictogramId());
+
+        // Check if the user provided a SelectedCategoryAware
+        if (selectedSequenceAware != null) {
+            boolean isSequenceMarked = selectedSequenceAware.isSequenceMarked(sequence);
+
+            // Check if the view is selected
+            //sequence.getId() == selectedSequencePictogramViewPair.sequence.getId()
+            if (isSequenceMarked) {
+                // Set the background-color for the selected item
+                v.setBackgroundColor(context.getResources().getColor(R.color.giraf_page_indicator_active));
+            }
+            sequenceViewPair.setPictogramView(v);
+        }
 
         if (onAdapterGetViewListener != null)
 			onAdapterGetViewListener.onAdapterGetView(position, v);
@@ -48,13 +92,13 @@ public class SequenceListAdapter extends BaseAdapter {
 	}
 
 	@Override
-	public Sequence getItem(int position) {
+	public SequencePictogramViewPair getItem(int position) {
         return items.get(position);
     }
 	
 	@Override
 	public long getItemId(int position) {
-        return items.get(position).getId();
+        return items.get(position).getSequence().getId();
         //return position;
     }
 	

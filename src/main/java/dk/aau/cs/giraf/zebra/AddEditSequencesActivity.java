@@ -663,6 +663,8 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
                         sequence.getFramesList().get(pictogramEditPos).setPictogramList(tempPictogramList);
                     }
 
+                    adapter.notifyDataSetChanged();
+                    choiceAdapter.notifyDataSetChanged();
                     choiceMode = false;
                     pictogramEditPos = -1;
                     dismiss();

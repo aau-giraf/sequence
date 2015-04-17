@@ -145,7 +145,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
 
     private void setupFramesGrid() {
         // Create Adapter for the SequenceViewGroup (The Grid displaying the Sequence)
-        adapter = setupAdapter();
+        adapter = setupAdapter(sequence);
         setupSequenceViewGroup(adapter);
     }
 
@@ -399,7 +399,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         return sequenceGroup;
     }
 
-    private SequenceAdapter setupAdapter() {
+    /*private SequenceAdapter setupAdapter() {
         //Sets up the adapter for the Sequence to display
         final SequenceAdapter adapter = new SequenceAdapter(this, sequence);
 
@@ -422,32 +422,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
             }
         });
         return adapter;
-    }
-
-    private SequenceAdapter setupChoiceAdapter() {
-        //Sets up the adapter for the Choice Frames
-        final SequenceAdapter adapter = new SequenceAdapter(this, choice);
-
-        //Adds a Delete Icon to all Frames which deletes the relevant Frame on click.
-        adapter.setOnAdapterGetViewListener(new OnAdapterGetViewListener() {
-            @Override
-            public void onAdapterGetView(final int position, final View view) {
-                if (view instanceof PictogramView) {
-                    //Cast view to PictogramView so the onDeleteClickListener can be set
-                    PictogramView v = (PictogramView) view;
-                    v.setOnDeleteClickListener(new OnDeleteClickListener() {
-                        @Override
-                        public void onDeleteClick() {
-                            //Remove frame and update Adapter
-                            choice.getFramesList().remove(position);
-                            adapter.notifyDataSetChanged();
-                        }
-                    });
-                }
-            }
-        });
-        return adapter;
-    }
+    }*/
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -590,6 +565,56 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         }
     }
 
+    /*private SequenceAdapter setupChoiceAdapter() {
+        //Sets up the adapter for the Choice Frames
+        final SequenceAdapter adapter = new SequenceAdapter(this, choice);
+
+        //Adds a Delete Icon to all Frames which deletes the relevant Frame on click.
+        adapter.setOnAdapterGetViewListener(new OnAdapterGetViewListener() {
+            @Override
+            public void onAdapterGetView(final int position, final View view) {
+                if (view instanceof PictogramView) {
+                    //Cast view to PictogramView so the onDeleteClickListener can be set
+                    PictogramView v = (PictogramView) view;
+                    v.setOnDeleteClickListener(new OnDeleteClickListener() {
+                        @Override
+                        public void onDeleteClick() {
+                            //Remove frame and update Adapter
+                            choice.getFramesList().remove(position);
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+                }
+            }
+        });
+        return adapter;
+    }*/
+
+    private SequenceAdapter setupAdapter(final Sequence seq) {
+        //Sets up the adapter for the Sequence to display
+        final SequenceAdapter adapter = new SequenceAdapter(this, seq);
+
+        //Adds a Delete & Edit Icon to all Frames which deletes or edits the relevant Frame on click.
+        adapter.setOnAdapterGetViewListener(new OnAdapterGetViewListener() {
+            @Override
+            public void onAdapterGetView(final int position, final View view) {
+                if (view instanceof PictogramView) {
+                    //Cast view to PictogramView so the onDeleteClickListener can be set
+                    PictogramView v = (PictogramView) view;
+                    v.setOnDeleteClickListener(new OnDeleteClickListener() {
+                        @Override
+                        public void onDeleteClick() {
+                            //Remove frame and update Adapter
+                            seq.getFramesList().remove(position);
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+                }
+            }
+        });
+        return adapter;
+    }
+
     private class ChoiceDialog extends GDialog {
         private ChoiceDialog(Context context) {
             super(context);
@@ -609,7 +634,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
             GButton discardChoice = (GButton) findViewById(R.id.discard_choice);
 
             //Adapter to display a list of pictograms in the choice dialog
-            choiceAdapter = setupChoiceAdapter();
+            choiceAdapter = setupAdapter(choice);
             setupChoiceGroup(choiceAdapter);
 
             saveChoice.setOnClickListener(new GButton.OnClickListener() {
@@ -620,7 +645,6 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
                         createAndShowErrorDialogEmptyChoice(v);
                         return;
                     }
-                    sequence.getFramesList().size();
 
                     tempPictogramList.clear();
                     for (int i = 0; i < choice.getFramesList().size(); i++) {
@@ -632,18 +656,13 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
                         frame.setPictogramId(tempPictogramList.get(i).getId());
                     }
 
-                    //tempPictogramList.size();
-
                     if (pictogramEditPos == -1) {
                         sequence.addFrame(frame);
                         pictogramEditPos = sequence.getFramesList().size() - 1;
                     } else {
                         sequence.getFramesList().get(pictogramEditPos).setPictogramList(tempPictogramList);
                     }
-                    sequence.getFramesList().size();
-                    helper.sequenceController.modifySequenceAndFrames(sequence);
-                    adapter.notifyDataSetChanged();
-                    choiceAdapter.notifyDataSetChanged();
+
                     choiceMode = false;
                     pictogramEditPos = -1;
                     dismiss();
@@ -656,21 +675,19 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
                     dismiss();
                 }
             });
-
         }
 
         private SequenceViewGroup setupChoiceGroup(
-                final SequenceAdapter adapter) {
+                final SequenceAdapter adapt) {
             final SequenceViewGroup choiceGroup = (SequenceViewGroup) findViewById(R.id.choice_view_group);
             choiceGroup.setEditModeEnabled(isInEditMode);
-            choiceGroup.setAdapter(adapter);
+            choiceGroup.setAdapter(adapt);
 
             // Handle rearrange
             choiceGroup.setOnRearrangeListener(new SequenceViewGroup.OnRearrangeListener() {
                 @Override
                 public void onRearrange(int indexFrom, int indexTo) {
-                    adapter.notifyDataSetChanged();
-                    choiceAdapter.notifyDataSetChanged();
+                    adapt.notifyDataSetChanged();
                     changesSaved = false;
                 }
             });
@@ -681,7 +698,6 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
                 public void onNewButtonClicked() {
                     final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.choice_view_group);
                     sequenceGroup.liftUpAddNewButton();
-
                     callPictoSearch(PICTO_NEW_PICTOGRAM_CALL);
                 }
             });

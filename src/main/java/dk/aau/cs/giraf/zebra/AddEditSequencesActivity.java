@@ -610,6 +610,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
 
             //Adapter to display a list of pictograms in the choice dialog
             choiceAdapter = setupChoiceAdapter();
+            setupChoiceGroup(choiceAdapter);
 
             saveChoice.setOnClickListener(new GButton.OnClickListener() {
                 @Override
@@ -619,9 +620,19 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
                         createAndShowErrorDialogEmptyChoice(v);
                         return;
                     }
+                    sequence.getFramesList().size();
 
-                    frame.setPictogramList(tempPictogramList);
-                    frame.setPictogramId(tempPictogramList.get(0).getId());
+                    tempPictogramList.clear();
+                    for (int i = 0; i < choice.getFramesList().size(); i++) {
+                        Pictogram pictogram = new Pictogram();
+                        pictogram.setId(choice.getFramesList().get(i).getPictogramId());
+                        tempPictogramList.add(pictogram);
+
+                        frame.setPictogramList(tempPictogramList);
+                        frame.setPictogramId(tempPictogramList.get(i).getId());
+                    }
+
+                    //tempPictogramList.size();
 
                     if (pictogramEditPos == -1) {
                         sequence.addFrame(frame);
@@ -629,7 +640,10 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
                     } else {
                         sequence.getFramesList().get(pictogramEditPos).setPictogramList(tempPictogramList);
                     }
+                    sequence.getFramesList().size();
+                    helper.sequenceController.modifySequenceAndFrames(sequence);
                     adapter.notifyDataSetChanged();
+                    choiceAdapter.notifyDataSetChanged();
                     choiceMode = false;
                     pictogramEditPos = -1;
                     dismiss();
@@ -642,7 +656,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
                     dismiss();
                 }
             });
-            setupChoiceGroup(choiceAdapter);
+
         }
 
         private SequenceViewGroup setupChoiceGroup(
@@ -656,6 +670,8 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
                 @Override
                 public void onRearrange(int indexFrom, int indexTo) {
                     adapter.notifyDataSetChanged();
+                    choiceAdapter.notifyDataSetChanged();
+                    changesSaved = false;
                 }
             });
 
@@ -676,7 +692,6 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
                 public void onItemClick(AdapterView<?> adapter, View view,
                                         int position, long id) {
                     pictogramEditPos = position;
-                    choiceMode = true;
                     callPictoSearch(PICTO_EDIT_PICTOGRAM_CALL);
                 }
             });

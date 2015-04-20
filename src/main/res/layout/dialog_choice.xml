@@ -1,35 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:svg="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:id="@+id/GDialogMessage_frame">
+    android:gravity="center">
 
-    <RelativeLayout
-        android:id="@+id/GDialogMessage_topWrapper"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true">
-
-        <TextView
-            android:id="@+id/add_frame_headline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:textSize="30sp"
-            android:textStyle="bold"
-            android:text="@string/choice"
-            android:layout_centerHorizontal="true" />
-    </RelativeLayout>
     <HorizontalScrollView
-        android:id="@+id/GDialog_image_layout"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="0dp"
+        android:layout_height="@dimen/choice_scroller_size"
         android:overScrollMode="always"
-        android:padding="0dp"
-        android:fadeScrollbars="false">
+        android:fadeScrollbars="false"
+        android:paddingLeft="@dimen/padding_standard"
+        android:paddingRight="@dimen/padding_standard">
 
         <FrameLayout
             android:layout_width="wrap_content"
@@ -37,40 +21,39 @@
 
             <dk.aau.cs.giraf.zebra.SequenceViewGroup
                 android:id="@+id/choice_view_group"
+                android:layout_gravity="center_vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
-                android:layout_marginTop="30dp"
-                svg:horizontalSpacing="20dp"
-                svg:itemHeight="@dimen/activity_main_picto_size"
-                svg:itemWidth="@dimen/activity_main_picto_size"
+                android:layout_marginLeft="@dimen/padding_standard"
+                android:layout_marginRight="@dimen/padding_standard"
+                android:layout_marginBottom="@dimen/padding_standard"
                 android:background="@layout/main_picto_container_bg"
-                android:layout_gravity="center_vertical" />
+                svg:horizontalSpacing="@dimen/padding_standard"
+                svg:itemHeight="@dimen/activity_main_picto_size"
+                svg:itemWidth="@dimen/activity_main_picto_size" />
         </FrameLayout>
     </HorizontalScrollView>
 
     <LinearLayout
-        android:id="@+id/GDialog_button_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="25dp"
-        android:layout_below="@id/GDialog_image_layout"
+        android:paddingTop="@dimen/padding_standard"
         android:layout_centerHorizontal="true" >
 
-        <dk.aau.cs.giraf.gui.GButton
-            android:id="@+id/save_choice"
-            android:text="@string/save"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="15dp" />
+        <dk.aau.cs.giraf.gui.GirafButton
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/giraf_button_height"
+            android:layout_marginRight="@dimen/padding_standard"
+            android:onClick="choiceSaveClick"
+            app:icon="@drawable/icon_save"
+            app:text="@string/save" />
 
-        <dk.aau.cs.giraf.gui.GButton
-            android:id="@+id/discard_choice"
-            android:text="@string/cancel"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="15dp" />
+        <dk.aau.cs.giraf.gui.GirafButton
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/giraf_button_height"
+            android:onClick="choiceCancelClick"
+            app:icon="@drawable/icon_cancel"
+            app:text="@string/cancel" />
     </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>

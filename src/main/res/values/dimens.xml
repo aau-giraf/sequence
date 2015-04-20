@@ -3,8 +3,12 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">0dp</dimen>
     <dimen name="activity_vertical_margin">0dp</dimen>
+    <dimen name="giraf_button_height">40dp</dimen>
+    <!-- The padding standard is used for many things, such as for the horizontal scrollviewer (Such that the scroller is not at the end of the view) -->
+    <dimen name="padding_standard">15dp</dimen>
     <dimen name="activity_overview_picto_size">200dp</dimen>
-    <dimen name="activity_main_picto_size">300dp</dimen>
+    <dimen name="activity_main_picto_size">200dp</dimen>
+    <dimen name="choice_scroller_size">300dp</dimen>
     <color name="text_color">#5b3b22</color>
 	<color name="text_hint_color">#55624319</color>
 	<color name="text_color_light">#46624319</color>

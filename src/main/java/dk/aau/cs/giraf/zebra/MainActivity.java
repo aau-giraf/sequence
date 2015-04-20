@@ -1,6 +1,7 @@
 package dk.aau.cs.giraf.zebra;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import android.content.ComponentName;
@@ -204,10 +205,9 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     }
 
     private void markSequence(SequenceListAdapter.SequencePictogramViewPair sequenceViewPair) {
-        //markedSequences.add(sequence);
         if (sequenceViewPair.getPictogramView() != null) {
             markedSequences.add(sequenceViewPair);
-            sequenceViewPair.getPictogramView().setBackgroundColor(getResources().getColor(R.color.giraf_button_focused_fill_start));
+            sequenceViewPair.getPictogramView().setBackgroundColor(getResources().getColor(R.color.giraf_page_indicator_active));
         }
     }
 
@@ -367,12 +367,11 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     public void onBackPressed() {
         if(markingMode)
         {
-            //sequenceGrid = (GridView)this.findViewById(R.id.sequence_grid);
-            //sequenceGrid.getAdapter().getView()
+            for (Iterator<SequenceListAdapter.SequencePictogramViewPair> it = markedSequences.iterator(); it.hasNext();) {
+                SequenceListAdapter.SequencePictogramViewPair s = it.next();
 
-            for (SequenceListAdapter.SequencePictogramViewPair sequenceViewPair : markedSequences )
-            {
-                unMarkSequence(sequenceViewPair);
+                s.getPictogramView().setBackgroundDrawable(null);
+                it.remove();
             }
 
             deleteButton.setVisibility(View.GONE);

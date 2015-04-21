@@ -75,10 +75,10 @@ public class SequenceListAdapter extends BaseAdapter {
 
             // Check if the view is selected
             //sequence.getId() == selectedSequencePictogramViewPair.sequence.getId()
-            /*if (isSequenceMarked) {
+            if (isSequenceMarked) {
                 // Set the background-color for the selected item
                 v.setBackgroundColor(context.getResources().getColor(R.color.giraf_page_indicator_active));
-            }*/
+            }
             sequenceViewPair.setPictogramView(v);
         }
 

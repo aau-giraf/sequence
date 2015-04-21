@@ -227,7 +227,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
             helper = new Helper(getApplicationContext());
             helper.sequenceController.removeSequence(seq.getSequence());
         }
-        sequenceAdapter.notifyDataSetChanged(); // Den skal fixes
+        sequenceAdapter.notifyDataSetChanged(); // Needs fixing
     }
 
     public void cancelDeleteClick(View v) {
@@ -296,14 +296,14 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     }
 
     //Sets up relevant intents and starts AddEditSequencesActivity
-    private void enterAddEditSequence(SequenceListAdapter.SequencePictogramViewPair sequence, boolean isNew) {
+    private void enterAddEditSequence(SequenceListAdapter.SequencePictogramViewPair sequenceViewPair, boolean isNew) {
 
         Intent intent = new Intent(getApplication(), AddEditSequencesActivity.class);
         intent.putExtra("childId", selectedChild.getId());
         intent.putExtra("guardianId", guardian.getId());
         intent.putExtra("editMode", true);
         intent.putExtra("isNew", isNew);
-        intent.putExtra("sequenceId", sequence.getSequence().getId());
+        intent.putExtra("sequenceId", sequenceViewPair.getSequence().getId());
         startActivity(intent);
     }
 

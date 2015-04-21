@@ -63,6 +63,8 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     private final int PICTO_EDIT_SEQUENCE_THUMBNAIL_CALL = 345;
     private final int PICTO_EDIT_PICTOGRAM_CALL = 456;
     private final int PICTO_NEW_PICTOGRAM_CALL = 567;
+    private final int CHOICE_NEW_PICTOGRAM_CALL = 214;
+    private final int CHOICE_EDIT_PICTOGRAM_CALL = 235;
     private final String ADD_PICTOGRAM_OR_CHOICE = "ADD_PICTOGRAM_OR_CHOICE";
     private final String SAVE_SEQUENCE = "SAVE_SEQUENCE";
     private final String BACK_SEQUENCE = "BACK_SEQUENCE";
@@ -370,15 +372,15 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
             return;
         }
 
-        tempPictogramList.clear();
-        for (int i = 0; i < choice.getFramesList().size(); i++) {
-            Pictogram pictogram = new Pictogram();
-            pictogram.setId(choice.getFramesList().get(i).getPictogramId());
-            tempPictogramList.add(pictogram);
+        //tempPictogramList.clear();
+        //for (int i = 0; i < choice.getFramesList().size(); i++) {
+        //    Pictogram pictogram = new Pictogram();
+        //    pictogram.setId(choice.getFramesList().get(i).getPictogramId());
+        //    tempPictogramList.add(pictogram);
 
             frame.setPictogramList(tempPictogramList);
-            frame.setPictogramId(tempPictogramList.get(i).getId());
-        }
+            frame.setPictogramId(0 /*tempPictogramList.get(0).getId()*/);
+        //}
 
         if (pictogramEditPos == -1) {
             sequence.addFrame(frame);
@@ -404,7 +406,6 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         choiceGroup.setEditModeEnabled(isInEditMode);
         choiceGroup.setAdapter(adapter);
 
-
         // Handle rearrange
         choiceGroup.setOnRearrangeListener(new SequenceViewGroup.OnRearrangeListener() {
             @Override
@@ -420,7 +421,8 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
             public void onNewButtonClicked() {
                 SequenceViewGroup sequenceGroup = sequenceChoiceGroupTemplate;
                 sequenceGroup.liftUpAddNewButton();
-                callPictoSearch(PICTO_NEW_PICTOGRAM_CALL);
+                callPictoSearch(CHOICE_NEW_PICTOGRAM_CALL);
+                adapter.notifyDataSetChanged();
             }
         });
 
@@ -430,7 +432,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
             public void onItemClick(AdapterView<?> adapter, View view,
                                     int position, long id) {
                 pictogramEditPos = position;
-                callPictoSearch(PICTO_EDIT_PICTOGRAM_CALL);
+                callPictoSearch(CHOICE_EDIT_PICTOGRAM_CALL);
             }
         });
 
@@ -533,6 +535,16 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
                     OnNewPictogramResult(data);
                     break;
 
+                case CHOICE_NEW_PICTOGRAM_CALL:
+                    final SequenceViewGroup choiceGroup = sequenceChoiceGroupTemplate;
+                    choiceGroup.placeDownAddNewButton();
+                    OnNewPictogramResult(data);
+                    break;
+
+                case CHOICE_EDIT_PICTOGRAM_CALL:
+
+                    break;
+
                 default:
                     break;
             }
@@ -561,6 +573,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
                 }
             }
             choiceAdapter.notifyDataSetChanged();
+            adapter.notifyDataSetChanged();
             changesSaved = false;
         } else {
 
@@ -615,7 +628,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         intent.putExtra("currentChildID", selectedChild.getId());
         intent.putExtra("currentGuardianID", guardian.getId());
 
-        if (modeId == PICTO_NEW_PICTOGRAM_CALL) {
+        if (modeId == PICTO_NEW_PICTOGRAM_CALL || modeId == CHOICE_NEW_PICTOGRAM_CALL) {
             intent.putExtra("purpose", "multi");
         } else {
             intent.putExtra("purpose", "single");

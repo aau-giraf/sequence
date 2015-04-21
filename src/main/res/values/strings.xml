@@ -39,6 +39,7 @@
     <string name="new_sequence">Ny sekvens</string>
     <string name="no">Nej </string>
     <string name="no_children">Der er ingen børn</string>
+    <string name="no_profile_error">Der skal vælges en profil</string>
     <string name="ok">OK </string>
     <string name="pictogram">Piktogram</string>
     <string name="return_question">Du er ved at afslutte sekvensen. Er du færdig?</string>

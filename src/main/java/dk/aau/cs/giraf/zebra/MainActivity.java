@@ -17,6 +17,7 @@ import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.gui.GProfileSelector;
 import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.gui.GirafInflatableDialog;
+import dk.aau.cs.giraf.gui.GirafNotifyDialog;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.oasis.lib.models.Sequence;
@@ -25,7 +26,7 @@ import dk.aau.cs.giraf.oasis.lib.models.Sequence;
  * This is the main activity of the sequence application
  * The activity shows the overview page, of available sequences, for the chosen user
  */
-public class MainActivity extends GirafActivity implements SequenceListAdapter.SelectedSequenceAware {
+public class MainActivity extends GirafActivity implements SequenceListAdapter.SelectedSequenceAware, GirafNotifyDialog.Notification {
 
     private static final int numColumns = 5;
 
@@ -39,6 +40,8 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     private SequenceListAdapter sequenceAdapter;
     private Set<Sequence> markedSequences = new HashSet<Sequence>();
     private Helper helper;
+    private final int NO_PROFILE_ERROR = 1770;
+    private final String NO_PROFILE_ERROR_TAG = "NO_PROFILE_ERROR_TAG";
     private final String DELETE_SEQUENCES_TAG = "DELETE_SEQUENCES_TAG";
 
     // Initialize buttons
@@ -114,7 +117,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
             public void onClick(View v) {
                 Sequence sequence = new Sequence();
                 //equenceListAdapter.SequencePictogramViewPair sequenceViewPair = new SequenceListAdapter.SequencePictogramViewPair(sequence, null);
-                enterAddEditSequence(sequence, true);
+                enterAddEditSequence(sequence, v, true);
             }
         });
 
@@ -182,7 +185,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
                 if (!markingMode) {
                     ((PictogramView) view).liftUp();
                     // Intent is not stated here, as there are two different modes - if guardian then edit mode, else if citizen then view mode
-                    enterAddEditSequence(sequence, false);
+                    enterAddEditSequence(sequence, view, false);
                 } else
                 {
                     if (markedSequences.contains(sequence))
@@ -287,20 +290,44 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     }
 
     //Sets up relevant intents and starts AddEditSequencesActivity
-    private void enterAddEditSequence(Sequence sequence, boolean isNew) {
+    private void enterAddEditSequence(Sequence sequence,View v, boolean isNew) {
 
-        Intent intent = new Intent(getApplication(), AddEditSequencesActivity.class);
-        intent.putExtra("childId", selectedChild.getId());
-        intent.putExtra("guardianId", guardian.getId());
-        intent.putExtra("editMode", true);
-        intent.putExtra("isNew", isNew);
-        intent.putExtra("sequenceId", sequence.getId());
-        startActivity(intent);
+        helper = new Helper(this);
+
+        selectedChild = helper.profilesHelper.getProfileById(childId);
+
+        if (selectedChild == null) {
+            createAndShowErrorDialogNoProfileSelected(v);
+            final GProfileSelector childSelector = new GProfileSelector(v.getContext(), guardian, null, false);
+            childSelector.show();
+            childSelector.setOnListItemClick(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                    childId = (int) id;
+                    setChild();
+                    childSelector.dismiss();
+                }
+            });
+        }
+        else {
+            Intent intent = new Intent(getApplication(), AddEditSequencesActivity.class);
+            intent.putExtra("childId", selectedChild.getId());
+            intent.putExtra("guardianId", guardian.getId());
+            intent.putExtra("editMode", true);
+            intent.putExtra("isNew", isNew);
+            intent.putExtra("sequenceId", sequence.getId());
+            startActivity(intent);
+        }
     }
 
     @Override
     public boolean isSequenceMarked(Sequence sequence) {
         return markedSequences.contains(sequence);
+    }
+
+    @Override
+    public void noticeDialog(int i) {
+
     }
 
     // AsyncTask. Used to fetch data from the database in another thread which is NOT the GUI thread
@@ -349,5 +376,10 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         } else {
             super.onBackPressed();
         }
+    }
+
+    private void createAndShowErrorDialogNoProfileSelected(View v) {
+        GirafNotifyDialog alertDialog = GirafNotifyDialog.newInstance(this.getString(R.string.error), this.getString(R.string.no_profile_error), NO_PROFILE_ERROR);
+        alertDialog.show(getSupportFragmentManager(), NO_PROFILE_ERROR_TAG);
     }
 }

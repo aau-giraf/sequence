@@ -288,7 +288,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         /*
-		 * This method dictates what size all children of the given parent must have. The method is a general method, meaning we ignore measure mode.
+         * This method dictates what size all children of the given parent must have. The method is a general method, meaning we ignore measure mode.
 		 * The ViewGroup requires all children to have the same size, itemWidth and itemHeight as the parent.
 		 */
 

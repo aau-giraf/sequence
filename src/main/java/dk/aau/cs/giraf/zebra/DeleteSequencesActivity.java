@@ -24,8 +24,8 @@ public class DeleteSequencesActivity extends GirafActivity implements SequenceLi
 
     private GridView sequenceGrid;
     private SequenceListAdapter sequenceAdapter;
-    private List<SequenceListAdapter.SequencePictogramViewPair> sequenceViewList = new ArrayList<SequenceListAdapter.SequencePictogramViewPair>();
-    private List<SequenceListAdapter.SequencePictogramViewPair> selectedSequenceViewList = new ArrayList<SequenceListAdapter.SequencePictogramViewPair>();
+    private List<Sequence> sequenceViewList = new ArrayList<Sequence>();
+    private List<Sequence> selectedSequenceViewList = new ArrayList<Sequence>();
     private Helper helper;
     private final String DELETE_SEQUENCES = "DELETE_SEQUENCES";
 
@@ -68,9 +68,9 @@ public class DeleteSequencesActivity extends GirafActivity implements SequenceLi
     public void deleteClick(View v) {
         acceptDeleteDialog.dismiss();
         // Delete all selected items
-        for (SequenceListAdapter.SequencePictogramViewPair seq : selectedSequenceViewList) {
+        for (Sequence seq : selectedSequenceViewList) {
             helper = new Helper(getApplicationContext());
-            helper.sequenceController.removeSequence(seq.getSequence());
+            helper.sequenceController.removeSequence(seq);
         }
         // Go back to main Activity
         finish();
@@ -107,15 +107,15 @@ public class DeleteSequencesActivity extends GirafActivity implements SequenceLi
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 
-                SequenceListAdapter.SequencePictogramViewPair sequenceViewPair = sequenceAdapter.getItem(position);
+                Sequence sequence = sequenceAdapter.getItem(position);
 
-                if(selectedSequenceViewList.contains(sequenceViewPair)){
+                if(selectedSequenceViewList.contains(sequence)){
                     ((PictogramView) view).deleteModeUnmarked();
-                    selectedSequenceViewList.remove(sequenceViewPair);
+                    selectedSequenceViewList.remove(sequence);
                 }
                 else {
                     ((PictogramView) view).deleteModeMarked();
-                    selectedSequenceViewList.add(sequenceViewPair);
+                    selectedSequenceViewList.add(sequence);
                 }
             }
         });
@@ -135,9 +135,9 @@ public class DeleteSequencesActivity extends GirafActivity implements SequenceLi
     @Override
     public boolean isSequenceMarked(Sequence sequence) {
 
-        for (SequenceListAdapter.SequencePictogramViewPair sequenceViewPair : selectedSequenceViewList)
+        for (Sequence seq : selectedSequenceViewList)
         {
-            if (sequenceViewPair.getSequence().equals(sequence))
+            if (seq.equals(sequence))
             {
                 return true;
             }
@@ -146,22 +146,18 @@ public class DeleteSequencesActivity extends GirafActivity implements SequenceLi
     }
 
     // AsyncTask. Used to fetch data from the database in another thread which is NOT the GUI thread
-    public class AsyncFetchDatabase extends AsyncTask<Void, Void, List<SequenceListAdapter.SequencePictogramViewPair>> {
+    public class AsyncFetchDatabase extends AsyncTask<Void, Void, List<Sequence>> {
 
         @Override
-        protected List<SequenceListAdapter.SequencePictogramViewPair> doInBackground(Void... params) {
+        protected List<Sequence> doInBackground(Void... params) {
             helper = new Helper(DeleteSequencesActivity.this);
             List<Sequence> sequenceList = helper.sequenceController.getSequencesAndFramesByProfileIdAndType(selectedChild.getId(), Sequence.SequenceType.SEQUENCE);
-            ArrayList<SequenceListAdapter.SequencePictogramViewPair> viewPairList = new ArrayList<SequenceListAdapter.SequencePictogramViewPair>();
 
-            for (Sequence sequence : sequenceList) {
-                viewPairList.add(new SequenceListAdapter.SequencePictogramViewPair(sequence, null));
-            }
-            return viewPairList;
+            return sequenceList;
         }
 
         @Override
-        protected void onPostExecute(List<SequenceListAdapter.SequencePictogramViewPair> result) {
+        protected void onPostExecute(List<Sequence> result) {
             sequenceAdapter = new SequenceListAdapter(DeleteSequencesActivity.this, result, DeleteSequencesActivity.this);
             sequenceGrid.setAdapter(sequenceAdapter);
             sequenceGrid.setEmptyView(findViewById(R.id.empty_sequences));

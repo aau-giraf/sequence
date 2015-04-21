@@ -1,8 +1,10 @@
 package dk.aau.cs.giraf.zebra;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import android.content.ComponentName;
 import android.content.Intent;
@@ -27,18 +29,19 @@ import dk.aau.cs.giraf.oasis.lib.models.Sequence;
  */
 public class MainActivity extends GirafActivity implements SequenceListAdapter.SelectedSequenceAware {
 
+    private static final int numColumns = 5;
+
     private Profile guardian;
     private Profile selectedChild;
-    private boolean childIsSet = false;
+    private boolean isChildSet = false;
     private int childId;
     private boolean markingMode = false;
 
     private GridView sequenceGrid;
     private SequenceListAdapter sequenceAdapter;
-    private List<SequenceListAdapter.SequencePictogramViewPair> sequences = new ArrayList<SequenceListAdapter.SequencePictogramViewPair>();
-    private List<SequenceListAdapter.SequencePictogramViewPair> markedSequences = new ArrayList<SequenceListAdapter.SequencePictogramViewPair>();
+    private Set<Sequence> markedSequences = new HashSet<Sequence>();
     private Helper helper;
-    private final String DELETE_SEQUENCES = "DELETE_SEQUENCES";
+    private final String DELETE_SEQUENCES_TAG = "DELETE_SEQUENCES_TAG";
 
     // Initialize buttons
     GirafInflatableDialog acceptDeleteDialog;
@@ -64,10 +67,14 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         addGirafButtonToActionBar(addButton, RIGHT);
         addGirafButtonToActionBar(deleteButton, RIGHT);
 
+        helper = new Helper(this);
+
         // Setup the sequence grid view used to display sequences
         setupSequenceGridView();
+
         // Setup the buttons (onClickListener)
         setupButtons();
+
         // Setup mode, this is either citizen mode or guardian mode
         setupModeFromIntents();
     }
@@ -76,6 +83,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     private void setupSequenceGridView() {
         sequenceGrid = (GridView) findViewById(R.id.sequence_grid);
         sequenceGrid.setEmptyView(findViewById(R.id.empty_sequences));
+        sequenceGrid.setColumnWidth(getResources().getDisplayMetrics().widthPixels / numColumns);
         //sequenceAdapter = new SequenceListAdapter(MainActivity.this, sequences, MainActivity.this);
         //sequenceGrid.setAdapter(sequenceAdapter);
     }
@@ -107,8 +115,8 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
             @Override
             public void onClick(View v) {
                 Sequence sequence = new Sequence();
-                SequenceListAdapter.SequencePictogramViewPair sequenceViewPair = new SequenceListAdapter.SequencePictogramViewPair(sequence, null);
-                enterAddEditSequence(sequenceViewPair, true);
+                //equenceListAdapter.SequencePictogramViewPair sequenceViewPair = new SequenceListAdapter.SequencePictogramViewPair(sequence, null);
+                enterAddEditSequence(sequence, true);
             }
         });
 
@@ -128,11 +136,11 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
             @Override
             public void onClick(View v) {
                 acceptDeleteDialog = GirafInflatableDialog.newInstance(
-                    getApplicationContext().getString(R.string.delete_sequences),
-                    getApplicationContext().getString(R.string.delete_this) + " "
-                        + getApplicationContext().getString(R.string.marked_sequences),
-                    R.layout.dialog_delete);
-                acceptDeleteDialog.show(getSupportFragmentManager(), DELETE_SEQUENCES);
+                        getApplicationContext().getString(R.string.delete_sequences),
+                        getApplicationContext().getString(R.string.delete_this) + " "
+                                + getApplicationContext().getString(R.string.marked_sequences),
+                        R.layout.dialog_delete);
+                acceptDeleteDialog.show(getSupportFragmentManager(), DELETE_SEQUENCES_TAG);
             }
         });
     }
@@ -140,7 +148,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     // Sets up either guardian mode or citizen mode, based on the intents
     private void setupModeFromIntents() {
         //Create helper to fetch data from database and fetches intents (from Launcher or AddEditSequencesActivity)
-        helper = new Helper(this);
+
         Bundle extras = getIntent().getExtras();
         int guardianId;
 
@@ -160,7 +168,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         else {
             setupChildMode();
             setChild();
-            childIsSet = true;
+            isChildSet = true;
         }
     }
 
@@ -170,23 +178,20 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                SequenceListAdapter.SequencePictogramViewPair sequenceViewPair = sequenceAdapter.getItem(position);
 
-                if (!markingMode)
-                {
+                final Sequence sequence = sequenceAdapter.getItem(position);
+
+                if (!markingMode) {
                     ((PictogramView) view).liftUp();
                     // Intent is not stated here, as there are two different modes - if guardian then edit mode, else if citizen then view mode
-                    enterAddEditSequence(sequenceViewPair, false);
-                }
-                else
+                    enterAddEditSequence(sequence, false);
+                } else
                 {
-                    if (markedSequences.contains(sequenceViewPair))
+                    if (markedSequences.contains(sequence))
                     {
-                        unMarkSequence(sequenceViewPair);
-                    }
-                    else
-                    {
-                        markSequence(sequenceViewPair);
+                        unMarkSequence(sequence, view);
+                    } else {
+                        markSequence(sequence, view);
                     }
                 }
             }
@@ -195,8 +200,8 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
                 markingMode = true;
-                SequenceListAdapter.SequencePictogramViewPair sequenceViewPair = sequenceAdapter.getItem(position);
-                markSequence(sequenceViewPair);
+                Sequence sequence = sequenceAdapter.getItem(position);
+                markSequence(sequence, view);
                 deleteButton.setVisibility(View.VISIBLE);
                 addButton.setVisibility(View.GONE);
                 return true;
@@ -204,28 +209,28 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         });
     }
 
-    private void markSequence(SequenceListAdapter.SequencePictogramViewPair sequenceViewPair) {
-        if (sequenceViewPair.getPictogramView() != null) {
-            markedSequences.add(sequenceViewPair);
-            sequenceViewPair.getPictogramView().setBackgroundColor(getResources().getColor(R.color.giraf_page_indicator_active));
-        }
+    private void markSequence(Sequence sequence, View view) {
+
+        //if (sequenceViewPair.getPictogramView() != null) {
+            markedSequences.add(sequence);
+            view.setBackgroundColor(getResources().getColor(R.color.giraf_page_indicator_active));
+        //}
     }
 
-    private void unMarkSequence(SequenceListAdapter.SequencePictogramViewPair pair) {
+    private void unMarkSequence(Sequence c, View view) {
         //markedSequences.remove(sequence);
-        if (pair != null) {
-            markedSequences.remove(pair);
-            pair.getPictogramView().setBackgroundDrawable(null);
-        }
+        //if (pair != null) {
+            markedSequences.remove(c);
+            view.setBackgroundDrawable(null);
+        //}
     }
 
     public void deleteClick(View v) {
         // Button to accept delete of sequences
         acceptDeleteDialog.dismiss();
         // Delete all selected items
-        for (SequenceListAdapter.SequencePictogramViewPair seq : markedSequences) {
-            helper = new Helper(getApplicationContext());
-            helper.sequenceController.removeSequence(seq.getSequence());
+        for (Sequence seq : markedSequences) {
+            helper.sequenceController.removeSequence(seq);
         }
         sequenceAdapter.notifyDataSetChanged(); // Needs fixing
     }
@@ -237,9 +242,6 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
 
     // Used to select a child
     private void pickAndSetChild() {
-        //Create helper to fetch data from database
-        helper = new Helper(this);
-
         //Create ProfileSelector to make Guardian select Child
         final GProfileSelector childSelector = new GProfileSelector(this, guardian, null, false);
 
@@ -249,7 +251,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 childId = (int) id;
                 setChild();
-                childIsSet = true;
+                isChildSet = true;
                 childSelector.dismiss();
             }
         });
@@ -261,13 +263,13 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         //When clicking a Sequence, lift up the view, create Intent for SequenceViewer and launch it
         sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+            public void onItemClick(AdapterView<?> arg0, View arg1, int position, long id) {
                 ((PictogramView) arg1).liftUp();
 
                 //Create Intent with relevant Extras
                 Intent intent = new Intent();
                 intent.setComponent(new ComponentName("dk.aau.cs.giraf.sequenceviewer", "dk.aau.cs.giraf.sequenceviewer.MainActivity"));
-                intent.putExtra("sequenceId", sequenceAdapter.getItem(arg2).getSequence().getId());
+                intent.putExtra("sequenceId", sequenceAdapter.getItem(position).getId());
                 intent.putExtra("callerType", "Zebra");
                 intent.putExtra("landscapeMode", false);
                 intent.putExtra("visiblePictogramCount", sequenceAdapter.getCount());
@@ -283,9 +285,6 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
 
     // Collects data about the child - and set actionbar title
     private synchronized void setChild() {
-        //Creates helper to fetch data from the Database
-        helper = new Helper(this);
-
         //Save Child locally and update relevant information for application
         selectedChild = helper.profilesHelper.getProfileById(childId);
         this.setActionBarTitle(getResources().getString(R.string.app_name) + " - " + selectedChild.getName()); // selectedChild.getName() "Child's name code"
@@ -296,47 +295,33 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     }
 
     //Sets up relevant intents and starts AddEditSequencesActivity
-    private void enterAddEditSequence(SequenceListAdapter.SequencePictogramViewPair sequenceViewPair, boolean isNew) {
+    private void enterAddEditSequence(Sequence sequence, boolean isNew) {
 
         Intent intent = new Intent(getApplication(), AddEditSequencesActivity.class);
         intent.putExtra("childId", selectedChild.getId());
         intent.putExtra("guardianId", guardian.getId());
         intent.putExtra("editMode", true);
         intent.putExtra("isNew", isNew);
-        intent.putExtra("sequenceId", sequenceViewPair.getSequence().getId());
+        intent.putExtra("sequenceId", sequence.getId());
         startActivity(intent);
     }
 
     @Override
     public boolean isSequenceMarked(Sequence sequence) {
-
-        for (SequenceListAdapter.SequencePictogramViewPair sequenceViewPair : markedSequences)
-        {
-            if (sequenceViewPair.getSequence().equals(sequence))
-            {
-                return true;
-            }
-        }
-        return false;
+        return markedSequences.contains(sequence);
     }
 
     // AsyncTask. Used to fetch data from the database in another thread which is NOT the GUI thread
-    public class AsyncFetchDatabase extends AsyncTask<Void, Void, List<SequenceListAdapter.SequencePictogramViewPair>> {
+    public class AsyncFetchDatabase extends AsyncTask<Void, Void, List<Sequence>> {
 
         @Override
-        protected List<SequenceListAdapter.SequencePictogramViewPair> doInBackground(Void... params) {
-            helper = new Helper(MainActivity.this);
+        protected List<Sequence> doInBackground(Void... params) {
             List<Sequence> sequenceList = helper.sequenceController.getSequencesAndFramesByProfileIdAndType(selectedChild.getId(), Sequence.SequenceType.SEQUENCE);
-            ArrayList<SequenceListAdapter.SequencePictogramViewPair> viewPairList = new ArrayList<SequenceListAdapter.SequencePictogramViewPair>();
-
-            for (Sequence sequence : sequenceList) {
-                viewPairList.add(new SequenceListAdapter.SequencePictogramViewPair(sequence, null));
-            }
-            return viewPairList;
+            return sequenceList;
         }
 
         @Override
-        protected void onPostExecute(List<SequenceListAdapter.SequencePictogramViewPair> result) {
+        protected void onPostExecute(final List<Sequence> result) {
             sequenceAdapter = new SequenceListAdapter(MainActivity.this, result, MainActivity.this);
             sequenceGrid.setAdapter(sequenceAdapter);
         }
@@ -352,34 +337,25 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         for (int i = 0; i < sequenceGrid.getChildCount(); i++) {
             View view = sequenceGrid.getChildAt(i);
 
-            if (view instanceof PictogramView) {
-                ((PictogramView) view).placeDown();
-            }
+            ((PictogramView) view).placeDown();
         }
 
         //If a Child is selected at this point, update Sequences for the Child
-        if (childIsSet) {
+        if (isChildSet) {
             fetchDatabase.execute();
         }
     }
 
     @Override
     public void onBackPressed() {
-        if(markingMode)
-        {
-            for (Iterator<SequenceListAdapter.SequencePictogramViewPair> it = markedSequences.iterator(); it.hasNext();) {
-                SequenceListAdapter.SequencePictogramViewPair s = it.next();
-
-                s.getPictogramView().setBackgroundDrawable(null);
-                it.remove();
-            }
+        if (markingMode) {
+            markedSequences.clear();
+            sequenceAdapter.notifyDataSetChanged();
 
             deleteButton.setVisibility(View.GONE);
             addButton.setVisibility(View.VISIBLE);
             markingMode = false;
-        }
-        else
-        {
+        } else {
             super.onBackPressed();
         }
     }

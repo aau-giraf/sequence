@@ -289,13 +289,14 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         fetchDatabaseSetChild.execute();
     }
 
-    //Sets up relevant intents and starts AddEditSequencesActivity
+    //Sets up relevant intents and starts AddEditSequencesActivity if a profile is selected
     private void enterAddEditSequence(Sequence sequence,View v, boolean isNew) {
 
         helper = new Helper(this);
 
         selectedChild = helper.profilesHelper.getProfileById(childId);
 
+        // If no profile has been selected, show an error dialog and the profile selector, else start AddEditSequencesActivity
         if (selectedChild == null) {
             createAndShowErrorDialogNoProfileSelected(v);
             final GProfileSelector childSelector = new GProfileSelector(v.getContext(), guardian, null, false);

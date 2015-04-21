@@ -38,9 +38,6 @@
             android:name=".AddEditSequencesActivity"
             android:launchMode="singleTop"
             android:screenOrientation="landscape"></activity>
-        <activity
-            android:name=".DeleteSequencesActivity"
-            android:screenOrientation="landscape"></activity>
     </application>
 
 </manifest>

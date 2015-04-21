@@ -3,7 +3,6 @@ package dk.aau.cs.giraf.zebra;
 import java.util.List;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -16,7 +15,6 @@ import dk.aau.cs.giraf.oasis.lib.models.Sequence;
 public class SequenceListAdapter extends BaseAdapter {
     private List<Sequence> items;
     private Context context;
-    private boolean isInEditMode;
     private SelectedSequenceAware selectedSequenceAware;
 
     public interface SelectedSequenceAware {
@@ -79,7 +77,6 @@ public class SequenceListAdapter extends BaseAdapter {
         //sequenceViewPair.setPictogramView(v);
 
         v.setTitle(sequence.getName());
-        v.setEditModeEnabled(isInEditMode);
         v.setImageFromId(sequence.getPictogramId());
 
         // Check if the user provided a SelectedCategoryAware

@@ -1,8 +1,6 @@
 package dk.aau.cs.giraf.zebra;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -132,7 +130,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         });
 
         deleteButton.setOnClickListener(new OnClickListener() {
-            //Open DeleteSequencesActivity when clicking the delete Button
+            // Opens a dialog to remove the selected sequences
             @Override
             public void onClick(View v) {
                 acceptDeleteDialog = GirafInflatableDialog.newInstance(
@@ -210,19 +208,13 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     }
 
     private void markSequence(Sequence sequence, View view) {
-
-        //if (sequenceViewPair.getPictogramView() != null) {
-            markedSequences.add(sequence);
-            view.setBackgroundColor(getResources().getColor(R.color.giraf_page_indicator_active));
-        //}
+        markedSequences.add(sequence);
+        view.setBackgroundColor(getResources().getColor(R.color.giraf_page_indicator_active));
     }
 
     private void unMarkSequence(Sequence c, View view) {
-        //markedSequences.remove(sequence);
-        //if (pair != null) {
-            markedSequences.remove(c);
-            view.setBackgroundDrawable(null);
-        //}
+        markedSequences.remove(c);
+        view.setBackgroundDrawable(null);
     }
 
     public void deleteClick(View v) {
@@ -316,8 +308,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
 
         @Override
         protected List<Sequence> doInBackground(Void... params) {
-            List<Sequence> sequenceList = helper.sequenceController.getSequencesAndFramesByProfileIdAndType(selectedChild.getId(), Sequence.SequenceType.SEQUENCE);
-            return sequenceList;
+            return helper.sequenceController.getSequencesAndFramesByProfileIdAndType(selectedChild.getId(), Sequence.SequenceType.SEQUENCE);
         }
 
         @Override

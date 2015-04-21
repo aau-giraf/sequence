@@ -119,22 +119,6 @@ public class PictogramView extends LinearLayout {
         return editButton;
     }
 
-    public void deleteModeMarked() {
-        pictogram.setScaleX(LOWLIGHT_SCALE);
-        pictogram.setScaleY(LOWLIGHT_SCALE);
-        this.setAlpha(0.5f);
-        setDeleteButtonVisible(false);
-        invalidate();
-    }
-
-    public void deleteModeUnmarked() {
-        pictogram.setScaleX(NORMAL_SCALE);
-        pictogram.setScaleY(NORMAL_SCALE);
-        this.setAlpha(1.0f);
-        setDeleteButtonVisible(isInEditMode);
-        invalidate();
-    }
-
     public void liftUp() {
         pictogram.setScaleX(HIGHLIGHT_SCALE);
         pictogram.setScaleY(HIGHLIGHT_SCALE);
@@ -219,14 +203,5 @@ public class PictogramView extends LinearLayout {
 
     public interface OnDeleteClickListener {
         public void onDeleteClick();
-    }
-
-
-    public boolean getEditModeEnabled() {
-        return isInEditMode;
-    }
-
-    public OnDeleteClickListener getOnDeleteClickListener() {
-        return onDeleteClickListener;
     }
 }

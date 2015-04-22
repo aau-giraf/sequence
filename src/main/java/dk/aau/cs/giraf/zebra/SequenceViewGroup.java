@@ -14,21 +14,17 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Transformation;
 import android.view.animation.TranslateAnimation;
+import android.support.annotation.NonNull;
 import android.widget.AdapterView;
-import android.widget.HorizontalScrollView;
 
 /**
  * Layouts its children with fixed sizes and fixed spacing between each child in
  * the horizontal dimension.
+ * Also contains the animation and effects (drag, rearrange, snap ...)
  */
 public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 
-    private final int DEFAULT_ITEM_WIDTH = 250;
-    private final int DEFAULT_ITEM_HEIGHT = 250;
-    private final int DEFAULT_HORIZONTAL_SPACING = 100;
-
     private final int ANIMATION_TIME = 350;
-    private final int DRAG_DISTANCE = 8;
 
     //Layout
     private int horizontalSpacing;
@@ -45,7 +41,6 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
     private int dragStartX;
     private int centerOffset;
     private int touchX = -1;
-    private int touchDeltaX = 0;
     private boolean animatingDragReposition = false;
     private int[] newPositions;
 
@@ -65,6 +60,9 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 
     public SequenceViewGroup(Context context, AttributeSet attrs) {
         super(context, attrs);
+        final int DEFAULT_ITEM_WIDTH = 250;
+        final int DEFAULT_ITEM_HEIGHT = 250;
+        final int DEFAULT_HORIZONTAL_SPACING = 100;
 
         TypedArray a = context.obtainStyledAttributes(attrs,
                 R.styleable.SequenceViewGroup);
@@ -136,7 +134,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 
     @Override
     protected boolean checkLayoutParams(ViewGroup.LayoutParams p) {
-        return p instanceof LayoutParams;
+        return p != null;
     }
 
     private View childAtPoint(int x, int y) {
@@ -211,10 +209,6 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
         return calcChildLeftPosition(index) + itemWidth / 2;
     }
 
-    public int getHorizontalSpacing() {
-        return horizontalSpacing;
-    }
-
     private int getIndexAtPoint(int x, int y) {
         View child = childAtPoint(x, y);
         if (child == null)
@@ -228,27 +222,9 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
         return getIndexAtPoint(x, calcChildTopPosition() + itemHeight / 2);
     }
 
-    public int getItemHeight() {
-        return itemHeight;
-    }
-
-    public int getItemWidth() {
-        return itemWidth;
-    }
-
     @SuppressWarnings("unused")
     private int getLeftX(int index) {
         return calcChildLeftPosition(index);
-    }
-
-    /**
-     * Returns the current OnRearrangeListener or null if not set.
-     *
-     * @param rearrangeListener
-     * @return
-     */
-    public OnRearrangeListener getOnRearrangeListener(OnRearrangeListener rearrangeListener) {
-        return this.rearrangeListener;
     }
 
     @SuppressWarnings("unused")
@@ -312,7 +288,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         /*
-		 * This method dictates what size all children of the given parent must have. The method is a general method, meaning we ignore measure mode.
+         * This method dictates what size all children of the given parent must have. The method is a general method, meaning we ignore measure mode.
 		 * The ViewGroup requires all children to have the same size, itemWidth and itemHeight as the parent.
 		 */
 
@@ -425,9 +401,9 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
                                 }
 
                                 rearrangeListener.onRearrange(startDragIndex, curDragIndexPos);
-                                //layout(getLeft(), getTop(), getRight(), getBottom());
-                                //This prevents lots of flicker
 
+                                //layout(getLeft(), getTop(), getRight(), getBottom());
+                                // Using "onLayout" instead of layout prevents lots of flicker
                                 onLayout(true, getLeft(), getTop(), getRight(), getBottom());
                             } else {
                                 //Must clear animation to prevent flicker - even though it just ended.
@@ -509,6 +485,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
                 break;
 
             case MotionEvent.ACTION_MOVE:
+                int DRAG_DISTANCE = 8;
 
                 if (draggingView == null) {  // The user is not touching a pictogram
                     handled = true;
@@ -565,6 +542,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
     private void handleTouchMove(float newTouchX) {
         if (!isDragging) return;
 
+        int touchDeltaX;
         touchX = (int) newTouchX;
         touchDeltaX = (int) (newTouchX - dragStartX);
         //Layout the dragging element. Is excluded from normal layout
@@ -574,33 +552,9 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
         checkForSwap();
     }
 
-    public void setHorizontalSpacing(int spacing) {
-        if (spacing >= 0 && spacing != horizontalSpacing) {
-            horizontalSpacing = spacing;
-            requestLayout();
-        }
-    }
 
-    public void setItemHeight(int height) {
-        if (height > 0 && height != itemHeight) {
-            itemHeight = height;
-            requestLayout();
-        }
-    }
-
-    public void setItemWidth(int width) {
-        if (width > 0 && width != itemWidth) {
-            itemWidth = width;
-            requestLayout();
-        }
-    }
-
-    /**
-     * Sets the OnRearrangeListener that is called when Views are rearranged.
-     * Can be null
-     *
-     * @param rearrangeListener
-     */
+    // Sets the OnRearrangeListener that is called when Views are rearranged.
+    // Can be null
     public void setOnRearrangeListener(OnRearrangeListener rearrangeListener) {
         this.rearrangeListener = rearrangeListener;
     }
@@ -662,11 +616,6 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
         }
 
         requestLayout();
-    }
-
-    @Override
-    public void setSelection(int position) {
-        return;
     }
 
     private class AdapterDataSetObserver extends DataSetObserver {
@@ -795,11 +744,53 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
         newButtonClickedListener = listener;
     }
 
-    public OnNewButtonClickedListener getOnNewButtonClickedListener() {
-        return newButtonClickedListener;
-    }
-
     public interface OnNewButtonClickedListener {
         public void onNewButtonClicked();
+    }
+
+    @Override
+    public void setSelection(int position) {
+
+    }
+
+    public int getHorizontalSpacing() {
+        return horizontalSpacing;
+    }
+
+    public OnRearrangeListener getOnRearrangeListener(OnRearrangeListener rearrangeListener) {
+        return this.rearrangeListener;
+    }
+
+    public void setHorizontalSpacing(int spacing) {
+        if (spacing >= 0 && spacing != horizontalSpacing) {
+            horizontalSpacing = spacing;
+            requestLayout();
+        }
+    }
+
+    public void setItemHeight(int height) {
+        if (height > 0 && height != itemHeight) {
+            itemHeight = height;
+            requestLayout();
+        }
+    }
+
+    public void setItemWidth(int width) {
+        if (width > 0 && width != itemWidth) {
+            itemWidth = width;
+            requestLayout();
+        }
+    }
+
+    public int getItemHeight() {
+        return itemHeight;
+    }
+
+    public int getItemWidth() {
+        return itemWidth;
+    }
+
+    public OnNewButtonClickedListener getOnNewButtonClickedListener() {
+        return newButtonClickedListener;
     }
 }

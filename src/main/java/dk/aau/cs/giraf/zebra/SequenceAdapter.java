@@ -8,78 +8,85 @@ import android.widget.BaseAdapter;
 import dk.aau.cs.giraf.oasis.lib.models.Frame;
 import dk.aau.cs.giraf.oasis.lib.models.Sequence;
 
+/**
+ * Adapter used for sequences, in the context of the given child
+ */
 public class SequenceAdapter extends BaseAdapter {
 
-    // Adapter for list of sequences in the context of the given child
-
     private Context context;
-	private Sequence sequence;
-	
-	private OnAdapterGetViewListener onAdapterGetViewListener;
+    private Sequence sequence;
 
-	public SequenceAdapter(Context context, Sequence sequence) {
-		this.context = context;
-		this.sequence = sequence;
-	}
+    private OnAdapterGetViewListener onAdapterGetViewListener;
 
-	@Override
-	public int getCount() {
-		if (sequence == null)
-			return 0;
-		else
-			return sequence.getFramesList().size();
-	}
+    public SequenceAdapter(Context context, Sequence sequence) {
+        this.context = context;
+        this.sequence = sequence;
+    }
 
-	@Override
-	public Frame getItem(int position) {
-		if (sequence == null) throw new IllegalStateException("No Sequence has been set for this Adapter");
-		
-		if (position >= 0 && position < sequence.getFramesList().size())
-			return sequence.getFramesList().get(position);
-		else
-			return null;
-	}
+    @Override
+    public int getCount() {
+        if (sequence == null)
+            return 0;
+        else
+            return sequence.getFramesList().size();
+    }
 
-	@Override
-	public boolean hasStableIds() {
-		return false;
-	}
-	
-	@Override
-	public long getItemId(int position) {
-		return position;
-	}
+    @Override
+    public Frame getItem(int position) {
+        if (sequence == null)
+            throw new IllegalStateException("No Sequence has been set for this Adapter");
 
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+        if (position >= 0 && position < sequence.getFramesList().size())
+            return sequence.getFramesList().get(position);
+        else
+            return null;
+    }
 
-		PictogramView view;
-		Frame frame = getItem(position);
-		
-		if (convertView == null) {
-			view = new PictogramView(context, 24f);
-		}
-        else {
-            view = (PictogramView)convertView;
+    @Override
+    public boolean hasStableIds() {
+        return false;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+
+        PictogramView view;
+        Frame frame = getItem(position);
+
+        if (convertView == null) {
+            view = new PictogramView(context, 24f);
+        } else {
+            view = (PictogramView) convertView;
         }
 
-		view.setImageFromId(frame.getPictogramId());
-		
-		if (onAdapterGetViewListener != null)
-			onAdapterGetViewListener.onAdapterGetView(position, view);
-		
-		return view;
-	}
-	
-	public void setOnAdapterGetViewListener(OnAdapterGetViewListener onCreateViewListener) {
-		this.onAdapterGetViewListener = onCreateViewListener;
-	}
-	
-	public OnAdapterGetViewListener getOnAdapterGetViewListener() {
-		return this.onAdapterGetViewListener;
-	}
-	
-	public interface OnAdapterGetViewListener {
-		public void onAdapterGetView(int position, View view);
-	}
+        // If the element is a choice, then use the "choose" icon
+        if (sequence.getFramesList().get(position).getPictogramList().size() > 0) {
+            view.setImageFromId(0);
+        } else {
+            view.setImageFromId(frame.getPictogramId());
+        }
+
+        if (onAdapterGetViewListener != null)
+            onAdapterGetViewListener.onAdapterGetView(position, view);
+
+        return view;
+    }
+
+    public void setOnAdapterGetViewListener(OnAdapterGetViewListener onCreateViewListener) {
+        this.onAdapterGetViewListener = onCreateViewListener;
+    }
+
+    public interface OnAdapterGetViewListener {
+        public void onAdapterGetView(int position, View view);
+    }
+
+    public OnAdapterGetViewListener getOnAdapterGetViewListener() {
+        return this.onAdapterGetViewListener;
+    }
 }
+

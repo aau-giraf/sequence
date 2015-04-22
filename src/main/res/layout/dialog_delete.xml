@@ -1,11 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center">
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -17,20 +10,17 @@
 
     <dk.aau.cs.giraf.gui.GirafButton
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_marginRight="15dp"
-        android:onClick="DeleteClick"
+        android:layout_height="@dimen/giraf_button_height"
+        android:layout_marginRight="@dimen/padding_standard"
+        android:onClick="deleteClick"
         app:icon="@drawable/icon_delete"
-        app:text="@string/delete_sequence" />
+        app:text="@string/delete" />
 
     <dk.aau.cs.giraf.gui.GirafButton
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:onClick="dontDeleteClick"
+        android:layout_height="@dimen/giraf_button_height"
+        android:onClick="cancelDeleteClick"
         app:icon="@drawable/icon_cancel"
         app:text="@string/cancel" />
 
 </LinearLayout>
-</RelativeLayout>

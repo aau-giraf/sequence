@@ -8,8 +8,8 @@
 	<stroke
        android:color="#9e6435"
        android:width="10dp"
-       android:dashWidth="40px"
-       android:dashGap="30px" />
+       android:dashWidth="40dp"
+       android:dashGap="30dp" />
 	
 	<padding 
 	    android:left="50dp" 

@@ -1,6 +1,8 @@
 package dk.aau.cs.giraf.zebra;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.view.Gravity;
 import android.view.View;
@@ -24,23 +26,21 @@ public class PictogramView extends LinearLayout {
     public final static float LOWLIGHT_SCALE = 0.7f;
     private final static float DEFAULT_TEXT_SIZE = 18f;
 
-    private Helper helper;
     private RoundedImageView pictogram;
     private TextView title;
     private ImageButton deleteButton;
+    private ImageButton editButton;
     private OnDeleteClickListener onDeleteClickListener;
 
     private boolean isInEditMode = false;
 
     public PictogramView(Context context) {
         super(context);
-
         initialize(context, 0);
     }
 
     public PictogramView(Context context, float radius) {
         super(context);
-
         initialize(context, radius);
     }
 
@@ -49,15 +49,16 @@ public class PictogramView extends LinearLayout {
         this.setLayerType(LAYER_TYPE_SOFTWARE, null);
         this.setOrientation(LinearLayout.VERTICAL);
 
-        SquaredRelativeLayout square = new SquaredRelativeLayout(context);
-        square.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        SquaredRelativeLayout squareRelLayout = new SquaredRelativeLayout(context);
+        squareRelLayout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
-        square.addView(createImageView(radius));
-        square.addView(createDeleteButton());
+        squareRelLayout.addView(createImageView(radius));
+        squareRelLayout.addView(createDeleteButton());
+        squareRelLayout.addView(createEditButton());
 
         setupOnDeleteClickHandler();
 
-        this.addView(square);
+        this.addView(squareRelLayout);
         this.addView(createTextView());
     }
 
@@ -81,7 +82,8 @@ public class PictogramView extends LinearLayout {
 
     private View createDeleteButton() {
         deleteButton = new ImageButton(getContext());
-        deleteButton.setImageResource(R.layout.btn_delete_pictogram);
+        Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.icon_delete);
+        deleteButton.setImageBitmap(bm);
 
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
@@ -95,6 +97,26 @@ public class PictogramView extends LinearLayout {
         setDeleteButtonVisible(false);
 
         return deleteButton;
+    }
+
+    private View createEditButton() {
+        editButton = new ImageButton(getContext());
+        Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.icon_edit);
+        editButton.setImageBitmap(bm);
+
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        editButton.setLayoutParams(params);
+
+        editButton.setPadding(8, 8, 8, 8);
+        editButton.setBackgroundColor(Color.TRANSPARENT);
+
+        editButton.setFocusable(false);
+
+        setEditButtonVisible(false);
+
+        return editButton;
     }
 
     public void liftUp() {
@@ -134,20 +156,31 @@ public class PictogramView extends LinearLayout {
         invalidate();
     }
 
+    private void setEditButtonVisible(boolean visible) {
+        editButton.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
+        invalidate();
+    }
+
     public void setEditModeEnabled(boolean editMode) {
         if (editMode != isInEditMode) {
             isInEditMode = editMode;
             setDeleteButtonVisible(editMode);
+            setEditButtonVisible(editMode);
         }
     }
 
-    public boolean getEditModeEnabled() {
-        return isInEditMode;
-    }
-
     public void setImageFromId(int id) {
+        Helper helper;
         helper = new Helper(getContext());
-        pictogram.setImageBitmap(helper.pictogramHelper.getPictogramById(id).getImage());
+
+        // If the first element in a sequence is a choice - pick the choose icon -
+        // this leads to NullPointerException otherwise, as errors occur when it tries to first the first element, if this is split in many. (as the choose element is)
+        if (id == 0) {
+            Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.icon_choose);
+            pictogram.setImageBitmap(bm);
+        } else {
+            pictogram.setImageBitmap(helper.pictogramHelper.getPictogramById(id).getImage());
+        }
     }
 
     public void setTitle(String newTitle) {
@@ -166,10 +199,6 @@ public class PictogramView extends LinearLayout {
 
     public void setOnDeleteClickListener(OnDeleteClickListener listener) {
         onDeleteClickListener = listener;
-    }
-
-    public OnDeleteClickListener getOnDeleteClickListener() {
-        return onDeleteClickListener;
     }
 
     public interface OnDeleteClickListener {

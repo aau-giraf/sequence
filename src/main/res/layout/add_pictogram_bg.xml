@@ -6,16 +6,16 @@
 	<solid android:color="@android:color/transparent" />
 	
 	<stroke
-       android:color="#9e6435"
+       android:color="#8cc63e"
        android:width="10dp"
        android:dashWidth="40dp"
        android:dashGap="30dp" />
 	
 	<padding 
-	    android:left="50dp" 
-	    android:top="50dp" 
-	    android:right="50dp" 
-	    android:bottom="50dp" />
+	    android:left="30dp"
+	    android:top="30dp"
+	    android:right="30dp"
+	    android:bottom="30dp" />
 	
 	<corners android:radius="24dp" /> 
 </shape>

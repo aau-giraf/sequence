@@ -4,5 +4,5 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:contentDescription="@string/add_pictogram"
-    android:src="@drawable/add_pictogram"
+    android:src="@drawable/icon_add"
     android:background="@layout/add_pictogram_bg" />

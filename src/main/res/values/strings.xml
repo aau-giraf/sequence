@@ -2,19 +2,14 @@
 <resources>
 <!-- getResources().getString(R.string.save_sequence) -->
 
-    <string name="settings">Indstillinger</string>
     <string name="add_pictogram">Tilføj pictogram</string>
     <string name="add_pictogram_choice">Tilføj </string>
     <string name="add_pictogram_choice_description">Vælg hvad Du vil tilføje</string>
     <string name="app_name">Sekvens</string>
     <string name="back">Tilbage </string>
     <string name="back_description">Vil du gemme før du går tilbage?</string>
-    <string name="back_question">Du er ved at afslutte sekvensen. Vil du gemme dine ændringer?</string>
     <string name="cancel">Fortryd </string>
-    <string name="changes_saved">Ændringerne blev gemt</string>
     <string name="choice">Valg</string>
-    <string name="confirm_discarding_changes">Du er ved at </string>
-    <string name="confirm_go_back">Vil du gå tilbage uden at gemme?</string>
     <string name="copy_and_send_to">Kopier og send til</string>
     <string name="copy_sequences">Kopier sekvenser</string>
     <string name="copy_sequences_window_arrow">Pil der viser hvilke sequenser der skal kopieres</string>
@@ -22,12 +17,7 @@
     <string name="delete">Slet</string>
     <string name="delete_sequence">Slet sekvens</string>
     <string name="delete_sequences">Slet sekvenser</string>
-    <string name="delete_these">Vil du slette de </string>
     <string name="delete_this">Vil du slette denne sekvens?</string>
-    <string name="delete_this_sequence">Vil du slette den markerede sekvens?</string>
-    <string name="discard_changes">Fortryd ændringer</string>
-    <string name="discard_question">Du er ved at fortryde dine ændringer. Er du sikker?</string>
-    <string name="Done_with_sequence">Færdig med sekvens</string>
     <string name="dont_save">Gem ikke </string>
     <string name="edit_sequence">Rediger sekvens</string>
     <string name="empty_choice_error">Det er ikke muligt at gemme en tom valg aktivitet</string>
@@ -37,24 +27,12 @@
     <string name="exit">Afslut</string>
     <string name="marked_sequences"> markerede sekvenser?</string>
     <string name="new_sequence">Ny sekvens</string>
-    <string name="no">Nej </string>
-    <string name="no_children">Der er ingen børn</string>
     <string name="no_profile_error">Du skal vælge en profil at lave sekvenser for før der kan oprettes nye sekvenser</string>
     <string name="ok">OK </string>
     <string name="pictogram">Piktogram</string>
-    <string name="return_question">Du er ved at afslutte sekvensen. Er du færdig?</string>
-    <string name="return_to_overview">Retuner til overview</string>
     <string name="save">Gem </string>
-    <string name="save_changes">Gem ændringer </string>
-    <string name="save_sequence">Gem sekvens </string>
-    <string name="save_sequence_desc">Du er ved at gemme sekvensen</string>
-    <string name="save_sequence_req">Du bliver nødt til at gemme sekvensen før du kan se den</string>
     <string name="sequence">Sekvens</string>
     <string name="sequence_saved">Sekvensen er blevet gemt</string>
-    <string name="title_activity_settings">settingsActivity</string>
-    <string name="undo_changes">Fortryd ændringer</string>
     <string name="unnamed_sequence">Unavngivet sekvens</string>
-    <string name="yes">Ja </string>
-
     <string name="choice_dialog_subtitle">Rediger piktogrammer der kan vælges imellem.</string>
 </resources>

@@ -14,7 +14,6 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Transformation;
 import android.view.animation.TranslateAnimation;
-import android.support.annotation.NonNull;
 import android.widget.AdapterView;
 
 /**
@@ -388,7 +387,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
                         public void onAnimationEnd(Animation animation) {
                             if (startDragIndex != curDragIndexPos) {
 
-                                if (AddEditSequencesActivity.choiceMode == true) {
+                                if (AddEditSequencesActivity.choiceMode) {
                                     AddEditSequencesActivity.choice.rearrangeFrame(startDragIndex, curDragIndexPos);
                                 } else {
                                     AddEditSequencesActivity.sequence.rearrangeFrame(startDragIndex, curDragIndexPos);

@@ -40,8 +40,6 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     private SequenceListAdapter sequenceAdapter;
     private Set<Sequence> markedSequences = new HashSet<Sequence>();
     private Helper helper;
-    private final int NO_PROFILE_ERROR = 1770;
-    private final String NO_PROFILE_ERROR_TAG = "NO_PROFILE_ERROR_TAG";
     private final String DELETE_SEQUENCES_TAG = "DELETE_SEQUENCES_TAG";
 
     // Initialize buttons
@@ -298,7 +296,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
 
         // If no profile has been selected, show an error dialog and the profile selector, else start AddEditSequencesActivity
         if (selectedChild == null) {
-            createAndShowErrorDialogNoProfileSelected(v);
+            createAndShowErrorDialogNoProfileSelected();
             final GProfileSelector childSelector = new GProfileSelector(v.getContext(), guardian, null, false);
             childSelector.show();
             childSelector.setOnListItemClick(new AdapterView.OnItemClickListener() {
@@ -379,7 +377,9 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         }
     }
 
-    private void createAndShowErrorDialogNoProfileSelected(View v) {
+    private void createAndShowErrorDialogNoProfileSelected() {
+        final int NO_PROFILE_ERROR = 1770;
+        final String NO_PROFILE_ERROR_TAG = "NO_PROFILE_ERROR_TAG";
         GirafNotifyDialog alertDialog = GirafNotifyDialog.newInstance(this.getString(R.string.error), this.getString(R.string.no_profile_error), NO_PROFILE_ERROR);
         alertDialog.show(getSupportFragmentManager(), NO_PROFILE_ERROR_TAG);
     }

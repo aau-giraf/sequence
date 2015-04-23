@@ -184,10 +184,8 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
                     ((PictogramView) view).liftUp();
                     // Intent is not stated here, as there are two different modes - if guardian then edit mode, else if citizen then view mode
                     enterAddEditSequence(sequence, view, false);
-                } else
-                {
-                    if (markedSequences.contains(sequence))
-                    {
+                } else {
+                    if (markedSequences.contains(sequence)) {
                         unMarkSequence(sequence, view);
                     } else {
                         markSequence(sequence, view);
@@ -288,7 +286,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     }
 
     //Sets up relevant intents and starts AddEditSequencesActivity if a profile is selected
-    private void enterAddEditSequence(Sequence sequence,View v, boolean isNew) {
+    private void enterAddEditSequence(Sequence sequence, View v, boolean isNew) {
 
         helper = new Helper(this);
 
@@ -307,8 +305,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
                     childSelector.dismiss();
                 }
             });
-        }
-        else {
+        } else {
             Intent intent = new Intent(getApplication(), AddEditSequencesActivity.class);
             intent.putExtra("childId", selectedChild.getId());
             intent.putExtra("guardianId", guardian.getId());

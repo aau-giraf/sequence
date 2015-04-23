@@ -1,4 +1,4 @@
-package dk.aau.cs.giraf.zebra;
+package dk.aau.cs.giraf.sequence;
 
 import java.util.List;
 

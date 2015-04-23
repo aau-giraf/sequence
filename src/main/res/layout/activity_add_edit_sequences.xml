@@ -15,7 +15,7 @@
     android:background="@color/giraf_background"
     tools:context=".SequenceActivity">
 
-    <dk.aau.cs.giraf.zebra.SequenceViewGroup
+    <dk.aau.cs.giraf.sequence.SequenceViewGroup
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
@@ -61,7 +61,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
 
-            <dk.aau.cs.giraf.zebra.SequenceViewGroup
+            <dk.aau.cs.giraf.sequence.SequenceViewGroup
                 android:id="@+id/sequenceViewGroup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

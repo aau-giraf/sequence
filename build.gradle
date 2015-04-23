@@ -32,6 +32,7 @@ dependencies {
     compile(group: 'dk.aau.cs.giraf', name: 'girafComponent', version: '1.15', ext: 'aar')
     compile(group: 'dk.aau.cs.giraf', name: 'localDb', version: '1.0', ext: 'aar')
     compile(group: 'dk.aau.cs.giraf', name: 'meta-database', version: '1.2')
+    compile(group: 'dk.aau.cs.giraf', name: 'sequenceViewerLib', version: '1.0.1-SNAPSHOT', ext: 'aar')
 }
 
 android {

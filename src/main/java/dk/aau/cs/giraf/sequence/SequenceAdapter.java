@@ -1,4 +1,4 @@
-package dk.aau.cs.giraf.zebra;
+package dk.aau.cs.giraf.sequence;
 
 import android.content.Context;
 import android.view.View;

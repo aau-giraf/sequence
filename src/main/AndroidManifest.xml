@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="dk.aau.cs.giraf.zebra"
+    package="dk.aau.cs.giraf.sequence"
     android:versionCode="1"
     android:versionName="1.0">
 
@@ -21,7 +21,7 @@
         android:theme="@style/GirafTheme"
         tools:replace="android:icon">
         <activity
-            android:name=".MainActivity"
+            android:name="dk.aau.cs.giraf.sequence.MainActivity"
             android:screenOrientation="landscape">
             <intent-filter>
 
@@ -32,10 +32,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".CopySequencesActivity"
+            android:name="dk.aau.cs.giraf.sequence.CopySequencesActivity"
             android:screenOrientation="landscape"></activity>
         <activity
-            android:name=".AddEditSequencesActivity"
+            android:name="dk.aau.cs.giraf.sequence.AddEditSequencesActivity"
             android:launchMode="singleTop"
             android:screenOrientation="landscape"></activity>
     </application>

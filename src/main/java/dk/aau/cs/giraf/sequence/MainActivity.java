@@ -1,4 +1,4 @@
-package dk.aau.cs.giraf.zebra;
+package dk.aau.cs.giraf.sequence;
 
 import java.util.HashSet;
 import java.util.List;
@@ -21,7 +21,7 @@ import dk.aau.cs.giraf.gui.GirafNotifyDialog;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.oasis.lib.models.Sequence;
-
+import dk.aau.cs.giraf.sequenceviewer.SequenceActivity;
 /*
  * This is the main activity of the sequence application
  * The activity shows the overview page, of available sequences, for the chosen user
@@ -262,8 +262,8 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
                 ((PictogramView) arg1).liftUp();
 
                 //Create Intent with relevant Extras
-                Intent intent = new Intent();
-                intent.setComponent(new ComponentName("dk.aau.cs.giraf.sequenceviewer", "dk.aau.cs.giraf.sequenceviewer.MainActivity"));
+                Intent intent = new Intent(getApplicationContext(), SequenceActivity.class);
+                //intent.setComponent(new ComponentName("dk.aau.cs.giraf.sequenceviewer", "dk.aau.cs.giraf.sequenceviewer.MainActivity"));
                 intent.putExtra("sequenceId", sequenceAdapter.getItem(position).getId());
                 intent.putExtra("callerType", "Zebra");
                 intent.putExtra("landscapeMode", false);

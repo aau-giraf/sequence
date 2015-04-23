@@ -1,4 +1,4 @@
-package dk.aau.cs.giraf.zebra;
+package dk.aau.cs.giraf.sequence;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -31,9 +31,9 @@ import dk.aau.cs.giraf.gui.GirafNotifyDialog;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Frame;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
-import dk.aau.cs.giraf.zebra.PictogramView.OnDeleteClickListener;
-import dk.aau.cs.giraf.zebra.SequenceAdapter.OnAdapterGetViewListener;
-import dk.aau.cs.giraf.zebra.SequenceViewGroup.OnNewButtonClickedListener;
+import dk.aau.cs.giraf.sequence.PictogramView.OnDeleteClickListener;
+import dk.aau.cs.giraf.sequence.SequenceAdapter.OnAdapterGetViewListener;
+import dk.aau.cs.giraf.sequence.SequenceViewGroup.OnNewButtonClickedListener;
 import dk.aau.cs.giraf.oasis.lib.models.Sequence;
 import dk.aau.cs.giraf.oasis.lib.models.Pictogram;
 
@@ -211,7 +211,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     }
 
     // Button to cancel delete of sequences
-    public void dontDeleteClick(View v) {
+    public void cancelDeleteClick(View v) {
         acceptDeleteDialog.dismiss();
     }
 
@@ -582,6 +582,10 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         }
         if (choiceMode) {
             for (int id : checkoutIds) {
+                Pictogram pictogram = new Pictogram();
+                pictogram.setId(id);
+                tempPictogramList.add(pictogram);
+
                 Frame frame = new Frame();
                 frame.setPictogramId(id);
                 choice.addFrame(frame);

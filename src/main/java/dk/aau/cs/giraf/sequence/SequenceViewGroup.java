@@ -1,4 +1,4 @@
-package dk.aau.cs.giraf.zebra;
+package dk.aau.cs.giraf.sequence;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -14,7 +14,6 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Transformation;
 import android.view.animation.TranslateAnimation;
-import android.support.annotation.NonNull;
 import android.widget.AdapterView;
 
 /**

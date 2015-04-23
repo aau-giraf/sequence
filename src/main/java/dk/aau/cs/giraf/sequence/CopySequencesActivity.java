@@ -1,12 +1,6 @@
-package dk.aau.cs.giraf.zebra;
+package dk.aau.cs.giraf.sequence;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.GridView;
 
@@ -14,15 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dk.aau.cs.giraf.activity.GirafActivity;
-import dk.aau.cs.giraf.gui.GButton;
-import dk.aau.cs.giraf.gui.GDialog;
-import dk.aau.cs.giraf.gui.GGridView;
-import dk.aau.cs.giraf.gui.GMultiProfileSelector;
 import dk.aau.cs.giraf.gui.GirafButton;
-import dk.aau.cs.giraf.oasis.lib.Helper;
-import dk.aau.cs.giraf.oasis.lib.models.Profile;
-import dk.aau.cs.giraf.oasis.lib.models.Sequence;
-
 
 
 public class CopySequencesActivity extends GirafActivity {

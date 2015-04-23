@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:focusableInTouchMode="true"
-    tools:context="dk.aau.cs.giraf.zebra.CopySequencesActivity">
+    tools:context="dk.aau.cs.giraf.sequence.CopySequencesActivity">
 
     <RelativeLayout
         android:id="@+id/headline_copy"

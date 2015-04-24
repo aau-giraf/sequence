@@ -2,7 +2,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/giraf_background"
-    tools:context="dk.aau.cs.giraf.zebra.DeleteSequencesActivity"
+    tools:context="dk.aau.cs.giraf.sequence.DeleteSequencesActivity"
     android:id="@+id/copying_sequences"
     android:layout_width="match_parent"
     android:layout_height="match_parent"

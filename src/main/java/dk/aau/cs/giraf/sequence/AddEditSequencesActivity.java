@@ -77,6 +77,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     private SequenceViewGroup choiceGroup;
     private SequenceViewGroup sequenceChoiceGroupTemplate;
     private boolean choiceListEdited = false;
+    private int tempPictogramId;
 
     // Initialize buttons
     private GirafButton saveButton;
@@ -355,7 +356,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
                 }
             }
         }
-        choiceListEdited = false;
+        //choiceListEdited = false;
 
         tempPictogramList.clear();
         for (int i = 0; i < choice.getFramesList().size(); i++) {
@@ -397,7 +398,8 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         }
 
         frame.setPictogramList(tempPictogramList);
-        frame.setPictogramId(0 /*tempPictogramList.get(0).getId()*/);
+        // By setting the pictogramId to 0, the sequenceAdapter ensures that the "choose icon" is used for a choice
+        frame.setPictogramId(0);
 
         if (pictogramEditPos == -1) {
             sequence.addFrame(frame);
@@ -416,6 +418,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     // Button to search for pictograms, that should be used in a "choice" activity
     public void choiceCancelClick(View v) {
         choiceMode = false;
+        choiceListEdited = false;
         pictogramEditPos = -1;
         choiceDialog.dismiss();
     }
@@ -450,6 +453,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
             public void onItemClick(AdapterView<?> adapter, View view,
                                     int position, long id) {
                 pictogramEditPos = position;
+                tempPictogramId = choice.getFramesList().get(pictogramEditPos).getPictogramId();
                 callPictoSearch(CHOICE_EDIT_PICTOGRAM_CALL);
             }
         });
@@ -560,7 +564,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
                     break;
 
                 case CHOICE_EDIT_PICTOGRAM_CALL:
-                    //onEditPictogramResult(data);
+                    onEditPictogramResult(data);
                     break;
 
                 default:
@@ -622,7 +626,16 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
             frame.setPictogramId(checkoutIds[0]);
             adapter.notifyDataSetChanged();
             changesSaved = false;
-
+        } else {
+            for (int i = 0; i < choice.getFramesList().size(); i++) {
+                if (tempPictogramId == choice.getFramesList().get(i).getPictogramId()) {
+                    choice.getFramesList().get(i).setPictogramId(checkoutIds[0]);
+                }
+            }
+            choiceListEdited = true;
+            choiceAdapter.notifyDataSetChanged();
+            adapter.notifyDataSetChanged();
+            changesSaved = false;
         }
     }
 
@@ -699,6 +712,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
                             }
                             changesSaved = false;
                             adapter.notifyDataSetChanged();
+                            choiceAdapter.notifyDataSetChanged();
                         }
                     });
                 }

@@ -65,11 +65,11 @@ public class SequenceAdapter extends BaseAdapter {
         }
 
         // If the element is a choice, then use the "choose" icon
-        if (sequence.getFramesList().get(position).getPictogramList().size() > 0) {
-            view.setImageFromId(0);
-        } else {
+        //if (sequence.getFramesList().get(position).getPictogramList().size() > 0) {
+        //    view.setImageFromId(0);
+        //} else {
             view.setImageFromId(frame.getPictogramId());
-        }
+        //}
 
         if (onAdapterGetViewListener != null)
             onAdapterGetViewListener.onAdapterGetView(position, view);

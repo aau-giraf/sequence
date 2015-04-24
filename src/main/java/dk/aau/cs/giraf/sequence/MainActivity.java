@@ -259,7 +259,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
 
                 //Create Intent with relevant Extras
                 Intent intent = new Intent(getApplicationContext(), SequenceActivity.class);
-                //intent.setComponent(new ComponentName("dk.aau.cs.giraf.sequenceviewer", "dk.aau.cs.giraf.sequenceviewer.MainActivity"));
+                //intent.setComponent(new ComponentName("dk.aau.cs.giraf.sequenceviewer", "dk.aau.cs.giraf.sequenceviewer.SequenceActivity"));
                 intent.putExtra("sequenceId", sequenceAdapter.getItem(position).getId());
                 intent.putExtra("callerType", "Zebra");
                 intent.putExtra("landscapeMode", false);

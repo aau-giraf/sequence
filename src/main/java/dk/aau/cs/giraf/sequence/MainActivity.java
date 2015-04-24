@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -148,13 +149,22 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     // Sets up either guardian mode or citizen mode, based on the intents
     private void setupModeFromIntents() {
         //Create helper to fetch data from database and fetches intents (from Launcher or AddEditSequencesActivity)
-
-        Bundle extras = getIntent().getExtras();
         int guardianId;
 
-        //Get GuardianId and ChildId from extras
-        guardianId = extras.getInt("currentGuardianID");
-        childId = extras.getInt("currentChildID");
+        if (ActivityManager.isUserAMonkey()) {
+            Helper h = new Helper(this);
+            h.CreateDummyData();
+
+            guardianId = h.profilesHelper.getGuardians().get(0).getId();
+            childId = -1;
+        }
+        else {
+            Bundle extras = getIntent().getExtras();
+
+            //Get GuardianId and ChildId from extras
+            guardianId = extras.getInt("currentGuardianID");
+            childId = extras.getInt("currentChildID");
+        }
 
         //Save guardian locally (Fetch from Database by Id)
         guardian = helper.profilesHelper.getProfileById(guardianId);

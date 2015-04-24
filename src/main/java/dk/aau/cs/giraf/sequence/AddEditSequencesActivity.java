@@ -62,18 +62,20 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     private final int PICTO_NEW_PICTOGRAM_CALL = 567;
     private final int CHOICE_NEW_PICTOGRAM_CALL = 214;
     private final int CHOICE_EDIT_PICTOGRAM_CALL = 235;
-    private final String ADD_PICTOGRAM_OR_CHOICE = "ADD_PICTOGRAM_OR_CHOICE";
-    private final String SAVE_SEQUENCE = "SAVE_SEQUENCE";
-    private final String BACK_SEQUENCE = "BACK_SEQUENCE";
-    private final String EDIT_CHOICE = "EDIT_CHOICE";
+    private final String ADD_PICTOGRAM_OR_CHOICE_TAG = "ADD_PICTOGRAM_OR_CHOICE_TAG";
+    private final String SAVE_SEQUENCE_TAG = "SAVE_SEQUENCE_TAG";
+    private final String BACK_SEQUENCE_TAG = "BACK_SEQUENCE_TAG";
+    private final String EDIT_CHOICE_TAG = "EDIT_CHOICE_TAG";
+    private final String EMPTY_SEQUENCE_ERROR_TAG = "EMPTY_SEQUENCE_ERROR_TAG";
+    private final String DELETE_SEQUENCES_TAG = "DELETE_SEQUENCES_TAG";
     private final int EMPTY_SEQUENCE_ERROR = 1338;
     private final int EMPTY_CHOICE_ERROR = 1586;
     private final int CHOICE_DIALOG = 58306;
-    private final String EMPTY_SEQUENCE_ERROR_TAG = "EMPTY_SEQUENCE_ERROR_TAG";
+
     private Helper helper;
     private EditText sequenceName;
     private LinearLayout parent_container;
-    private final String DELETE_SEQUENCES = "DELETE_SEQUENCES";
+
     private SequenceViewGroup choiceGroup;
     private SequenceViewGroup sequenceChoiceGroupTemplate;
     private boolean choiceListEdited = false;
@@ -177,7 +179,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
                         getApplicationContext().getString(R.string.delete_sequence),
                         getApplicationContext().getString(R.string.delete_this),
                         R.layout.dialog_delete);
-                acceptDeleteDialog.show(getSupportFragmentManager(), DELETE_SEQUENCES);
+                acceptDeleteDialog.show(getSupportFragmentManager(), DELETE_SEQUENCES_TAG);
             }
         });
 
@@ -293,7 +295,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     private void createAndShowAddDialog() {
         //Create instance of AddDialog and display it
         choosePictogramOrChoiceDialog = GirafInflatableDialog.newInstance(this.getString(R.string.add_pictogram_choice), this.getString(R.string.add_pictogram_choice_description), R.layout.dialog_add_pictogram_or_choice);
-        choosePictogramOrChoiceDialog.show(getSupportFragmentManager(), ADD_PICTOGRAM_OR_CHOICE);
+        choosePictogramOrChoiceDialog.show(getSupportFragmentManager(), ADD_PICTOGRAM_OR_CHOICE_TAG);
     }
 
     // Button to search for pictograms
@@ -314,7 +316,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         //Create instance of AddDialog and display it
         if (!changesSaved) {
             backDialog = GirafInflatableDialog.newInstance(this.getString(R.string.back), this.getString(R.string.back_description), R.layout.dialog_back);
-            backDialog.show(getSupportFragmentManager(), BACK_SEQUENCE);
+            backDialog.show(getSupportFragmentManager(), BACK_SEQUENCE_TAG);
         } else {
             super.onBackPressed();
         }
@@ -342,7 +344,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         tempPictogramList.clear();
 
         choiceDialog = GirafInflatableDialog.newInstance(this.getString(R.string.choice), this.getString(R.string.choice_dialog_subtitle), R.layout.dialog_choice, CHOICE_DIALOG);
-        choiceDialog.show(getSupportFragmentManager(), EDIT_CHOICE);
+        choiceDialog.show(getSupportFragmentManager(), EDIT_CHOICE_TAG);
     }
 
     private void setupChoiceDialog() {
@@ -467,7 +469,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     private void createAndShowSaveDialog() {
         //Create instance of AddDialog and display it
         saveDialog = GirafInflatableDialog.newInstance(this.getString(R.string.save), this.getString(R.string.sequence_saved), R.layout.dialog_save);
-        saveDialog.show(getSupportFragmentManager(), SAVE_SEQUENCE);
+        saveDialog.show(getSupportFragmentManager(), SAVE_SEQUENCE_TAG);
     }
 
     // Button to search for pictograms
@@ -731,8 +733,8 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     public void editCustomView(ViewGroup viewGroup, int i) {
         // The choice dialog used a view that is updated according to the sequence. 
         if (i == CHOICE_DIALOG) {
-            choiceGroup = (SequenceViewGroup) viewGroup.findViewById(R.id.choice_view_group);
             sequenceChoiceGroupTemplate = (SequenceViewGroup) viewGroup.findViewById(R.id.choice_view_group);
+            choiceGroup = sequenceChoiceGroupTemplate;
             // Sets up the dialog, now that the resources are properly found.
             setupChoiceDialog();
         }

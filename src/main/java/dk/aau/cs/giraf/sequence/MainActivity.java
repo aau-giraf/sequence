@@ -40,6 +40,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     private SequenceListAdapter sequenceAdapter;
     private Set<Sequence> markedSequences = new HashSet<Sequence>();
     private Helper helper;
+    private AsyncFetchDatabase fetchDatabase;
     private final String DELETE_SEQUENCES_TAG = "DELETE_SEQUENCES_TAG";
 
     // Initialize buttons
@@ -201,6 +202,8 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
                 markSequence(sequence, view);
                 deleteButton.setVisibility(View.VISIBLE);
                 addButton.setVisibility(View.GONE);
+                changeUserButton.setVisibility(View.GONE);
+                setActionBarTitle(getResources().getString(R.string.delete_sequences) + " - " + selectedChild.getName());
                 return true;
             }
         });
@@ -223,7 +226,12 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         for (Sequence seq : markedSequences) {
             helper.sequenceController.removeSequence(seq);
         }
-        sequenceAdapter.notifyDataSetChanged(); // Needs fixing
+        // Reload the adapter - do this in background
+        fetchDatabase.execute();
+        sequenceGrid.invalidateViews();
+        sequenceGrid.setAdapter(sequenceAdapter);
+
+        onBackPressed();
     }
 
     public void cancelDeleteClick(View v) {
@@ -345,7 +353,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     protected synchronized void onResume() {
         super.onResume();
         // Create the AsyncTask thread used to fetch database content
-        AsyncFetchDatabase fetchDatabase = new AsyncFetchDatabase();
+        fetchDatabase = new AsyncFetchDatabase();
 
         // Removes highlighting from Sequences that might have been lifted up when selected before entering the sequence
         for (int i = 0; i < sequenceGrid.getChildCount(); i++) {
@@ -368,6 +376,8 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
 
             deleteButton.setVisibility(View.GONE);
             addButton.setVisibility(View.VISIBLE);
+            changeUserButton.setVisibility(View.VISIBLE);
+            setActionBarTitle(getResources().getString(R.string.app_name) + " - " + selectedChild.getName());
             markingMode = false;
         } else {
             super.onBackPressed();

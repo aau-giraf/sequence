@@ -42,50 +42,55 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
 
     private Profile guardian;
     private Profile selectedChild;
-    private boolean isInEditMode;
-    private boolean isNew;
-    private boolean changesSaved = true;
 
-    public static boolean choiceMode = false;
-    private int guardianId;
     private int childId;
     private int sequenceId;
+    private int guardianId;
+    private boolean isNew;
+    private boolean isInEditMode;
+
     private int pictogramEditPos = -1;
-    public static Sequence sequence;
-    public static Sequence choice = new Sequence();
-    public SequenceAdapter adapter;
-    public SequenceAdapter choiceAdapter;
-    private List<Pictogram> tempPictogramList = new ArrayList<Pictogram>();
+    private boolean changesSaved = true;
+    public static boolean choiceMode = false;
+    private boolean choiceListEdited = false;
+    private int tempPictogramId;
+
+    // Various tag
     private final String PICTO_INTENT_CHECKOUT_ID = "checkoutIds";
-    private final int PICTO_EDIT_SEQUENCE_THUMBNAIL_CALL = 345;
-    private final int PICTO_EDIT_PICTOGRAM_CALL = 456;
-    private final int PICTO_NEW_PICTOGRAM_CALL = 567;
-    private final int CHOICE_NEW_PICTOGRAM_CALL = 214;
-    private final int CHOICE_EDIT_PICTOGRAM_CALL = 235;
     private final String ADD_PICTOGRAM_OR_CHOICE_TAG = "ADD_PICTOGRAM_OR_CHOICE_TAG";
     private final String SAVE_SEQUENCE_TAG = "SAVE_SEQUENCE_TAG";
     private final String BACK_SEQUENCE_TAG = "BACK_SEQUENCE_TAG";
     private final String EDIT_CHOICE_TAG = "EDIT_CHOICE_TAG";
     private final String EMPTY_SEQUENCE_ERROR_TAG = "EMPTY_SEQUENCE_ERROR_TAG";
     private final String DELETE_SEQUENCES_TAG = "DELETE_SEQUENCES_TAG";
-    private final int EMPTY_SEQUENCE_ERROR = 1338;
-    private final int EMPTY_CHOICE_ERROR = 1586;
-    private final int CHOICE_DIALOG = 58306;
+    private final int PICTO_EDIT_SEQUENCE_THUMBNAIL_CALL = 123;
+    private final int PICTO_EDIT_PICTOGRAM_CALL = 234;
+    private final int PICTO_NEW_PICTOGRAM_CALL = 345;
+    private final int CHOICE_DIALOG = 456;
+    private final int CHOICE_NEW_PICTOGRAM_CALL = 567;
+    private final int CHOICE_EDIT_PICTOGRAM_CALL = 678;
+    private final int ERROR_EMPTY_SEQUENCE = 789;
+    private final int ERROR_EMPTY_CHOICE = 890;
 
     private Helper helper;
     private EditText sequenceName;
     private LinearLayout parent_container;
 
+    public static Sequence sequence;
+    public static Sequence choice = new Sequence();
+    public SequenceAdapter adapter;
+    public SequenceAdapter choiceAdapter;
+    private List<Pictogram> tempPictogramList = new ArrayList<Pictogram>();
+
     private SequenceViewGroup choiceGroup;
     private SequenceViewGroup sequenceChoiceGroupTemplate;
-    private boolean choiceListEdited = false;
-    private int tempPictogramId;
 
     // Initialize buttons
     private GirafButton saveButton;
     private GirafButton deleteButton;
     private GirafButton sequenceThumbnailButton;
 
+    // Initialize dialogs
     GirafInflatableDialog choosePictogramOrChoiceDialog;
     GirafInflatableDialog backDialog;
     GirafInflatableDialog saveDialog;
@@ -128,7 +133,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
 
     private void loadSequence() {
         //Create helper to load data from Database (Otherwise start working on empty Sequence)
-        helper = new Helper(this);
+        //helper = new Helper(this);
 
         //If SequenceId from intents is valid, get it from the Database
         if (sequenceId != 0) {
@@ -478,16 +483,19 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     }
 
 
+    /**
+     * Error dialogs
+     * The error dialogs uses the GirafNotifyDialog (From Giraf components), where only some strings and a tag is needed.
+      */
     private void createAndShowErrorDialogEmptySequence() {
         //Creates alertDialog to display error. Clicking Ok dismisses the Dialog
-        GirafNotifyDialog alertDialog = GirafNotifyDialog.newInstance(this.getString(R.string.error), this.getString(R.string.empty_sequence_error), EMPTY_SEQUENCE_ERROR);
+        GirafNotifyDialog alertDialog = GirafNotifyDialog.newInstance(this.getString(R.string.error), this.getString(R.string.empty_sequence_error), ERROR_EMPTY_SEQUENCE);
         alertDialog.show(getSupportFragmentManager(), EMPTY_SEQUENCE_ERROR_TAG);
     }
 
-
     private void createAndShowErrorDialogEmptyChoice() {
         //Creates alertDialog to display error. Clicking Ok dismisses the Dialog
-        GirafNotifyDialog alertDialog = GirafNotifyDialog.newInstance(this.getString(R.string.error), this.getString(R.string.empty_choice_error), EMPTY_CHOICE_ERROR);
+        GirafNotifyDialog alertDialog = GirafNotifyDialog.newInstance(this.getString(R.string.error), this.getString(R.string.empty_choice_error), ERROR_EMPTY_CHOICE);
         alertDialog.show(getSupportFragmentManager(), EMPTY_SEQUENCE_ERROR_TAG);
     }
 
@@ -681,7 +689,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     @Override
     public void noticeDialog(int i) {
         switch (i) {
-            case EMPTY_SEQUENCE_ERROR:
+            case ERROR_EMPTY_SEQUENCE:
 
                 break;
 

@@ -153,7 +153,6 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
 
         if (ActivityManager.isUserAMonkey()) {
             Helper h = new Helper(this);
-            h.CreateDummyData();
 
             guardianId = h.profilesHelper.getGuardians().get(0).getId();
             childId = -1;

@@ -28,14 +28,14 @@ import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.gui.GirafInflatableDialog;
 import dk.aau.cs.giraf.gui.GirafNotifyDialog;
-import dk.aau.cs.giraf.oasis.lib.Helper;
-import dk.aau.cs.giraf.oasis.lib.models.Frame;
-import dk.aau.cs.giraf.oasis.lib.models.Profile;
+import dk.aau.cs.giraf.dblib.Helper;
+import dk.aau.cs.giraf.dblib.models.Frame;
+import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.sequence.PictogramView.OnDeleteClickListener;
 import dk.aau.cs.giraf.sequence.SequenceAdapter.OnAdapterGetViewListener;
 import dk.aau.cs.giraf.sequence.SequenceViewGroup.OnNewButtonClickedListener;
-import dk.aau.cs.giraf.oasis.lib.models.Sequence;
-import dk.aau.cs.giraf.oasis.lib.models.Pictogram;
+import dk.aau.cs.giraf.dblib.models.Sequence;
+import dk.aau.cs.giraf.dblib.models.Pictogram;
 
 @SuppressWarnings("FieldCanBeLocal") // Suppress warnings to keep the similar variables and initializations together
 public class AddEditSequencesActivity extends GirafActivity implements GirafNotifyDialog.Notification, GirafInflatableDialog.OnCustomViewCreatedListener {
@@ -211,7 +211,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         acceptDeleteDialog.dismiss();
         // Delete all selected items
         helper = new Helper(getApplicationContext());
-        helper.sequenceController.removeSequence(sequenceId);
+        helper.sequenceController.remove(sequenceId);
         onBackPressed();
     }
 

@@ -11,7 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import dk.aau.cs.giraf.oasis.lib.Helper;
+import dk.aau.cs.giraf.dblib.Helper;
 
 
 /**

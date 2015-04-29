@@ -206,8 +206,8 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         }
     }
 
-    // Button to accept delete of sequences
     public void deleteClick(View v) {
+        // Button to accept delete of sequences
         acceptDeleteDialog.dismiss();
         // Delete all selected items
         helper = new Helper(getApplicationContext());
@@ -215,8 +215,8 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         onBackPressed();
     }
 
-    // Button to cancel delete of sequences
     public void cancelDeleteClick(View v) {
+        // Button to cancel delete of sequences
         acceptDeleteDialog.dismiss();
     }
 
@@ -295,30 +295,26 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         changesSaved = true;
     }
 
-    // creates the "add pictogram or choice" view
-    // The following two methods is connected to girafbuttons in the xml file
     private void createAndShowAddDialog() {
-        //Create instance of AddDialog and display it
+        //Create instance of AddDialog and display it with the two choices, Add Pictogram or Add Choice
         choosePictogramOrChoiceDialog = GirafInflatableDialog.newInstance(this.getString(R.string.add_pictogram_choice), this.getString(R.string.add_pictogram_choice_description), R.layout.dialog_add_pictogram_or_choice);
         choosePictogramOrChoiceDialog.show(getSupportFragmentManager(), ADD_PICTOGRAM_OR_CHOICE_TAG);
     }
 
-    // Button to search for pictograms
     public void getPictogramClick(View v) {
+        // Attempts to add a pictogram by opening PictoSearch
         callPictoSearch(PICTO_NEW_PICTOGRAM_CALL);
         choosePictogramOrChoiceDialog.dismiss();
     }
 
-    // Button to search for pictograms, that should be used in a "choice" activity
     public void getChoiceClick(View v) {
+        // Opens the Choice activity dialog box
         createAndShowChoiceDialog();
         choosePictogramOrChoiceDialog.dismiss();
     }
 
-    // creates the "back dialog" if the backbutton is pressed. Only shows the dialog if there has been changes.
-    // The following two methods is connected to girafbuttons in the view
     private void createAndShowBackDialog() {
-        //Create instance of AddDialog and display it
+        // Creates the "back dialog" if the backbutton is pressed. Only shows the dialog if there has been changes.
         if (!changesSaved) {
             backDialog = GirafInflatableDialog.newInstance(this.getString(R.string.back), this.getString(R.string.back_description), R.layout.dialog_back);
             backDialog.show(getSupportFragmentManager(), BACK_SEQUENCE_TAG);
@@ -327,8 +323,8 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         }
     }
 
-    // Button to search for pictograms
-    public void backSaveClick(View v) {
+    public void onBackSaveButton(View v) {
+        // Save button on dialog box that appears when trying to click "back" without saving changes
         checkSequenceBeforeSave(false);
         backDialog.dismiss();
         if (changesSaved) {
@@ -336,12 +332,16 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         }
     }
 
-    // Button to search for pictograms, that should be used in a "choice" activity
-    public void backDontSaveClick(View v) {
+    public void onBackNoSaveButton(View v) {
+        // Don't save button on dialog box that appears when trying to click "back" without saving changes
         backDialog.dismiss();
         super.onBackPressed();
     }
 
+    public void onBackCancelSaveButton(View v) {
+        // Cancel button on dialog box that appears when trying to click "back" without saving changes
+        backDialog.dismiss();
+    }
 
     private void createAndShowChoiceDialog() {
         //Create instance of ChoiceDialog and display it

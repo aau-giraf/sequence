@@ -33,7 +33,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     private Profile guardian;
     private Profile selectedChild;
     private boolean isChildSet = false;
-    private int childId;
+    private long childId;
     private boolean markingMode = false;
 
     private GridView sequenceGrid;
@@ -102,7 +102,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                         //When child is selected, save Child locally and update application accordingly (Title name and Sequences)
-                        childId = (int) id;
+                        childId = id;
                         setChild();
                         childSelector.dismiss();
                     }
@@ -150,11 +150,11 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         //Create helper to fetch data from database and fetches intents (from Launcher or AddEditSequencesActivity)
 
         Bundle extras = getIntent().getExtras();
-        int guardianId;
+        long guardianId;
 
         //Get GuardianId and ChildId from extras
-        guardianId = extras.getInt("currentGuardianID");
-        childId = extras.getInt("currentChildID");
+        guardianId = extras.getLong("currentGuardianID");
+        childId = extras.getLong("currentChildID");
 
         //Save guardian locally (Fetch from Database by Id)
         guardian = helper.profilesHelper.getProfileById(guardianId);
@@ -248,7 +248,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         childSelector.setOnListItemClick(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                childId = (int) id;
+                childId = id;
                 setChild();
                 isChildSet = true;
                 childSelector.dismiss();
@@ -285,7 +285,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     // Collects data about the child - and set actionbar title
     private synchronized void setChild() {
         //Save Child locally and update relevant information for application
-        selectedChild = helper.profilesHelper.getProfileById(childId);
+        selectedChild = helper.profilesHelper.getById(childId);
         this.setActionBarTitle(getResources().getString(R.string.app_name) + " - " + selectedChild.getName()); // selectedChild.getName() "Child's name code"
 
         // AsyncTask thread
@@ -298,7 +298,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
 
         helper = new Helper(this);
 
-        selectedChild = helper.profilesHelper.getProfileById(childId);
+        selectedChild = helper.profilesHelper.getById(childId);
 
         // If no profile has been selected, show an error dialog and the profile selector, else start AddEditSequencesActivity
         if (selectedChild == null) {
@@ -308,7 +308,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
             childSelector.setOnListItemClick(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                    childId = (int) id;
+                    childId = id;
                     setChild();
                     childSelector.dismiss();
                 }

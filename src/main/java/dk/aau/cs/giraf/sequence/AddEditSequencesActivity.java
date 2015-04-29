@@ -43,9 +43,9 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     private Profile guardian;
     private Profile selectedChild;
 
-    private int childId;
-    private int sequenceId;
-    private int guardianId;
+    private long childId;
+    private long sequenceId;
+    private long guardianId;
     private boolean isNew;
     private boolean isInEditMode;
 
@@ -53,7 +53,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     private boolean changesSaved = true;
     public static boolean choiceMode = false;
     private boolean choiceListEdited = false;
-    private int tempPictogramId;
+    private long tempPictogramId;
 
     // Various tag
     private final String PICTO_INTENT_CHECKOUT_ID = "checkoutIds";
@@ -117,9 +117,9 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
 
     private void loadIntents() {
         Bundle extras = getIntent().getExtras();
-        childId = extras.getInt("childId");
-        sequenceId = extras.getInt("sequenceId");
-        guardianId = extras.getInt("guardianId");
+        childId = extras.getLong("childId");
+        sequenceId = extras.getLong("sequenceId");
+        guardianId = extras.getLong("guardianId");
         isNew = extras.getBoolean("isNew");
         isInEditMode = extras.getBoolean("editMode");
     }

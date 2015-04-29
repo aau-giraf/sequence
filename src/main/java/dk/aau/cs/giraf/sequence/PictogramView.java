@@ -169,7 +169,7 @@ public class PictogramView extends LinearLayout {
         }
     }
 
-    public void setImageFromId(int id) {
+    public void setImageFromId(long id) {
         Helper helper;
         helper = new Helper(getContext());
 

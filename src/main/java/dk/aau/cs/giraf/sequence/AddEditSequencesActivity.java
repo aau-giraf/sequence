@@ -54,6 +54,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     public static boolean choiceMode = false;
     private boolean choiceListEdited = false;
     private long tempPictogramId;
+    private boolean deleteNewCreatedSequence = false;
 
     // Various tag
     private final String PICTO_INTENT_CHECKOUT_ID = "checkoutIds";
@@ -180,6 +181,10 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                // Prevents the save unsaved changes from appearing when deleting a newly created sequence that has not yet been saved.
+                deleteNewCreatedSequence = true;
+
                 acceptDeleteDialog = GirafInflatableDialog.newInstance(
                         getApplicationContext().getString(R.string.delete_sequence),
                         getApplicationContext().getString(R.string.delete_this),
@@ -314,8 +319,8 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     }
 
     private void createAndShowBackDialog() {
-        // Creates the "back dialog" if the backbutton is pressed. Only shows the dialog if there has been changes.
-        if (!changesSaved) {
+        // Creates the "back dialog" if the back button is pressed. Only shows the dialog if there has been changes.
+        if (!changesSaved && !deleteNewCreatedSequence) {
             backDialog = GirafInflatableDialog.newInstance(this.getString(R.string.back), this.getString(R.string.back_description), R.layout.dialog_back);
             backDialog.show(getSupportFragmentManager(), BACK_SEQUENCE_TAG);
         } else {
@@ -377,8 +382,8 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         setupChoiceGroup(choiceAdapter);
     }
 
-    // SKRIV NOGET HER
     public void choiceSaveClick(View v) {
+        // Save button used at the create "Choice option" activity dialog box
         if (!choiceListEdited) {
             choice.getFramesList().clear();
             if (pictogramEditPos != -1) {
@@ -422,8 +427,8 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         choiceDialog.dismiss();
     }
 
-    // Button to search for pictograms, that should be used in a "choice" activity
     public void choiceCancelClick(View v) {
+        // Cancel button used at the create "Choice option" activity dialog box
         choiceMode = false;
         choiceListEdited = false;
         pictogramEditPos = -1;
@@ -468,17 +473,17 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         return choiceGroup;
     }
 
-
-    // creates the "save dialog", when the save button is clicked.
-    // The following two methods is connected to girafbuttons in the view
     private void createAndShowSaveDialog() {
+        // creates the "save dialog", when the save button is clicked.
+        // The following two methods is connected to girafbuttons in the view
+
         //Create instance of AddDialog and display it
         saveDialog = GirafInflatableDialog.newInstance(this.getString(R.string.save), this.getString(R.string.sequence_saved), R.layout.dialog_save);
         saveDialog.show(getSupportFragmentManager(), SAVE_SEQUENCE_TAG);
     }
 
-    // Button to search for pictograms
     public void savedClick(View v) {
+        // Okay button at the "Changes saved" activity dialog box
         saveDialog.dismiss();
     }
 

@@ -225,11 +225,12 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         for (Sequence seq : markedSequences) {
             helper.sequenceController.remove(seq);
         }
+
         // Reload the adapter - do this in background
-        fetchDatabase.execute();
+        AsyncFetchDatabase fetchDatabaseAfterDelete = new AsyncFetchDatabase();
+        fetchDatabaseAfterDelete.execute();
         sequenceGrid.invalidateViews();
         sequenceGrid.setAdapter(sequenceAdapter);
-
         onBackPressed();
     }
 

@@ -179,7 +179,7 @@ public class PictogramView extends LinearLayout {
             Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.icon_choose);
             pictogram.setImageBitmap(bm);
         } else {
-            pictogram.setImageBitmap(helper.pictogramHelper.getPictogramById(id).getImage());
+            pictogram.setImageBitmap(helper.pictogramHelper.getById(id).getImage());
         }
     }
 

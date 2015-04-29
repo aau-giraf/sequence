@@ -84,9 +84,5 @@ public class SequenceAdapter extends BaseAdapter {
     public interface OnAdapterGetViewListener {
         public void onAdapterGetView(int position, View view);
     }
-
-    public OnAdapterGetViewListener getOnAdapterGetViewListener() {
-        return this.onAdapterGetViewListener;
-    }
 }
 

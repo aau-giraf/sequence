@@ -127,8 +127,8 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     private void loadProfiles() {
         //Create helper to load Child from Database
         helper = new Helper(this);
-        selectedChild = helper.profilesHelper.getProfileById(childId);
-        guardian = helper.profilesHelper.getProfileById(guardianId);
+        selectedChild = helper.profilesHelper.getById(childId);
+        guardian = helper.profilesHelper.getById(guardianId);
     }
 
     private void loadSequence() {
@@ -201,7 +201,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         //If no Image has been selected or the Sequence, display the Add Sequence Picture. Otherwise load the image for the Button
         if (sequence.getPictogramId() != 0) {
             helper = new Helper(this);
-            Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(sequence.getPictogramId()).getImage());
+            Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getById(sequence.getPictogramId()).getImage());
             sequenceThumbnailButton.setIcon(d);
         }
     }
@@ -225,7 +225,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         helper = new Helper(this);
 
         //Save Child locally and update relevant information for application
-        selectedChild = helper.profilesHelper.getProfileById(childId);
+        selectedChild = helper.profilesHelper.getById(childId);
         if (isNew) {
             this.setActionBarTitle(getResources().getString(R.string.new_sequence));
         } else {
@@ -657,7 +657,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         }
 
         sequence.setPictogramId(checkoutIds[0]);
-        Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(sequence.getPictogramId()).getImage());
+        Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getById(sequence.getPictogramId()).getImage());
         sequenceThumbnailButton.setIcon(d);
         changesSaved = false;
     }

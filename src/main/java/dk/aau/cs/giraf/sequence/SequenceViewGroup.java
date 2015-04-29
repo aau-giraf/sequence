@@ -1,5 +1,6 @@
 package dk.aau.cs.giraf.sequence;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.database.DataSetObserver;
@@ -383,6 +384,8 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 
                     move.setAnimationListener(new AnimationListener() {
 
+                        // Suppresses the warning due to the usage of the onLayout in the if-statement below.
+                        @SuppressLint("WrongCall")
                         @Override
                         public void onAnimationEnd(Animation animation) {
                             if (startDragIndex != curDragIndexPos) {

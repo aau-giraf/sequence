@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import android.content.ComponentName;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -157,7 +156,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         childId = extras.getLong("currentChildID");
 
         //Save guardian locally (Fetch from Database by Id)
-        guardian = helper.profilesHelper.getProfileById(guardianId);
+        guardian = helper.profilesHelper.getById(guardianId);
 
         //Make user pick a child and set up GuardianMode if ChildId is -1 (= Logged in as Guardian)
         if (childId == -1) {
@@ -224,7 +223,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         acceptDeleteDialog.dismiss();
         // Delete all selected items
         for (Sequence seq : markedSequences) {
-            helper.sequenceController.removeSequence(seq);
+            helper.sequenceController.remove(seq);
         }
         // Reload the adapter - do this in background
         fetchDatabase.execute();

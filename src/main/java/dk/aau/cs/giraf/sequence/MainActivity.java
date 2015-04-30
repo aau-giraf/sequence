@@ -212,7 +212,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         view.setBackgroundDrawable(null);
     }
 
-    public void deleteClick(View v) {
+    public void onConfirmDeleteClick(View v) {
         // Button to accept delete of sequences
         acceptDeleteDialog.dismiss();
         // Delete all selected items
@@ -228,7 +228,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         onBackPressed();
     }
 
-    public void cancelDeleteClick(View v) {
+    public void onCancelDeleteClick(View v) {
         // Button to cancel delete of sequences
         acceptDeleteDialog.dismiss();
     }

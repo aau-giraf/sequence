@@ -37,7 +37,8 @@ import dk.aau.cs.giraf.sequence.SequenceViewGroup.OnNewButtonClickedListener;
 import dk.aau.cs.giraf.dblib.models.Sequence;
 import dk.aau.cs.giraf.dblib.models.Pictogram;
 
-@SuppressWarnings("FieldCanBeLocal") // Suppress warnings to keep the similar variables and initializations together
+@SuppressWarnings("FieldCanBeLocal")
+// Suppress warnings to keep the similar variables and initializations together
 public class AddEditSequencesActivity extends GirafActivity implements GirafNotifyDialog.Notification, GirafInflatableDialog.OnCustomViewCreatedListener {
 
     private Profile guardian;
@@ -211,20 +212,6 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         }
     }
 
-    public void deleteClick(View v) {
-        // Button to accept delete of sequences
-        acceptDeleteDialog.dismiss();
-        // Delete all selected items
-        helper = new Helper(getApplicationContext());
-        helper.sequenceController.remove(sequenceId);
-        onBackPressed();
-    }
-
-    public void cancelDeleteClick(View v) {
-        // Button to cancel delete of sequences
-        acceptDeleteDialog.dismiss();
-    }
-
     private void setupActionBar() {
         //Creates helper to fetch data from the Database
         helper = new Helper(this);
@@ -252,6 +239,20 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
                 return false;
             }
         });
+    }
+
+    public void onConfirmDeleteClick(View v) {
+        // Button to accept delete of sequences
+        acceptDeleteDialog.dismiss();
+        // Delete all selected items
+        helper = new Helper(getApplicationContext());
+        helper.sequenceController.remove(sequenceId);
+        onBackPressed();
+    }
+
+    public void onCancelDeleteClick(View v) {
+        // Button to cancel delete of sequences
+        acceptDeleteDialog.dismiss();
     }
 
     private boolean checkSequenceBeforeSave(boolean confirmation) {
@@ -306,6 +307,34 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         choosePictogramOrChoiceDialog.show(getSupportFragmentManager(), ADD_PICTOGRAM_OR_CHOICE_TAG);
     }
 
+    private void createAndShowBackDialog() {
+        // Creates the "back dialog" if the back button is pressed. Only shows the dialog if there has been changes.
+        if (!changesSaved && !deleteNewCreatedSequence) {
+            backDialog = GirafInflatableDialog.newInstance(this.getString(R.string.back), this.getString(R.string.back_description), R.layout.dialog_back);
+            backDialog.show(getSupportFragmentManager(), BACK_SEQUENCE_TAG);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    private void createAndShowChoiceDialog() {
+        //Create instance of ChoiceDialog and display it
+        choiceMode = true;
+        tempPictogramList.clear();
+
+        choiceDialog = GirafInflatableDialog.newInstance(this.getString(R.string.choice), this.getString(R.string.choice_dialog_subtitle), R.layout.dialog_choice, CHOICE_DIALOG);
+        choiceDialog.show(getSupportFragmentManager(), EDIT_CHOICE_TAG);
+    }
+
+    private void createAndShowSaveDialog() {
+        // creates the "save dialog", when the save button is clicked.
+        // The following two methods is connected to girafbuttons in the view
+
+        //Create instance of AddDialog and display it
+        saveDialog = GirafInflatableDialog.newInstance(this.getString(R.string.save), this.getString(R.string.sequence_saved), R.layout.dialog_save);
+        saveDialog.show(getSupportFragmentManager(), SAVE_SEQUENCE_TAG);
+    }
+
     public void getPictogramClick(View v) {
         // Attempts to add a pictogram by opening PictoSearch
         callPictoSearch(PICTO_NEW_PICTOGRAM_CALL);
@@ -316,16 +345,6 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         // Opens the Choice activity dialog box
         createAndShowChoiceDialog();
         choosePictogramOrChoiceDialog.dismiss();
-    }
-
-    private void createAndShowBackDialog() {
-        // Creates the "back dialog" if the back button is pressed. Only shows the dialog if there has been changes.
-        if (!changesSaved && !deleteNewCreatedSequence) {
-            backDialog = GirafInflatableDialog.newInstance(this.getString(R.string.back), this.getString(R.string.back_description), R.layout.dialog_back);
-            backDialog.show(getSupportFragmentManager(), BACK_SEQUENCE_TAG);
-        } else {
-            super.onBackPressed();
-        }
     }
 
     public void onBackSaveButton(View v) {
@@ -346,15 +365,6 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     public void onBackCancelSaveButton(View v) {
         // Cancel button on dialog box that appears when trying to click "back" without saving changes
         backDialog.dismiss();
-    }
-
-    private void createAndShowChoiceDialog() {
-        //Create instance of ChoiceDialog and display it
-        choiceMode = true;
-        tempPictogramList.clear();
-
-        choiceDialog = GirafInflatableDialog.newInstance(this.getString(R.string.choice), this.getString(R.string.choice_dialog_subtitle), R.layout.dialog_choice, CHOICE_DIALOG);
-        choiceDialog.show(getSupportFragmentManager(), EDIT_CHOICE_TAG);
     }
 
     private void setupChoiceDialog() {
@@ -473,25 +483,12 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         return choiceGroup;
     }
 
-    private void createAndShowSaveDialog() {
-        // creates the "save dialog", when the save button is clicked.
-        // The following two methods is connected to girafbuttons in the view
-
-        //Create instance of AddDialog and display it
-        saveDialog = GirafInflatableDialog.newInstance(this.getString(R.string.save), this.getString(R.string.sequence_saved), R.layout.dialog_save);
-        saveDialog.show(getSupportFragmentManager(), SAVE_SEQUENCE_TAG);
-    }
-
     public void savedClick(View v) {
         // Okay button at the "Changes saved" activity dialog box
         saveDialog.dismiss();
     }
 
-
-    /**
-     * Error dialogs
-     * The error dialogs uses the GirafNotifyDialog (From Giraf components), where only some strings and a tag is needed.
-      */
+    // Error dialogs. The error dialogs uses the GirafNotifyDialog (From Giraf components), where only some strings and a tag is needed.
     private void createAndShowErrorDialogEmptySequence() {
         //Creates alertDialog to display error. Clicking Ok dismisses the Dialog
         GirafNotifyDialog alertDialog = GirafNotifyDialog.newInstance(this.getString(R.string.error), this.getString(R.string.empty_sequence_error), ERROR_EMPTY_SEQUENCE);

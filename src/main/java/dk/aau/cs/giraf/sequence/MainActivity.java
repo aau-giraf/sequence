@@ -13,7 +13,6 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 
 import dk.aau.cs.giraf.activity.GirafActivity;
-import dk.aau.cs.giraf.gui.GProfileSelector;
 import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.gui.GirafInflatableDialog;
 import dk.aau.cs.giraf.gui.GirafNotifyDialog;
@@ -110,7 +109,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
             public void onClick(View v) {
                 Sequence sequence = new Sequence();
                 //equenceListAdapter.SequencePictogramViewPair sequenceViewPair = new SequenceListAdapter.SequencePictogramViewPair(sequence, null);
-                enterAddEditSequence(sequence, v, true);
+                enterAddEditSequence(sequence, true);
             }
         });
 
@@ -165,8 +164,9 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         }
     }
 
-    // Sets up guardian mode - all functions are enabled
     private void setupGuardianMode() {
+        // Sets up guardian mode - all functions are enabled
+
         //Clicking a Sequence lifts up the view and leads up to entering AddEditSequencesActivity by calling enterAddEditSequence
         sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -174,10 +174,11 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
 
                 final Sequence sequence = sequenceAdapter.getItem(position);
 
+                // In case of markingMode, mark sequences upon normal clicking
                 if (!markingMode) {
                     ((PictogramView) view).liftUp();
                     // Intent is not stated here, as there are two different modes - if guardian then edit mode, else if citizen then view mode
-                    enterAddEditSequence(sequence, view, false);
+                    enterAddEditSequence(sequence, false);
                 } else {
                     if (markedSequences.contains(sequence)) {
                         unMarkSequence(sequence, view);
@@ -187,6 +188,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
                 }
             }
         });
+        // Long click listener. Used to enter marking mode.
         sequenceGrid.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -203,11 +205,13 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     }
 
     private void markSequence(Sequence sequence, View view) {
+        // Marks the clicked sequence by changing it's background color
         markedSequences.add(sequence);
         view.setBackgroundColor(getResources().getColor(R.color.giraf_page_indicator_active));
     }
 
     private void unMarkSequence(Sequence c, View view) {
+        // Clears the background color of a marked sequence
         markedSequences.remove(c);
         view.setBackgroundDrawable(null);
     }
@@ -277,7 +281,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     }
 
     //Sets up relevant intents and starts AddEditSequencesActivity if a profile is selected
-    private void enterAddEditSequence(Sequence sequence, View v, boolean isNew) {
+    private void enterAddEditSequence(Sequence sequence, boolean isNew) {
 
         helper = new Helper(this);
 

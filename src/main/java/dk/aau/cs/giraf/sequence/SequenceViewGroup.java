@@ -6,6 +6,7 @@ import android.content.res.TypedArray;
 import android.database.DataSetObserver;
 import android.graphics.Matrix;
 import android.graphics.Rect;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -356,7 +357,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
+    public boolean onTouchEvent(@NonNull MotionEvent event) {
 
         //If performing drag animation then consume event to not disrupt
         if (animatingDragReposition) return true;

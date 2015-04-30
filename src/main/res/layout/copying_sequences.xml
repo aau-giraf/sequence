@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/giraf_background"
     tools:context="dk.aau.cs.giraf.sequence.DeleteSequencesActivity"
+    tools:ignore="OverDraw"
     android:id="@+id/copying_sequences"
     android:layout_width="match_parent"
     android:layout_height="match_parent"

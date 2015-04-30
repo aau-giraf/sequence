@@ -718,7 +718,6 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
                         @Override
                         public void onDeleteClick() {
                             //Remove frame and update Adapter
-                            //seq.getFramesList().remove(position);
                             if (choiceMode) {
                                 choiceListEdited = true;
                                 choice.getFramesList().remove(position);

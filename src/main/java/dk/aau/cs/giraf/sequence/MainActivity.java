@@ -44,6 +44,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     private static final String DELETE_SEQUENCES_TAG = "DELETE_SEQUENCES_TAG";
     private static final int CHANGE_USER_DIALOG = 1234;
     private static final int NO_PROFILE_ERROR = 1770;
+    private static final int NO_SEQUENCE_MARKED_ERROR = 1771;
 
     // Initialize buttons
     GirafInflatableDialog acceptDeleteDialog;
@@ -125,13 +126,12 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
             }
         });
 
-        // Todo : Fix så den siger det rigtige antal sekvenser her
         deleteButton.setOnClickListener(new OnClickListener() {
             // Opens a dialog to remove the selected sequences
             @Override
             public void onClick(View v) {
                 if (markedSequences.size() == 0) {
-                    // do nothing
+                    createAndShowErrorDialogNoSequencesMarked();
                 } else if (markedSequences.size() <= 1) {
                     acceptDeleteDialog = GirafInflatableDialog.newInstance(
                             getApplicationContext().getString(R.string.delete_sequences),
@@ -394,5 +394,11 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         final String NO_PROFILE_ERROR_TAG = "NO_PROFILE_ERROR_TAG";
         GirafNotifyDialog alertDialog = GirafNotifyDialog.newInstance(this.getString(R.string.error), this.getString(R.string.no_profile_error), NO_PROFILE_ERROR);
         alertDialog.show(getSupportFragmentManager(), NO_PROFILE_ERROR_TAG);
+    }
+
+    private void createAndShowErrorDialogNoSequencesMarked() {
+        final String NO_SEQUENCE_MARKED_ERROR_TAG = "NO_SEQUENCE_MARKED_ERROR_TAG";
+        GirafNotifyDialog alertDialog = GirafNotifyDialog.newInstance(this.getString(R.string.error), this.getString(R.string.no_sequence_marked_error), NO_SEQUENCE_MARKED_ERROR);
+        alertDialog.show(getSupportFragmentManager(), NO_SEQUENCE_MARKED_ERROR_TAG);
     }
 }

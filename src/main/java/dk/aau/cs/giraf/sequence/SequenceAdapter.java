@@ -5,8 +5,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import dk.aau.cs.giraf.oasis.lib.models.Frame;
-import dk.aau.cs.giraf.oasis.lib.models.Sequence;
+import dk.aau.cs.giraf.dblib.models.Frame;
+import dk.aau.cs.giraf.dblib.models.Sequence;
 
 /**
  * Adapter used for sequences, in the context of the given child
@@ -83,10 +83,6 @@ public class SequenceAdapter extends BaseAdapter {
 
     public interface OnAdapterGetViewListener {
         public void onAdapterGetView(int position, View view);
-    }
-
-    public OnAdapterGetViewListener getOnAdapterGetViewListener() {
-        return this.onAdapterGetViewListener;
     }
 }
 

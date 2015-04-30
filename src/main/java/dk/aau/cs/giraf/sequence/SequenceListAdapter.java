@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import dk.aau.cs.giraf.oasis.lib.models.Sequence;
+import dk.aau.cs.giraf.dblib.models.Sequence;
 
 /**
  * Adapter for a List of Sequences typically associated with a child

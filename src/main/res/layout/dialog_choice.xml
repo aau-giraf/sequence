@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:svg="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -30,7 +31,8 @@
                 android:background="@layout/main_picto_container_bg"
                 svg:horizontalSpacing="@dimen/padding_standard"
                 svg:itemHeight="@dimen/activity_main_picto_size"
-                svg:itemWidth="@dimen/activity_main_picto_size" />
+                svg:itemWidth="@dimen/activity_main_picto_size"
+                tools:ignore="InconsistentLayout" />
         </FrameLayout>
     </HorizontalScrollView>
 

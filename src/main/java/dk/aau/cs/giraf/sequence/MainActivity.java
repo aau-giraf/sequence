@@ -4,8 +4,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import android.app.ActivityManager;
-import android.content.ComponentName;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -19,9 +17,9 @@ import dk.aau.cs.giraf.gui.GProfileSelector;
 import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.gui.GirafInflatableDialog;
 import dk.aau.cs.giraf.gui.GirafNotifyDialog;
-import dk.aau.cs.giraf.oasis.lib.Helper;
-import dk.aau.cs.giraf.oasis.lib.models.Profile;
-import dk.aau.cs.giraf.oasis.lib.models.Sequence;
+import dk.aau.cs.giraf.dblib.Helper;
+import dk.aau.cs.giraf.dblib.models.Profile;
+import dk.aau.cs.giraf.dblib.models.Sequence;
 import dk.aau.cs.giraf.sequenceviewer.SequenceActivity;
 /*
  * This is the main activity of the sequence application
@@ -34,14 +32,13 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     private Profile guardian;
     private Profile selectedChild;
     private boolean isChildSet = false;
-    private int childId;
+    private long childId;
     private boolean markingMode = false;
 
     private GridView sequenceGrid;
     private SequenceListAdapter sequenceAdapter;
     private Set<Sequence> markedSequences = new HashSet<Sequence>();
     private Helper helper;
-    private AsyncFetchDatabase fetchDatabase;
     private final String DELETE_SEQUENCES_TAG = "DELETE_SEQUENCES_TAG";
 
     // Initialize buttons
@@ -103,7 +100,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                         //When child is selected, save Child locally and update application accordingly (Title name and Sequences)
-                        childId = (int) id;
+                        childId = id;
                         setChild();
                         childSelector.dismiss();
                     }
@@ -149,24 +146,16 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     // Sets up either guardian mode or citizen mode, based on the intents
     private void setupModeFromIntents() {
         //Create helper to fetch data from database and fetches intents (from Launcher or AddEditSequencesActivity)
-        int guardianId;
 
-        if (ActivityManager.isUserAMonkey()) {
-            Helper h = new Helper(this);
+        Bundle extras = getIntent().getExtras();
+        long guardianId;
 
-            guardianId = h.profilesHelper.getGuardians().get(0).getId();
-            childId = -1;
-        }
-        else {
-            Bundle extras = getIntent().getExtras();
-
-            //Get GuardianId and ChildId from extras
-            guardianId = extras.getInt("currentGuardianID");
-            childId = extras.getInt("currentChildID");
-        }
+        //Get GuardianId and ChildId from extras
+        guardianId = extras.getLong("currentGuardianID");
+        childId = extras.getLong("currentChildID");
 
         //Save guardian locally (Fetch from Database by Id)
-        guardian = helper.profilesHelper.getProfileById(guardianId);
+        guardian = helper.profilesHelper.getById(guardianId);
 
         //Make user pick a child and set up GuardianMode if ChildId is -1 (= Logged in as Guardian)
         if (childId == -1) {
@@ -233,13 +222,14 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         acceptDeleteDialog.dismiss();
         // Delete all selected items
         for (Sequence seq : markedSequences) {
-            helper.sequenceController.removeSequence(seq);
+            helper.sequenceController.remove(seq);
         }
+
         // Reload the adapter - do this in background
-        fetchDatabase.execute();
+        AsyncFetchDatabase fetchDatabaseAfterDelete = new AsyncFetchDatabase();
+        fetchDatabaseAfterDelete.execute();
         sequenceGrid.invalidateViews();
         sequenceGrid.setAdapter(sequenceAdapter);
-
         onBackPressed();
     }
 
@@ -257,7 +247,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         childSelector.setOnListItemClick(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                childId = (int) id;
+                childId = id;
                 setChild();
                 isChildSet = true;
                 childSelector.dismiss();
@@ -294,7 +284,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     // Collects data about the child - and set actionbar title
     private synchronized void setChild() {
         //Save Child locally and update relevant information for application
-        selectedChild = helper.profilesHelper.getProfileById(childId);
+        selectedChild = helper.profilesHelper.getById(childId);
         this.setActionBarTitle(getResources().getString(R.string.app_name) + " - " + selectedChild.getName()); // selectedChild.getName() "Child's name code"
 
         // AsyncTask thread
@@ -307,7 +297,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
 
         helper = new Helper(this);
 
-        selectedChild = helper.profilesHelper.getProfileById(childId);
+        selectedChild = helper.profilesHelper.getById(childId);
 
         // If no profile has been selected, show an error dialog and the profile selector, else start AddEditSequencesActivity
         if (selectedChild == null) {
@@ -317,7 +307,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
             childSelector.setOnListItemClick(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                    childId = (int) id;
+                    childId = id;
                     setChild();
                     childSelector.dismiss();
                 }
@@ -362,7 +352,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     protected synchronized void onResume() {
         super.onResume();
         // Create the AsyncTask thread used to fetch database content
-        fetchDatabase = new AsyncFetchDatabase();
+        AsyncFetchDatabase fetchDatabaseOnResume = new AsyncFetchDatabase();
 
         // Removes highlighting from Sequences that might have been lifted up when selected before entering the sequence
         for (int i = 0; i < sequenceGrid.getChildCount(); i++) {
@@ -373,7 +363,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
 
         //If a Child is selected at this point, update Sequences for the Child
         if (isChildSet) {
-            fetchDatabase.execute();
+            fetchDatabaseOnResume.execute();
         }
     }
 

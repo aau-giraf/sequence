@@ -39,7 +39,6 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     private SequenceListAdapter sequenceAdapter;
     private Set<Sequence> markedSequences = new HashSet<Sequence>();
     private Helper helper;
-    private AsyncFetchDatabase fetchDatabase;
     private final String DELETE_SEQUENCES_TAG = "DELETE_SEQUENCES_TAG";
 
     // Initialize buttons
@@ -353,7 +352,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     protected synchronized void onResume() {
         super.onResume();
         // Create the AsyncTask thread used to fetch database content
-        fetchDatabase = new AsyncFetchDatabase();
+        AsyncFetchDatabase fetchDatabaseOnResume = new AsyncFetchDatabase();
 
         // Removes highlighting from Sequences that might have been lifted up when selected before entering the sequence
         for (int i = 0; i < sequenceGrid.getChildCount(); i++) {
@@ -364,7 +363,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
 
         //If a Child is selected at this point, update Sequences for the Child
         if (isChildSet) {
-            fetchDatabase.execute();
+            fetchDatabaseOnResume.execute();
         }
     }
 

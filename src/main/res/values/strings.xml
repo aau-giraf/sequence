@@ -35,4 +35,5 @@
     <string name="sequence_saved">Sekvensen er blevet gemt</string>
     <string name="unnamed_sequence">Unavngivet sekvens</string>
     <string name="choice_dialog_subtitle">Rediger piktogrammer der kan vælges imellem.</string>
+    <string name="change_user_dialog_description">Vælg en borger du ønsker at administrere sekvenser for</string>
 </resources>

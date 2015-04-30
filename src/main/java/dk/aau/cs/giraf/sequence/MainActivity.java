@@ -20,12 +20,13 @@ import dk.aau.cs.giraf.gui.GirafNotifyDialog;
 import dk.aau.cs.giraf.dblib.Helper;
 import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.dblib.models.Sequence;
+import dk.aau.cs.giraf.gui.GirafProfileSelectorDialog;
 import dk.aau.cs.giraf.sequenceviewer.SequenceActivity;
 /*
  * This is the main activity of the sequence application
  * The activity shows the overview page, of available sequences, for the chosen user
  */
-public class MainActivity extends GirafActivity implements SequenceListAdapter.SelectedSequenceAware, GirafNotifyDialog.Notification {
+public class MainActivity extends GirafActivity implements SequenceListAdapter.SelectedSequenceAware, GirafNotifyDialog.Notification, GirafProfileSelectorDialog.OnSingleProfileSelectedListener {
 
     private static final int numColumns = 5;
 
@@ -34,12 +35,15 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     private boolean isChildSet = false;
     private long childId;
     private boolean markingMode = false;
+    private long guardianId;
 
     private GridView sequenceGrid;
     private SequenceListAdapter sequenceAdapter;
     private Set<Sequence> markedSequences = new HashSet<Sequence>();
     private Helper helper;
-    private final String DELETE_SEQUENCES_TAG = "DELETE_SEQUENCES_TAG";
+    private static final String DELETE_SEQUENCES_TAG = "DELETE_SEQUENCES_TAG";
+    private static final int CHANGE_USER_DIALOG = 1234;
+    private static final int NO_PROFILE_ERROR = 1770;
 
     // Initialize buttons
     GirafInflatableDialog acceptDeleteDialog;
@@ -47,6 +51,9 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     private GirafButton addButton;
     private GirafButton copyButton;
     private GirafButton deleteButton;
+
+    // Initialize dialogs
+    GirafProfileSelectorDialog profileSelectorDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,18 +100,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
             //Open Child Selector when pressing the Child Select Button
             @Override
             public void onClick(View v) {
-                final GProfileSelector childSelector = new GProfileSelector(v.getContext(), guardian, null, false);
-                childSelector.show();
-
-                childSelector.setOnListItemClick(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                        //When child is selected, save Child locally and update application accordingly (Title name and Sequences)
-                        childId = id;
-                        setChild();
-                        childSelector.dismiss();
-                    }
-                });
+                pickAndSetChild();
             }
         });
 
@@ -148,7 +144,6 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         //Create helper to fetch data from database and fetches intents (from Launcher or AddEditSequencesActivity)
 
         Bundle extras = getIntent().getExtras();
-        long guardianId;
 
         //Get GuardianId and ChildId from extras
         guardianId = extras.getLong("currentGuardianID");
@@ -241,19 +236,8 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     // Used to select a child
     private void pickAndSetChild() {
         //Create ProfileSelector to make Guardian select Child
-        final GProfileSelector childSelector = new GProfileSelector(this, guardian, null, false);
-
-        //When child is selected, save Child locally and update application accordingly (Title name and Sequences)
-        childSelector.setOnListItemClick(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                childId = id;
-                setChild();
-                isChildSet = true;
-                childSelector.dismiss();
-            }
-        });
-        childSelector.show();
+        profileSelectorDialog = GirafProfileSelectorDialog.newInstance(this, guardianId, false, false, getString(R.string.change_user_dialog_description), CHANGE_USER_DIALOG);
+        profileSelectorDialog.show(getSupportFragmentManager(), "" + CHANGE_USER_DIALOG);
     }
 
     // Sets up child mode - only possible to view sequences
@@ -302,16 +286,6 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         // If no profile has been selected, show an error dialog and the profile selector, else start AddEditSequencesActivity
         if (selectedChild == null) {
             createAndShowErrorDialogNoProfileSelected();
-            final GProfileSelector childSelector = new GProfileSelector(v.getContext(), guardian, null, false);
-            childSelector.show();
-            childSelector.setOnListItemClick(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                    childId = id;
-                    setChild();
-                    childSelector.dismiss();
-                }
-            });
         } else {
             Intent intent = new Intent(getApplication(), AddEditSequencesActivity.class);
             intent.putExtra("childId", selectedChild.getId());
@@ -330,7 +304,24 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
 
     @Override
     public void noticeDialog(int i) {
+        switch (i) {
+            case NO_PROFILE_ERROR:
+                pickAndSetChild();
+                break;
 
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onProfileSelected(int i, Profile profile) {
+        if (i == CHANGE_USER_DIALOG) {
+            childId = profile.getId();
+            setChild();
+            isChildSet = true;
+            profileSelectorDialog.dismiss();
+        }
     }
 
     // AsyncTask. Used to fetch data from the database in another thread which is NOT the GUI thread
@@ -384,7 +375,6 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     }
 
     private void createAndShowErrorDialogNoProfileSelected() {
-        final int NO_PROFILE_ERROR = 1770;
         final String NO_PROFILE_ERROR_TAG = "NO_PROFILE_ERROR_TAG";
         GirafNotifyDialog alertDialog = GirafNotifyDialog.newInstance(this.getString(R.string.error), this.getString(R.string.no_profile_error), NO_PROFILE_ERROR);
         alertDialog.show(getSupportFragmentManager(), NO_PROFILE_ERROR_TAG);

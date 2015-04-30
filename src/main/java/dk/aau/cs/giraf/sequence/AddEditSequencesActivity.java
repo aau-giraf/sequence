@@ -721,12 +721,13 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
                             if (choiceMode) {
                                 choiceListEdited = true;
                                 choice.getFramesList().remove(position);
+                                choiceAdapter.notifyDataSetChanged();
                             } else {
                                 seq.getFramesList().remove(position);
                             }
                             changesSaved = false;
                             adapter.notifyDataSetChanged();
-                            choiceAdapter.notifyDataSetChanged();
+
                         }
                     });
                 }

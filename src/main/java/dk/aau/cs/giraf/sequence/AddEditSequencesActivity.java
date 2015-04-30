@@ -293,6 +293,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
             sequence.setProfileId(selectedChild.getId());
             sequence.setSequenceType(Sequence.SequenceType.SEQUENCE);
             helper.sequenceController.insertSequenceAndFrames(sequence);
+            isNew = false;
         }
         //If Sequence exists, modify in Database
         else {

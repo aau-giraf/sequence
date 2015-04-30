@@ -589,14 +589,14 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     }
 
     private void onNewPictogramResult(Intent data) {
-        int[] checkoutIds = data.getExtras().getIntArray(PICTO_INTENT_CHECKOUT_ID);
+        long[] checkoutIds = data.getExtras().getLongArray(PICTO_INTENT_CHECKOUT_ID);
 
         //If no pictures are returned, assume user cancelled and nothing is supposed to change.
         if (checkoutIds.length == 0) {
             return;
         }
         if (choiceMode) {
-            for (int id : checkoutIds) {
+            for (long id : checkoutIds) {
                 Pictogram pictogram = new Pictogram();
                 pictogram.setId(id);
                 tempPictogramList.add(pictogram);
@@ -615,7 +615,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
             adapter.notifyDataSetChanged();
             changesSaved = false;
         } else {
-            for (int id : checkoutIds) {
+            for (long id : checkoutIds) {
                 Frame frame = new Frame();
                 frame.setPictogramId(id);
                 sequence.addFrame(frame);
@@ -630,7 +630,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     }
 
     private void onEditPictogramResult(Intent data) {
-        int[] checkoutIds = data.getExtras().getIntArray(PICTO_INTENT_CHECKOUT_ID);
+        long[] checkoutIds = data.getExtras().getLongArray(PICTO_INTENT_CHECKOUT_ID);
 
         //
         if (checkoutIds.length == 0) {
@@ -655,7 +655,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     }
 
     private void onEditSequenceThumbnailResult(Intent data) {
-        int[] checkoutIds = data.getExtras().getIntArray(PICTO_INTENT_CHECKOUT_ID);
+        long[] checkoutIds = data.getExtras().getLongArray(PICTO_INTENT_CHECKOUT_ID);
 
         if (checkoutIds.length == 0) {
             return;

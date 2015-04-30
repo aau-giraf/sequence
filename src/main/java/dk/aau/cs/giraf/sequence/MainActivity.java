@@ -21,6 +21,7 @@ import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.dblib.models.Sequence;
 import dk.aau.cs.giraf.gui.GirafProfileSelectorDialog;
 import dk.aau.cs.giraf.sequenceviewer.SequenceActivity;
+
 /*
  * This is the main activity of the sequence application
  * The activity shows the overview page, of available sequences, for the chosen user
@@ -124,16 +125,27 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
             }
         });
 
+        // Todo : Fix så den siger det rigtige antal sekvenser her
         deleteButton.setOnClickListener(new OnClickListener() {
             // Opens a dialog to remove the selected sequences
             @Override
             public void onClick(View v) {
-                acceptDeleteDialog = GirafInflatableDialog.newInstance(
-                        getApplicationContext().getString(R.string.delete_sequences),
-                        getApplicationContext().getString(R.string.delete_this) + " "
-                                + getApplicationContext().getString(R.string.marked_sequences),
-                        R.layout.dialog_delete);
-                acceptDeleteDialog.show(getSupportFragmentManager(), DELETE_SEQUENCES_TAG);
+                if (markedSequences.size() == 0) {
+                    // do nothing
+                } else if (markedSequences.size() <= 1) {
+                    acceptDeleteDialog = GirafInflatableDialog.newInstance(
+                            getApplicationContext().getString(R.string.delete_sequences),
+                            getApplicationContext().getString(R.string.delete_this),
+                            R.layout.dialog_delete);
+                    acceptDeleteDialog.show(getSupportFragmentManager(), DELETE_SEQUENCES_TAG);
+                } else {
+                    acceptDeleteDialog = GirafInflatableDialog.newInstance(
+                            getApplicationContext().getString(R.string.delete_sequences),
+                            getApplicationContext().getString(R.string.marked_sequences_part1) + " " + markedSequences.size() + " " +
+                                    getApplicationContext().getString(R.string.marked_sequences_part2),
+                            R.layout.dialog_delete);
+                    acceptDeleteDialog.show(getSupportFragmentManager(), DELETE_SEQUENCES_TAG);
+                }
             }
         });
     }

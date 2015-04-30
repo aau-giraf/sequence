@@ -25,7 +25,8 @@
     <string name="empty_space">Tom plads mellem to knapper</string>
     <string name="error">Fejl</string>
     <string name="exit">Afslut</string>
-    <string name="marked_sequences"> markerede sekvenser?</string>
+    <string name="marked_sequences_part1">Vil du slette de </string>
+    <string name="marked_sequences_part2"> markerede sekvenser?</string>
     <string name="new_sequence">Ny sekvens</string>
     <string name="no_profile_error">Du skal vælge en profil at lave sekvenser for før der kan oprettes nye sekvenser</string>
     <string name="ok">OK </string>

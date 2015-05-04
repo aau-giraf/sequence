@@ -57,7 +57,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
     private OnNewButtonClickedListener newButtonClickedListener;
 
     private SequenceAdapter adapter;
-    private AdapterDataSetObserver observer = new AdapterDataSetObserver();
+    private final AdapterDataSetObserver observer = new AdapterDataSetObserver();
 
     public SequenceViewGroup(Context context, AttributeSet attrs) {
         super(context, attrs);

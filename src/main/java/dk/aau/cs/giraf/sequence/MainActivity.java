@@ -40,7 +40,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
 
     private GridView sequenceGrid;
     private SequenceListAdapter sequenceAdapter;
-    private Set<Sequence> markedSequences = new HashSet<Sequence>();
+    private final Set<Sequence> markedSequences = new HashSet<Sequence>();
     private Helper helper;
     private TextView noSequencesWarning;
     private TextView noSequencesHint;
@@ -50,14 +50,14 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     private static final int NO_SEQUENCE_MARKED_ERROR = 1771;
 
     // Initialize buttons
-    GirafInflatableDialog acceptDeleteDialog;
+    private GirafInflatableDialog acceptDeleteDialog;
     private GirafButton changeUserButton;
     private GirafButton addButton;
     private GirafButton copyButton;
     private GirafButton deleteButton;
 
     // Initialize dialogs
-    GirafProfileSelectorDialog profileSelectorDialog;
+    private GirafProfileSelectorDialog profileSelectorDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -260,7 +260,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         acceptDeleteDialog.dismiss();
     }
 
-    public void checkExistingSequences(boolean showHint) {
+    void checkExistingSequences(boolean showHint) {
         // Checks if there are any sequences to be shown. Otherwise show a help message.
         if (showHint)
         {
@@ -366,7 +366,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     }
 
     // AsyncTask. Used to fetch data from the database in another thread which is NOT the GUI thread
-    public class AsyncFetchDatabase extends AsyncTask<Void, Void, List<Sequence>> {
+    private class AsyncFetchDatabase extends AsyncTask<Void, Void, List<Sequence>> {
 
         @Override
         protected List<Sequence> doInBackground(Void... params) {

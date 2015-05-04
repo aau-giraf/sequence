@@ -23,7 +23,7 @@ public class PictogramView extends LinearLayout {
 
     public final static float NORMAL_SCALE = 0.8f;
     public final static float HIGHLIGHT_SCALE = 0.9f;
-    public final static float LOWLIGHT_SCALE = 0.7f;
+    private final static float LOWLIGHT_SCALE = 0.7f;
     private final static float DEFAULT_TEXT_SIZE = 18f;
 
     private RoundedImageView pictogram;
@@ -187,7 +187,7 @@ public class PictogramView extends LinearLayout {
         title.setText(newTitle);
     }
 
-    public void setupOnDeleteClickHandler() {
+    void setupOnDeleteClickHandler() {
         deleteButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

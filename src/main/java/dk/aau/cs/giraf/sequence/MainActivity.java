@@ -260,9 +260,9 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         acceptDeleteDialog.dismiss();
     }
 
-    public void checkExistingSequences(boolean hideOrShow) {
+    public void checkExistingSequences(boolean showHint) {
         // Checks if there are any sequences to be shown. Otherwise show a help message.
-        if (hideOrShow)
+        if (showHint)
         {
             noSequencesWarning.setVisibility(View.VISIBLE);
             noSequencesHint.setVisibility(View.VISIBLE);

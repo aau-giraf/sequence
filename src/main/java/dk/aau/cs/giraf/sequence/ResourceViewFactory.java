@@ -10,13 +10,13 @@ import android.view.View;
  * Meant for View that cannot be in the XML and are only used few (or a single) place.
  *
  */
-public class ResourceViewFactory {
+class ResourceViewFactory {
 
 	public static View getAddPictogramButton(Context context) {
 		return getViewFromResource(context, R.layout.add_pictogram);
 	}
 
-	public static View getViewFromResource(Context context, int resource) {
+    private static View getViewFromResource(Context context, int resource) {
 		return getInflater(context).inflate(resource, null);
 	}
 

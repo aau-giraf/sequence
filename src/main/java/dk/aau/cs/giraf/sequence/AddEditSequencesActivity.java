@@ -79,10 +79,10 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     private LinearLayout parent_container;
 
     public static Sequence sequence;
-    public static Sequence choice = new Sequence();
-    public SequenceAdapter adapter;
-    public SequenceAdapter choiceAdapter;
-    private List<Pictogram> tempPictogramList = new ArrayList<Pictogram>();
+    public static final Sequence choice = new Sequence();
+    private SequenceAdapter adapter;
+    private SequenceAdapter choiceAdapter;
+    private final List<Pictogram> tempPictogramList = new ArrayList<Pictogram>();
 
     private SequenceViewGroup choiceGroup;
     private SequenceViewGroup sequenceChoiceGroupTemplate;
@@ -93,11 +93,11 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     private GirafButton sequenceThumbnailButton;
 
     // Initialize dialogs
-    GirafInflatableDialog choosePictogramOrChoiceDialog;
-    GirafInflatableDialog backDialog;
-    GirafInflatableDialog saveDialog;
-    GirafInflatableDialog acceptDeleteDialog;
-    GirafInflatableDialog choiceDialog;
+    private GirafInflatableDialog choosePictogramOrChoiceDialog;
+    private GirafInflatableDialog backDialog;
+    private GirafInflatableDialog saveDialog;
+    private GirafInflatableDialog acceptDeleteDialog;
+    private GirafInflatableDialog choiceDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -29,17 +29,14 @@ public class RoundedImageView extends ImageView {
 
 	private static final int DEFAULT_CORNER_RADIUS = -1;
 	
-	private float cornerRadius;
-	
-	RectF imageRect = new RectF();
-	int height = -1;
-	int width = -1;
-	float radius;
-	Xfermode oldMode;
-	int saveCount;
-	Paint paint;
-	Drawable image;
-	Bitmap bitmap;
+	private final float cornerRadius;
+
+    private final RectF imageRect = new RectF();
+    private int height = -1;
+    private int width = -1;
+    private float radius;
+    private Drawable image;
+    private Bitmap bitmap;
 	
  
     public RoundedImageView(Context context, float radius) {
@@ -109,8 +106,8 @@ public class RoundedImageView extends ImageView {
             	if (cornerRadius == -1) 
             		fCornerRadius = Math.min(width, height) / 11.f;
 
-            	
-            	paint = ((BitmapDrawable)maiDrawable).getPaint();
+
+                Paint paint = ((BitmapDrawable) maiDrawable).getPaint();
                 //Color is: transparency/red/green/blue. ff is no transparency
             	final int color = 0xff000000; //Old background color: 0xfffde18d
             	
@@ -118,13 +115,13 @@ public class RoundedImageView extends ImageView {
             	maiDrawable.setColorFilter(Color.rgb(253, 225, 141), Mode.DST_OVER);
             	
             	imageRect.set(0, 0, width, height);
-            	
-            	saveCount = bitmapCanvas.saveLayer(imageRect, null,
+
+                int saveCount = bitmapCanvas.saveLayer(imageRect, null,
                         Canvas.MATRIX_SAVE_FLAG |
-                        Canvas.CLIP_SAVE_FLAG |
-                        Canvas.HAS_ALPHA_LAYER_SAVE_FLAG |
-                        Canvas.FULL_COLOR_LAYER_SAVE_FLAG |
-                        Canvas.CLIP_TO_LAYER_SAVE_FLAG);
+                                Canvas.CLIP_SAVE_FLAG |
+                                Canvas.HAS_ALPHA_LAYER_SAVE_FLAG |
+                                Canvas.FULL_COLOR_LAYER_SAVE_FLAG |
+                                Canvas.CLIP_TO_LAYER_SAVE_FLAG);
             	
             	
             	paint.setAntiAlias(true);
@@ -134,8 +131,8 @@ public class RoundedImageView extends ImageView {
                 paint.setColor(color);
 
                 bitmapCanvas.drawRoundRect(imageRect, fCornerRadius, fCornerRadius, paint);
-                
-                oldMode = paint.getXfermode();
+
+                Xfermode oldMode = paint.getXfermode();
                 
                 paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
                 super.onDraw(bitmapCanvas);

@@ -13,8 +13,8 @@ import dk.aau.cs.giraf.dblib.models.Sequence;
  */
 public class SequenceAdapter extends BaseAdapter {
 
-    private Context context;
-    private Sequence sequence;
+    private final Context context;
+    private final Sequence sequence;
 
     private OnAdapterGetViewListener onAdapterGetViewListener;
 

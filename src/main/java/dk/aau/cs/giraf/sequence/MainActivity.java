@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.TextView;
 
 import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.gui.GirafButton;
@@ -41,6 +42,8 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     private SequenceListAdapter sequenceAdapter;
     private Set<Sequence> markedSequences = new HashSet<Sequence>();
     private Helper helper;
+    private TextView noSequencesWarning;
+    private TextView noSequencesHint;
     private static final String DELETE_SEQUENCES_TAG = "DELETE_SEQUENCES_TAG";
     private static final int CHANGE_USER_DIALOG = 1234;
     private static final int NO_PROFILE_ERROR = 1770;
@@ -75,8 +78,8 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
 
         helper = new Helper(this);
 
-        // Setup the sequence grid view used to display sequences
-        setupSequenceGridView();
+        // Setup XML components
+        setupXmlComponents();
 
         // Setup the buttons (onClickListener)
         setupButtons();
@@ -85,17 +88,25 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         setupModeFromIntents();
     }
 
-    //Sets the GridView and adapter to display Sequences
+    private void setupXmlComponents() {
+        noSequencesWarning = (TextView) findViewById(R.id.noExistingSequencesWarning);
+        noSequencesHint = (TextView) findViewById(R.id.noExistingSequencesHint);
+
+        // Setup the sequence grid view used to display sequences
+        setupSequenceGridView();
+
+        checkExistingSequences(false);
+    }
+
     private void setupSequenceGridView() {
+        //Sets the GridView and adapter to display Sequences
         sequenceGrid = (GridView) findViewById(R.id.sequence_grid);
         sequenceGrid.setEmptyView(findViewById(R.id.empty_sequences));
         sequenceGrid.setColumnWidth(getResources().getDisplayMetrics().widthPixels / numColumns);
-        //sequenceAdapter = new SequenceListAdapter(MainActivity.this, sequences, MainActivity.this);
-        //sequenceGrid.setAdapter(sequenceAdapter);
     }
 
-    // Creates all buttons for the Activity and their listeners.
     private void setupButtons() {
+        // Creates all buttons for the Activity and their listeners.
 
         changeUserButton.setOnClickListener(new OnClickListener() {
             //Open Child Selector when pressing the Child Select Button
@@ -150,25 +161,25 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         });
     }
 
-    // Sets up either guardian mode or citizen mode, based on the intents
     private void setupModeFromIntents() {
-        //Create helper to fetch data from database and fetches intents (from Launcher or AddEditSequencesActivity)
+        // Sets up either guardian mode or citizen mode, based on the intents
+        // Create helper to fetch data from database and fetches intents (from Launcher or AddEditSequencesActivity)
 
         Bundle extras = getIntent().getExtras();
 
-        //Get GuardianId and ChildId from extras
+        // Get GuardianId and ChildId from extras
         guardianId = extras.getLong("currentGuardianID");
         childId = extras.getLong("currentChildID");
 
-        //Save guardian locally (Fetch from Database by Id)
+        // Save guardian locally (Fetch from Database by Id)
         guardian = helper.profilesHelper.getById(guardianId);
 
-        //Make user pick a child and set up GuardianMode if ChildId is -1 (= Logged in as Guardian)
+        // Make user pick a child and set up GuardianMode if ChildId is -1 (= Logged in as Guardian)
         if (childId == -1) {
             pickAndSetChild();
             setupGuardianMode();
         }
-        //Else setup application for a Child
+        // Else setup application for a Child
         else {
             setupChildMode();
             setChild();
@@ -247,6 +258,20 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     public void onCancelDeleteClick(View v) {
         // Button to cancel delete of sequences
         acceptDeleteDialog.dismiss();
+    }
+
+    public void checkExistingSequences(boolean hideOrShow) {
+        // Checks if there are any sequences to be shown. Otherwise show a help message.
+        if (hideOrShow)
+        {
+            noSequencesWarning.setVisibility(View.VISIBLE);
+            noSequencesHint.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            noSequencesWarning.setVisibility(View.GONE);
+            noSequencesHint.setVisibility(View.GONE);
+        }
     }
 
     // Used to select a child
@@ -351,6 +376,14 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         @Override
         protected void onPostExecute(final List<Sequence> result) {
             sequenceAdapter = new SequenceListAdapter(MainActivity.this, result, MainActivity.this);
+            if (result.size() == 0)
+            {
+                checkExistingSequences(true);
+            }
+            else
+            {
+                checkExistingSequences(false);
+            }
             sequenceGrid.setAdapter(sequenceAdapter);
         }
     }
@@ -364,7 +397,6 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         // Removes highlighting from Sequences that might have been lifted up when selected before entering the sequence
         for (int i = 0; i < sequenceGrid.getChildCount(); i++) {
             View view = sequenceGrid.getChildAt(i);
-
             ((PictogramView) view).placeDown();
         }
 

@@ -9,7 +9,7 @@
     <string name="back">Tilbage </string>
     <string name="back_description">Vil du gemme før du går tilbage?</string>
     <string name="cancel">Fortryd </string>
-    <string name="choice">Valg</string>
+    <string name="choice">Vælgetavle</string>
     <string name="copy_and_send_to">Kopier og send til</string>
     <string name="copy_sequences">Kopier sekvenser</string>
     <string name="copy_sequences_window_arrow">Pil der viser hvilke sequenser der skal kopieres</string>
@@ -38,4 +38,6 @@
     <string name="unnamed_sequence">Unavngivet sekvens</string>
     <string name="choice_dialog_subtitle">Rediger piktogrammer der kan vælges imellem.</string>
     <string name="change_user_dialog_description">Vælg en borger du ønsker at administrere sekvenser for</string>
+    <string name="no_existing_sequences_warning">Der eksistere ingen sekvenser for denne profil.</string>
+    <string name="no_existing_sequences_hint">Du kan tilføje nye sekvenser brug af det grønne plus.</string>
 </resources>

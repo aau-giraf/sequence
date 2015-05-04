@@ -13,6 +13,23 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity">
 
+    <TextView
+        android:id="@+id/noExistingSequencesWarning"
+        android:layout_width="600dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:text="@string/no_existing_sequences_warning"
+        android:textSize="22sp"/>
+    <TextView
+        android:id="@+id/noExistingSequencesHint"
+        android:layout_width="600dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:text="@string/no_existing_sequences_hint"
+        android:textSize="22sp"/>
+
     <GridView
         android:id="@+id/sequence_grid"
         android:layout_width="match_parent"

@@ -415,7 +415,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         }
 
         Frame frame = new Frame();
-        if (tempPictogramList == null || tempPictogramList.size() == 0) {
+        if (tempPictogramList.size() == 0) {
             createAndShowErrorDialogEmptyChoice();
             return;
         }
@@ -631,7 +631,6 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     private void onEditPictogramResult(Intent data) {
         long[] checkoutIds = data.getExtras().getLongArray(PICTO_INTENT_CHECKOUT_ID);
 
-        //
         if (checkoutIds.length == 0) {
             return;
         }

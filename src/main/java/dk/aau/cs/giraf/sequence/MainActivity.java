@@ -93,16 +93,10 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         noSequencesHint = (TextView) findViewById(R.id.noExistingSequencesHint);
 
         // Setup the sequence grid view used to display sequences
-        setupSequenceGridView();
+        sequenceGrid = (GridView) findViewById(R.id.sequence_grid);
+        sequenceGrid.setColumnWidth(getResources().getDisplayMetrics().widthPixels / numColumns);
 
         checkExistingSequences(false);
-    }
-
-    private void setupSequenceGridView() {
-        //Sets the GridView and adapter to display Sequences
-        sequenceGrid = (GridView) findViewById(R.id.sequence_grid);
-        sequenceGrid.setEmptyView(findViewById(R.id.empty_sequences));
-        sequenceGrid.setColumnWidth(getResources().getDisplayMetrics().widthPixels / numColumns);
     }
 
     private void setupButtons() {

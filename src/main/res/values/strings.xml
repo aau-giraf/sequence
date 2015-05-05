@@ -10,10 +10,7 @@
     <string name="back_description">Vil du gemme før du går tilbage?</string>
     <string name="cancel">Fortryd </string>
     <string name="choice">Vælgetavle</string>
-    <string name="copy_and_send_to">Kopier og send til</string>
     <string name="copy_sequences">Kopier sekvenser</string>
-    <string name="copy_sequences_window_arrow">Pil der viser hvilke sequenser der skal kopieres</string>
-    <string name="copy_sequences_window_description">Alle sekvenser samt hvilke der skal kopieres</string>
     <string name="delete">Slet</string>
     <string name="delete_sequence">Slet sekvens</string>
     <string name="delete_sequences">Slet sekvenser</string>

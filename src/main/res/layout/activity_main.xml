@@ -17,6 +17,7 @@
         android:id="@+id/noExistingSequencesWarning"
         android:layout_width="600dp"
         android:layout_height="30dp"
+        android:layout_marginTop="200dp"
         android:layout_gravity="center_horizontal"
         android:gravity="center"
         android:text="@string/no_existing_sequences_warning"

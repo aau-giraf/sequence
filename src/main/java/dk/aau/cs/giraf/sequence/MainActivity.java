@@ -53,7 +53,6 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     private GirafInflatableDialog acceptDeleteDialog;
     private GirafButton changeUserButton;
     private GirafButton addButton;
-    private GirafButton copyButton;
     private GirafButton deleteButton;
 
     // Initialize dialogs
@@ -67,7 +66,6 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         // Creating buttons for the action bar
         changeUserButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_change_user));
         addButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_add));
-        copyButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_copy));
         deleteButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_delete));
         deleteButton.setVisibility(View.GONE);
 
@@ -117,17 +115,6 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
                 Sequence sequence = new Sequence();
                 //equenceListAdapter.SequencePictogramViewPair sequenceViewPair = new SequenceListAdapter.SequencePictogramViewPair(sequence, null);
                 enterAddEditSequence(sequence, true);
-            }
-        });
-
-        copyButton.setOnClickListener(new OnClickListener() {
-            //Open CopySequencesActivity when clicking the Copy Button
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplication(), CopySequencesActivity.class);
-                intent.putExtra("childId", selectedChild.getId());
-                intent.putExtra("guardianId", guardian.getId());
-                startActivity(intent);
             }
         });
 
@@ -296,7 +283,6 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
 
         addButton.setVisibility(View.INVISIBLE);
         deleteButton.setVisibility(View.INVISIBLE);
-        copyButton.setVisibility(View.INVISIBLE);
         changeUserButton.setVisibility(View.INVISIBLE);
     }
 

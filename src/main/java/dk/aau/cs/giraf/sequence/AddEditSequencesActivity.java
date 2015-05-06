@@ -19,6 +19,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.view.inputmethod.EditorInfo;
 
+import com.google.analytics.tracking.android.EasyTracker;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -115,6 +117,8 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         setupButtons();
         setupActionBar();
         clearFocus();
+
+        EasyTracker.getInstance(this).activityStart(this);
     }
 
     private void loadIntents() {
@@ -737,6 +741,15 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     @Override
     public void onBackPressed() {
         createAndShowBackDialog();
+    }
+
+    /**
+     * Occurs when the application is shut down.
+     */
+    @Override
+    public void onStop() {
+        // Ends the tracker of Google Analytics
+        EasyTracker.getInstance(this).activityStop(this);
     }
 
     // This function is used by the GirafInflatableDialog, in order to access components in the xml, which changes dynamically

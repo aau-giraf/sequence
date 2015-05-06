@@ -12,15 +12,15 @@
         android:layout_width="wrap_content"
         android:layout_height="@dimen/giraf_button_height"
         android:layout_marginRight="@dimen/padding_standard"
-        android:onClick="getPictogramClick"
+        android:onClick="onPictogramClick"
         app:icon="@drawable/icon_accept"
         app:text="@string/pictogram" />
 
     <dk.aau.cs.giraf.gui.GirafButton
         android:layout_width="wrap_content"
         android:layout_height="@dimen/giraf_button_height"
-        android:onClick="getChoiceClick"
-        app:icon="@drawable/icon_choose"
+        android:onClick="onChoiceClick"
+        app:icon="@drawable/icon_choose_no_background"
         app:text="@string/choice" />
 
 </LinearLayout>

@@ -22,6 +22,7 @@ import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.dblib.models.Sequence;
 import dk.aau.cs.giraf.gui.GirafProfileSelectorDialog;
 import dk.aau.cs.giraf.sequenceviewer.SequenceActivity;
+import com.google.analytics.tracking.android.EasyTracker;
 
 /*
  * This is the main activity of the sequence application
@@ -84,6 +85,9 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
 
         // Setup mode, this is either citizen mode or guardian mode
         setupModeFromIntents();
+
+        // Starts the tracker of Google Analytics
+        EasyTracker.getInstance(this).activityStart(this);
     }
 
     /**
@@ -482,6 +486,15 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         } else {
             super.onBackPressed();
         }
+    }
+
+    /**
+     * Occurs when the application is shut down.
+     */
+    @Override
+    public void onStop() {
+        // Ends the tracker of Google Analytics
+        EasyTracker.getInstance(this).activityStop(this);
     }
 
     /**

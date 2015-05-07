@@ -29,9 +29,9 @@ dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
 	compile('com.android.support:support-v4:+')
 	compile(group: 'dk.aau.cs.giraf', name: 'girafComponent', version: '6.1.2', ext: 'aar')
-	compile(group: 'dk.aau.cs.giraf', name: 'localDb', version: '3.0.0', ext: 'aar')
+	compile(group: 'dk.aau.cs.giraf', name: 'localDb', version: '4.0.0', ext: 'aar')
 	compile(group: 'dk.aau.cs.giraf', name: 'meta-database', version: '1.4.1')
-	compile(group: 'dk.aau.cs.giraf', name: 'oasisLib', version: '4.0.1', ext: 'aar')
+	compile(group: 'dk.aau.cs.giraf', name: 'oasisLib', version: '4.1.0', ext: 'aar')
 	compile(group: 'dk.aau.cs.giraf', name: 'pictogramLib', version: '2.0.0', ext: 'aar')
 	compile(group: 'dk.aau.cs.giraf', name: 'sequenceViewerLib', version: '2.1.0', ext: 'aar')
 }
@@ -47,6 +47,11 @@ android {
         debug {
             testCoverageEnabled true
         }
+    }
+    packagingOptions {
+        exclude 'LICENSE.txt'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
     }
 }
 play {

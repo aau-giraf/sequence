@@ -21,6 +21,7 @@
         android:layout_gravity="center_horizontal"
         android:gravity="center"
         android:text="@string/no_existing_sequences_warning"
+        android:textColor="@android:color/darker_gray"
         android:textSize="22sp"/>
     <TextView
         android:id="@+id/noExistingSequencesHint"
@@ -29,6 +30,7 @@
         android:layout_gravity="center_horizontal"
         android:gravity="center"
         android:text="@string/no_existing_sequences_hint"
+        android:textColor="@android:color/darker_gray"
         android:textSize="22sp"/>
 
     <GridView

@@ -86,6 +86,13 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         setupModeFromIntents();
     }
 
+    /**
+     * Setup the requires XML components and initializes the sequenceGrid.
+     * <p>
+     *     This connects the editable XML elements
+     *     with variables in the .java file.
+     * </p>
+     */
     private void setupXmlComponents() {
         noSequencesWarning = (TextView) findViewById(R.id.noExistingSequencesWarning);
         noSequencesHint = (TextView) findViewById(R.id.noExistingSequencesHint);
@@ -97,6 +104,15 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         checkExistingSequences(false);
     }
 
+    /**
+     * Setup the buttons in the action-bar at the top of the app.
+     * <p>
+     *     This consists of the:
+     *     Change user button,
+     *     Add sequence button,
+     *     Delete sequence button.
+     * </p>
+     */
     private void setupButtons() {
         // Creates all buttons for the Activity and their listeners.
 
@@ -142,13 +158,17 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         });
     }
 
+    /**
+     * Sets up either guardian mode or citizen mode, based on the intents.
+     * <p>
+     *     Create helper to fetch data from database
+     *     and fetches intents (from Launcher or
+     *     AddEditSequencesActivity).
+     * </p>
+     */
     private void setupModeFromIntents() {
-        // Sets up either guardian mode or citizen mode, based on the intents
-        // Create helper to fetch data from database and fetches intents (from Launcher or AddEditSequencesActivity)
-
-        Bundle extras = getIntent().getExtras();
-
         // Get GuardianId and ChildId from extras
+        Bundle extras = getIntent().getExtras();
         guardianId = extras.getLong("currentGuardianID");
         childId = extras.getLong("currentChildID");
 
@@ -168,9 +188,15 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         }
     }
 
+    /**
+     * Sets up guardian mode
+     * <p>
+     *     Sets up the different kinds of click
+     *     commands available to a guardian
+     *     profile.
+     * </p>
+     */
     private void setupGuardianMode() {
-        // Sets up guardian mode - all functions are enabled
-
         //Clicking a Sequence lifts up the view and leads up to entering AddEditSequencesActivity by calling enterAddEditSequence
         sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -208,20 +234,31 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         });
     }
 
+    /**
+     * Marks the clicked sequence by changing it's bg color and adding it to the list.
+     * @param sequence The sequence being added.
+     * @param view The view of the sequence.
+     */
     private void markSequence(Sequence sequence, View view) {
-        // Marks the clicked sequence by changing it's background color
         markedSequences.add(sequence);
         view.setBackgroundColor(getResources().getColor(R.color.giraf_page_indicator_active));
     }
 
-    private void unMarkSequence(Sequence c, View view) {
-        // Clears the background color of a marked sequence
-        markedSequences.remove(c);
+    /**
+     * Unmarks the clicked sequence, previously marked by markSequence().
+     * @param sequence The sequence being removed.
+     * @param view The view of the sequence.
+     */
+    private void unMarkSequence(Sequence sequence, View view) {
+        markedSequences.remove(sequence);
         view.setBackgroundDrawable(null);
     }
 
+    /**
+     * Confirm button on the delete sequence confirmation dialog box.
+     * @param v The view belonging to the button.
+     */
     public void onConfirmDeleteClick(View v) {
-        // Button to accept delete of sequences
         acceptDeleteDialog.dismiss();
         // Delete all selected items
         for (Sequence seq : markedSequences) {
@@ -236,13 +273,20 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         onBackPressed();
     }
 
+    /**
+     * Delete button on the delete sequence confirmation dialog box.
+     * @param v The view belonging to the button.
+     */
     public void onCancelDeleteClick(View v) {
         // Button to cancel delete of sequences
         acceptDeleteDialog.dismiss();
     }
 
+    /**
+     * Checks if there are any sequences to be shown. Otherwise show a help message.
+     * @param showHint Boolean value, determining whether to hide or show the hint.
+     */
     void checkExistingSequences(boolean showHint) {
-        // Checks if there are any sequences to be shown. Otherwise show a help message.
         if (showHint)
         {
             noSequencesWarning.setVisibility(View.VISIBLE);
@@ -255,14 +299,18 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         }
     }
 
-    // Used to select a child
+    /**
+     * Pick a child as a guardian and set it to the current child being configured.
+     */
     private void pickAndSetChild() {
         //Create ProfileSelector to make Guardian select Child
         profileSelectorDialog = GirafProfileSelectorDialog.newInstance(this, guardianId, false, false, getString(R.string.change_user_dialog_description), CHANGE_USER_DIALOG);
         profileSelectorDialog.show(getSupportFragmentManager(), "" + CHANGE_USER_DIALOG);
     }
 
-    // Sets up child mode - only possible to view sequences
+    /**
+     *  Sets up child mode - only possible to view sequences
+     */
     private void setupChildMode() {
         //When clicking a Sequence, lift up the view, create Intent for SequenceViewer and launch it
         sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -283,7 +331,9 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         changeUserButton.setVisibility(View.INVISIBLE);
     }
 
-    // Collects data about the child - and set actionbar title
+    /**
+     * Collects data about the child - and set actionbar title
+     */
     private synchronized void setChild() {
         //Save Child locally and update relevant information for application
         selectedChild = helper.profilesHelper.getById(childId);
@@ -294,7 +344,11 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         fetchDatabaseSetChild.execute();
     }
 
-    //Sets up relevant intents and starts AddEditSequencesActivity if a profile is selected
+    /**
+     * Sets up intents and starts AddEditSequencesActivity if a profile is selected.
+     * @param sequence Sequence being edited.
+     * @param isNew Whether or not it's a new sequence.
+     */
     private void enterAddEditSequence(Sequence sequence, boolean isNew) {
 
         helper = new Helper(this);
@@ -315,14 +369,23 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         }
     }
 
+    /**
+     * Checks if the sequence is marked.
+     * @param sequence The sequence being checked.
+     * @return Boolean value based on the marked state of the sequence.
+     */
     @Override
     public boolean isSequenceMarked(Sequence sequence) {
         return markedSequences.contains(sequence);
     }
 
+    /**
+     * Receives an ID and runs the pickAndSetChild() if correct ID.
+     * @param id The ID being checked.
+     */
     @Override
-    public void noticeDialog(int i) {
-        switch (i) {
+    public void noticeDialog(int id) {
+        switch (id) {
             case NO_PROFILE_ERROR:
                 pickAndSetChild();
                 break;
@@ -332,9 +395,14 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         }
     }
 
+    /**
+     * Based on ID received, set the guardian to configure a new child.
+     * @param id The ID being checked.
+     * @param profile The profile of the new child.
+     */
     @Override
-    public void onProfileSelected(int i, Profile profile) {
-        if (i == CHANGE_USER_DIALOG) {
+    public void onProfileSelected(int id, Profile profile) {
+        if (id == CHANGE_USER_DIALOG) {
             childId = profile.getId();
             setChild();
             isChildSet = true;
@@ -342,14 +410,25 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         }
     }
 
-    // AsyncTask. Used to fetch data from the database in another thread which is NOT the GUI thread
+    /**
+     * Used to fetch data from the database in a thread which is NOT the GUI thread.
+     */
     private class AsyncFetchDatabase extends AsyncTask<Void, Void, List<Sequence>> {
 
+        /**
+         * Runs in the background. Upon finishing goes to onPostExecute.
+         * @param params The parameters sent along.
+         * @return Returns the data that was fetched.
+         */
         @Override
         protected List<Sequence> doInBackground(Void... params) {
             return helper.sequenceController.getSequencesAndFramesByProfileIdAndType(selectedChild.getId(), Sequence.SequenceType.SEQUENCE);
         }
 
+        /**
+         * Checks the size of the returned data and adds it to the adapter.
+         * @param result Updates the sequenceGrid based on the adapter.
+         */
         @Override
         protected void onPostExecute(final List<Sequence> result) {
             sequenceAdapter = new SequenceListAdapter(MainActivity.this, result, MainActivity.this);
@@ -365,6 +444,9 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         }
     }
 
+    /**
+     * Occurs when returning to this activity.
+     */
     @Override
     protected synchronized void onResume() {
         super.onResume();
@@ -383,6 +465,9 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         }
     }
 
+    /**
+     * Occurs when the back button, Giraf or physical tablet, is clicked.
+     */
     @Override
     public void onBackPressed() {
         if (markingMode) {
@@ -399,12 +484,27 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         }
     }
 
+    /**
+     * Create and show the No Profile Selected error dialog.
+     * <p>
+     *     Used when the users have no selected a profile,
+     *     and is trying to do an action that requires
+     *     a profile being selected.
+     * </p>
+     */
     private void createAndShowErrorDialogNoProfileSelected() {
         final String NO_PROFILE_ERROR_TAG = "NO_PROFILE_ERROR_TAG";
         GirafNotifyDialog alertDialog = GirafNotifyDialog.newInstance(this.getString(R.string.error), this.getString(R.string.no_profile_error), NO_PROFILE_ERROR);
         alertDialog.show(getSupportFragmentManager(), NO_PROFILE_ERROR_TAG);
     }
 
+    /**
+     * Create and show the No Sequence Marked error dialog.
+     * <p>
+     *     Used when the user tries to delete sequences,
+     *     but no sequences have been marked.
+     * </p>
+     */
     private void createAndShowErrorDialogNoSequencesMarked() {
         final String NO_SEQUENCE_MARKED_ERROR_TAG = "NO_SEQUENCE_MARKED_ERROR_TAG";
         GirafNotifyDialog alertDialog = GirafNotifyDialog.newInstance(this.getString(R.string.error), this.getString(R.string.no_sequence_marked_error), NO_SEQUENCE_MARKED_ERROR);

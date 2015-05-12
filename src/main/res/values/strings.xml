@@ -37,4 +37,5 @@
     <string name="change_user_dialog_description">Vælg en borger du ønsker at administrere sekvenser for</string>
     <string name="no_existing_sequences_warning">Der eksisterer ingen sekvenser for denne profil.</string>
     <string name="no_existing_sequences_hint">Du kan tilføje nye sekvenser ved brug af det grønne plus.</string>
+    <string name="error_must_be_started_from_giraf">"%1$s skal startes fra GIRAF"</string>
 </resources>

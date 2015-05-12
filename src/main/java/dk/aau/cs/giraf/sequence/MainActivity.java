@@ -9,25 +9,31 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.gui.GirafInflatableDialog;
 import dk.aau.cs.giraf.gui.GirafNotifyDialog;
+import dk.aau.cs.giraf.gui.GirafProfileSelectorDialog;
 import dk.aau.cs.giraf.dblib.Helper;
 import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.dblib.models.Sequence;
-import dk.aau.cs.giraf.gui.GirafProfileSelectorDialog;
 import dk.aau.cs.giraf.sequenceviewer.ViewSequenceActivity;
+import dk.aau.cs.giraf.showcaseview.ShowcaseManager;
+import dk.aau.cs.giraf.showcaseview.ShowcaseView;
+import dk.aau.cs.giraf.showcaseview.targets.ViewTarget;
 
 /*
  * This is the main activity of the sequence application
  * The activity shows the overview page, of available sequences, for the chosen user
  */
-public class MainActivity extends GirafActivity implements SequenceListAdapter.SelectedSequenceAware, GirafNotifyDialog.Notification, GirafProfileSelectorDialog.OnSingleProfileSelectedListener {
+public class MainActivity extends GirafActivity implements SequenceListAdapter.SelectedSequenceAware, GirafNotifyDialog.Notification, GirafProfileSelectorDialog.OnSingleProfileSelectedListener, ShowcaseManager.ShowcaseCapable {
 
     private static final int numColumns = 5;
 
@@ -39,6 +45,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     private long guardianId;
 
     private GridView sequenceGrid;
+    private ShowcaseManager showcaseManager;
     private SequenceListAdapter sequenceAdapter;
     private final Set<Sequence> markedSequences = new HashSet<Sequence>();
     private Helper helper;
@@ -52,6 +59,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     // Initialize buttons
     private GirafInflatableDialog acceptDeleteDialog;
     private GirafButton changeUserButton;
+    private GirafButton helpButton;
     private GirafButton addButton;
     private GirafButton deleteButton;
 
@@ -65,12 +73,14 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
 
         // Creating buttons for the action bar
         changeUserButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_change_user));
+        helpButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_help));
         addButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_add));
         deleteButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_delete));
         deleteButton.setVisibility(View.GONE);
 
         // Adding buttons to the action bar
         addGirafButtonToActionBar(changeUserButton, LEFT);
+        addGirafButtonToActionBar(helpButton, LEFT);
         addGirafButtonToActionBar(addButton, RIGHT);
         addGirafButtonToActionBar(deleteButton, RIGHT);
 
@@ -156,6 +166,13 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
                 }
             }
         });
+
+        helpButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleShowcase();
+            }
+        });
     }
 
     /**
@@ -167,10 +184,19 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
      * </p>
      */
     private void setupModeFromIntents() {
+
         // Get GuardianId and ChildId from extras
         Bundle extras = getIntent().getExtras();
-        guardianId = extras.getLong("currentGuardianID");
-        childId = extras.getLong("currentChildID");
+
+        if (extras == null || (!extras.containsKey(getString(R.string.current_child_id)) && !extras.containsKey(getString(R.string.current_guardian_id)))) {
+            Toast.makeText(this, String.format(getString(R.string.error_must_be_started_from_giraf), getString(R.string.app_name)), Toast.LENGTH_SHORT).show();
+            // The activity was not started correctly, now finish it!
+            finish();
+            return;
+        } else {
+            guardianId = extras.getLong(getString(R.string.current_guardian_id));
+            childId = extras.getLong(getString(R.string.current_child_id));
+        }
 
         // Save guardian locally (Fetch from Database by Id)
         guardian = helper.profilesHelper.getById(guardianId);
@@ -450,6 +476,116 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     }
 
     /**
+     * Showcase is used to highlight buttons when using the help button
+     */
+    @Override
+    public synchronized void showShowcase() {
+
+        // Targets for the Showcase
+        final ViewTarget createNewSequence = new ViewTarget(addButton, 1.5f);
+        final ViewTarget changeTargetCitizen = new ViewTarget(changeUserButton, 1.5f);
+        final ViewTarget targetSequence = new ViewTarget(sequenceGrid.getChildAt(0), 1.0f);
+
+        // Create a relative location for the next button
+        final RelativeLayout.LayoutParams lps = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        final int margin = ((Number) (getResources().getDisplayMetrics().density * 12)).intValue();
+        lps.setMargins(margin, margin, margin, margin);
+
+        // Calculate position for the help text
+        final int textX = getResources().getDisplayMetrics().widthPixels / 2 + margin;
+        final int textY = getResources().getDisplayMetrics().heightPixels / 2 + margin;
+
+        showcaseManager = new ShowcaseManager();
+
+        showcaseManager.addShowCase(new ShowcaseManager.Showcase() {
+            @Override
+            public void configShowCaseView(final ShowcaseView showcaseView) {
+                showcaseView.setShowcase(createNewSequence, true);
+                showcaseView.setContentTitle(getString(R.string.sc_new_sequence));
+                showcaseView.setContentText(getString(R.string.sc_new_sequence_text));
+                showcaseView.setStyle(R.style.GirafCustomShowcaseTheme);
+                showcaseView.setButtonPosition(lps);
+                showcaseView.setTextPostion(textX, textY);
+            }
+        });
+
+        showcaseManager.addShowCase(new ShowcaseManager.Showcase() {
+            @Override
+            public void configShowCaseView(final ShowcaseView showcaseView) {
+
+                showcaseView.setShowcase(changeTargetCitizen, true);
+                showcaseView.setContentTitle(getString(R.string.sc_change_citizen));
+                showcaseView.setContentText(getString(R.string.sc_change_citizen_text));
+                showcaseView.setStyle(R.style.GirafCustomShowcaseTheme);
+                showcaseView.setButtonPosition(lps);
+                showcaseView.setTextPostion(textX, textY);
+            }
+        });
+
+        if (sequenceGrid.getChildCount() >= 1) {
+            showcaseManager.addShowCase(new ShowcaseManager.Showcase() {
+                @Override
+                public void configShowCaseView(final ShowcaseView showcaseView) {
+                    showcaseView.setShowcase(targetSequence, true);
+                    showcaseView.setContentTitle(getString(R.string.sc_edit_sequence));
+                    showcaseView.setContentText(getString(R.string.sc_edit_sequence_text));
+                    showcaseView.setStyle(R.style.GirafCustomShowcaseTheme);
+                    showcaseView.setButtonPosition(lps);
+                    showcaseView.setTextPostion(textX, textY);
+                }
+            });
+
+            showcaseManager.addShowCase(new ShowcaseManager.Showcase() {
+                @Override
+                public void configShowCaseView(final ShowcaseView showcaseView) {
+                    showcaseView.setShowcase(targetSequence, true);
+                    showcaseView.setContentTitle(getString(R.string.sc_delete_sequence));
+                    showcaseView.setContentText(getString(R.string.sc_delete_sequence_text));
+                    showcaseView.setStyle(R.style.GirafCustomShowcaseTheme);
+                    showcaseView.setButtonPosition(lps);
+                    showcaseView.setTextPostion(textX, textY);
+                }
+            });
+        }
+
+        showcaseManager.setOnDoneListener(new ShowcaseManager.OnDoneListener() {
+            @Override
+            public void onDone(ShowcaseView showcaseView) {
+                showcaseManager = null;
+            }
+        });
+
+        showcaseManager.start(this);
+    }
+
+    /**
+     * Hide the showcasing by stopping it
+     */
+    @Override
+    public synchronized void hideShowcase() {
+
+        if (showcaseManager != null) {
+            showcaseManager.stop();
+            showcaseManager = null;
+        }
+    }
+
+    /**
+     * Toggles the showcase to either show or hide it
+     */
+    @Override
+    public synchronized void toggleShowcase() {
+
+        if (showcaseManager != null) {
+            hideShowcase();
+        } else {
+            showShowcase();
+        }
+    }
+
+    /**
      * Occurs when returning to this activity.
      */
     @Override
@@ -467,6 +603,18 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         //If a Child is selected at this point, update Sequences for the Child
         if (isChildSet) {
             fetchDatabaseOnResume.execute();
+        }
+    }
+
+    /**
+     * Occurs when moving to a new activity from this activity
+     */
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        if (showcaseManager != null) {
+            showcaseManager.stop();
         }
     }
 

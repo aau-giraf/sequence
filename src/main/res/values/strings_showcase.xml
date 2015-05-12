@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<!-- getResources().getString(R.string.save_sequence) -->
+    <string name="sc_new_sequence">Ny sekvens</string>
+    <string name="sc_new_sequence_text">Denne knap bruges til at tilføje nye sekvenser</string>
+
+    <string name="sc_change_citizen">Vælg borger</string>
+    <string name="sc_change_citizen_text">Her vælges hvilken border du ønsker at konfigurere sekvenser for</string>
+
+    <string name="sc_edit_sequence">Rediger sekvens</string>
+    <string name="sc_edit_sequence_text">Klik på en sekvens for at redigere dens pictogrammer</string>
+
+    <string name="sc_delete_sequence">Slet sekvens</string>
+    <string name="sc_delete_sequence_text">Hold inde på en sekvens for at markere den \nDerefter kan markerede sekvenser slettes</string>
+
+</resources>

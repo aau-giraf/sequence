@@ -30,10 +30,11 @@ dependencies {
 	compile('com.android.support:support-v4:+')
     compile(group: 'dk.aau.cs.giraf', name: 'girafComponent', version: '7.4.0', ext: 'aar')
     compile(group: 'dk.aau.cs.giraf', name: 'oasisLib', version: '5.0.1', ext: 'aar')
-    compile(group: 'dk.aau.cs.giraf', name: 'localDb', version: '4.0.2', ext: 'aar')
+    compile(group: 'dk.aau.cs.giraf', name: 'localDb', version: '4.0.3', ext: 'aar')
     compile(group: 'dk.aau.cs.giraf', name: 'meta-database', version: '2.0.0')
     compile(group: 'dk.aau.cs.giraf', name: 'pictogramLib', version: '2.0.1', ext: 'aar')
 	compile(group: 'dk.aau.cs.giraf', name: 'sequenceViewerLib', version: '0.0-SNAPSHOT', ext: 'aar')
+    compile(group: 'dk.aau.cs.giraf', name: 'ShowcaseView', version: '1.0.0', ext: 'aar')
 }
 
 android {

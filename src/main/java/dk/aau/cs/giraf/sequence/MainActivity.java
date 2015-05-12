@@ -21,7 +21,7 @@ import dk.aau.cs.giraf.dblib.Helper;
 import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.dblib.models.Sequence;
 import dk.aau.cs.giraf.gui.GirafProfileSelectorDialog;
-import dk.aau.cs.giraf.sequenceviewer.SequenceActivity;
+import dk.aau.cs.giraf.sequenceviewer.ViewSequenceActivity;
 
 /*
  * This is the main activity of the sequence application
@@ -89,8 +89,8 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     /**
      * Setup the requires XML components and initializes the sequenceGrid.
      * <p>
-     *     This connects the editable XML elements
-     *     with variables in the .java file.
+     * This connects the editable XML elements
+     * with variables in the .java file.
      * </p>
      */
     private void setupXmlComponents() {
@@ -107,10 +107,10 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     /**
      * Setup the buttons in the action-bar at the top of the app.
      * <p>
-     *     This consists of the:
-     *     Change user button,
-     *     Add sequence button,
-     *     Delete sequence button.
+     * This consists of the:
+     * Change user button,
+     * Add sequence button,
+     * Delete sequence button.
      * </p>
      */
     private void setupButtons() {
@@ -161,9 +161,9 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     /**
      * Sets up either guardian mode or citizen mode, based on the intents.
      * <p>
-     *     Create helper to fetch data from database
-     *     and fetches intents (from Launcher or
-     *     AddEditSequencesActivity).
+     * Create helper to fetch data from database
+     * and fetches intents (from Launcher or
+     * AddEditSequencesActivity).
      * </p>
      */
     private void setupModeFromIntents() {
@@ -191,9 +191,9 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     /**
      * Sets up guardian mode
      * <p>
-     *     Sets up the different kinds of click
-     *     commands available to a guardian
-     *     profile.
+     * Sets up the different kinds of click
+     * commands available to a guardian
+     * profile.
      * </p>
      */
     private void setupGuardianMode() {
@@ -236,8 +236,9 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
 
     /**
      * Marks the clicked sequence by changing it's bg color and adding it to the list.
+     *
      * @param sequence The sequence being added.
-     * @param view The view of the sequence.
+     * @param view     The view of the sequence.
      */
     private void markSequence(Sequence sequence, View view) {
         markedSequences.add(sequence);
@@ -246,8 +247,9 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
 
     /**
      * Unmarks the clicked sequence, previously marked by markSequence().
+     *
      * @param sequence The sequence being removed.
-     * @param view The view of the sequence.
+     * @param view     The view of the sequence.
      */
     private void unMarkSequence(Sequence sequence, View view) {
         markedSequences.remove(sequence);
@@ -256,6 +258,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
 
     /**
      * Confirm button on the delete sequence confirmation dialog box.
+     *
      * @param v The view belonging to the button.
      */
     public void onConfirmDeleteClick(View v) {
@@ -275,6 +278,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
 
     /**
      * Delete button on the delete sequence confirmation dialog box.
+     *
      * @param v The view belonging to the button.
      */
     public void onCancelDeleteClick(View v) {
@@ -284,16 +288,14 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
 
     /**
      * Checks if there are any sequences to be shown. Otherwise show a help message.
+     *
      * @param showHint Boolean value, determining whether to hide or show the hint.
      */
     void checkExistingSequences(boolean showHint) {
-        if (showHint)
-        {
+        if (showHint) {
             noSequencesWarning.setVisibility(View.VISIBLE);
             noSequencesHint.setVisibility(View.VISIBLE);
-        }
-        else
-        {
+        } else {
             noSequencesWarning.setVisibility(View.GONE);
             noSequencesHint.setVisibility(View.GONE);
         }
@@ -309,7 +311,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     }
 
     /**
-     *  Sets up child mode - only possible to view sequences
+     * Sets up child mode - only possible to view sequences
      */
     private void setupChildMode() {
         //When clicking a Sequence, lift up the view, create Intent for SequenceViewer and launch it
@@ -319,7 +321,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
                 ((PictogramView) arg1).liftUp();
 
                 //Create Intent with relevant Extras
-                Intent intent = new Intent(getApplicationContext(), SequenceActivity.class);
+                Intent intent = new Intent(getApplicationContext(), ViewSequenceActivity.class);
                 intent.putExtra("sequenceId", sequenceAdapter.getItem(position).getId());
                 intent.putExtra("callerType", "sequence");
                 startActivityForResult(intent, 2);
@@ -346,8 +348,9 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
 
     /**
      * Sets up intents and starts AddEditSequencesActivity if a profile is selected.
+     *
      * @param sequence Sequence being edited.
-     * @param isNew Whether or not it's a new sequence.
+     * @param isNew    Whether or not it's a new sequence.
      */
     private void enterAddEditSequence(Sequence sequence, boolean isNew) {
 
@@ -371,6 +374,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
 
     /**
      * Checks if the sequence is marked.
+     *
      * @param sequence The sequence being checked.
      * @return Boolean value based on the marked state of the sequence.
      */
@@ -381,6 +385,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
 
     /**
      * Receives an ID and runs the pickAndSetChild() if correct ID.
+     *
      * @param id The ID being checked.
      */
     @Override
@@ -397,7 +402,8 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
 
     /**
      * Based on ID received, set the guardian to configure a new child.
-     * @param id The ID being checked.
+     *
+     * @param id      The ID being checked.
      * @param profile The profile of the new child.
      */
     @Override
@@ -417,6 +423,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
 
         /**
          * Runs in the background. Upon finishing goes to onPostExecute.
+         *
          * @param params The parameters sent along.
          * @return Returns the data that was fetched.
          */
@@ -427,17 +434,15 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
 
         /**
          * Checks the size of the returned data and adds it to the adapter.
+         *
          * @param result Updates the sequenceGrid based on the adapter.
          */
         @Override
         protected void onPostExecute(final List<Sequence> result) {
             sequenceAdapter = new SequenceListAdapter(MainActivity.this, result, MainActivity.this);
-            if (result.size() == 0)
-            {
+            if (result.size() == 0) {
                 checkExistingSequences(true);
-            }
-            else
-            {
+            } else {
                 checkExistingSequences(false);
             }
             sequenceGrid.setAdapter(sequenceAdapter);
@@ -487,9 +492,9 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     /**
      * Create and show the No Profile Selected error dialog.
      * <p>
-     *     Used when the users have no selected a profile,
-     *     and is trying to do an action that requires
-     *     a profile being selected.
+     * Used when the users have no selected a profile,
+     * and is trying to do an action that requires
+     * a profile being selected.
      * </p>
      */
     private void createAndShowErrorDialogNoProfileSelected() {
@@ -501,8 +506,8 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     /**
      * Create and show the No Sequence Marked error dialog.
      * <p>
-     *     Used when the user tries to delete sequences,
-     *     but no sequences have been marked.
+     * Used when the user tries to delete sequences,
+     * but no sequences have been marked.
      * </p>
      */
     private void createAndShowErrorDialogNoSequencesMarked() {

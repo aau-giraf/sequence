@@ -13,6 +13,7 @@
         android:layout_height="@dimen/choice_scroller_size"
         android:overScrollMode="always"
         android:fadeScrollbars="false"
+        android:background="@color/giraf_background"
         android:paddingLeft="@dimen/padding_standard"
         android:paddingRight="@dimen/padding_standard">
 

@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.view.inputmethod.EditorInfo;
 
@@ -36,10 +37,13 @@ import dk.aau.cs.giraf.sequence.SequenceAdapter.OnAdapterGetViewListener;
 import dk.aau.cs.giraf.sequence.SequenceViewGroup.OnNewButtonClickedListener;
 import dk.aau.cs.giraf.dblib.models.Sequence;
 import dk.aau.cs.giraf.dblib.models.Pictogram;
+import dk.aau.cs.giraf.showcaseview.ShowcaseManager;
+import dk.aau.cs.giraf.showcaseview.ShowcaseView;
+import dk.aau.cs.giraf.showcaseview.targets.ViewTarget;
 
 @SuppressWarnings("FieldCanBeLocal")
 // Suppress warnings to keep the similar variables and initializations together
-public class AddEditSequencesActivity extends GirafActivity implements GirafNotifyDialog.Notification, GirafInflatableDialog.OnCustomViewCreatedListener {
+public class AddEditSequencesActivity extends GirafActivity implements GirafNotifyDialog.Notification, GirafInflatableDialog.OnCustomViewCreatedListener, ShowcaseManager.ShowcaseCapable {
 
     private Profile guardian;
     private Profile selectedChild;
@@ -51,11 +55,11 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     private boolean isInEditMode;
 
     private int pictogramEditPos = -1;
-    private boolean changesSaved = true;
-    public static boolean choiceMode = false;
-    private boolean choiceListEdited = false;
     private long tempPictogramId;
+    private boolean choiceListEdited = false;
+    private boolean changesSaved = true;
     private boolean deleteNewCreatedSequence = false;
+    public static boolean choiceMode = false;
 
     // Various tag
     private final String PICTO_INTENT_CHECKOUT_ID = "checkoutIds";
@@ -77,7 +81,9 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
 
     private Helper helper;
     private EditText sequenceName;
+    private ShowcaseManager showcaseManager;
     private LinearLayout parent_container;
+    private SequenceViewGroup sequenceViewGroup;
 
     public static Sequence sequence;
     public static final Sequence choice = new Sequence();
@@ -91,6 +97,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     // Initialize buttons
     private GirafButton saveButton;
     private GirafButton deleteButton;
+    private GirafButton helpButton;
     private GirafButton sequenceThumbnailButton;
 
     // Initialize dialogs
@@ -108,8 +115,9 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         // Initialize XML components
         sequenceName = (EditText) findViewById(R.id.sequenceName);
         parent_container = (LinearLayout) findViewById(R.id.parent_container);
+        sequenceViewGroup = (dk.aau.cs.giraf.sequence.SequenceViewGroup) findViewById(R.id.sequenceViewGroup);
 
-        //Create helper to load data from Database
+                //Create helper to load data from Database
         helper = new Helper(this);
 
         loadIntents();
@@ -175,11 +183,13 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
      */
     private void setupButtons() {
         saveButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_save));
+        helpButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_help));
         deleteButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_delete));
         sequenceThumbnailButton = (GirafButton) findViewById(R.id.sequenceThumbnail);
 
         // Adding buttons to action-bar
         addGirafButtonToActionBar(saveButton, LEFT);
+        addGirafButtonToActionBar(helpButton, LEFT);
         addGirafButtonToActionBar(deleteButton, RIGHT);
 
         saveButton.setOnClickListener(new ImageButton.OnClickListener() {
@@ -201,6 +211,13 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
                         getApplicationContext().getString(R.string.delete_this),
                         R.layout.dialog_delete);
                 acceptDeleteDialog.show(getSupportFragmentManager(), DELETE_SEQUENCES_TAG);
+            }
+        });
+
+        helpButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleShowcase();
             }
         });
 
@@ -833,11 +850,145 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     }
 
     /**
+     * Showcase is used to highlight buttons when using the help button
+     */
+    @Override
+    public synchronized void showShowcase() {
+
+        // Targets for the Showcase
+        final ViewTarget saveSequence = new ViewTarget(saveButton, 1.5f);
+        final ViewTarget deleteSequence = new ViewTarget(deleteButton, 1.5f);
+        final ViewTarget editSequenceThumbnail = new ViewTarget(sequenceThumbnailButton, 1.5f);
+        final ViewTarget editSequenceName = new ViewTarget(sequenceName, 0.6f);
+        final ViewTarget addPictograms = new ViewTarget(sequenceViewGroup.getChildAt(sequence.getFramesList().size()), 1.35f);
+
+        // Create a relative location for the next button
+        final RelativeLayout.LayoutParams lps = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        final int margin = ((Number) (getResources().getDisplayMetrics().density * 12)).intValue();
+        lps.setMargins(margin, margin, margin, margin);
+
+        // Calculate position for the help text
+        final int textX = getResources().getDisplayMetrics().widthPixels / 2 + margin;
+        final int textY = getResources().getDisplayMetrics().heightPixels / 2 + margin;
+        final int textYHigh = getResources().getDisplayMetrics().heightPixels / 6 + margin;
+
+        showcaseManager = new ShowcaseManager();
+
+        showcaseManager.addShowCase(new ShowcaseManager.Showcase() {
+            @Override
+            public void configShowCaseView(final ShowcaseView showcaseView) {
+                showcaseView.setShowcase(saveSequence, true);
+                showcaseView.setContentTitle(getString(R.string.sc_save_sequence));
+                showcaseView.setContentText(getString(R.string.sc_save_sequence_text));
+                showcaseView.setStyle(R.style.GirafCustomShowcaseTheme);
+                showcaseView.setButtonPosition(lps);
+                showcaseView.setTextPostion(textX, textY);
+            }
+        });
+
+        showcaseManager.addShowCase(new ShowcaseManager.Showcase() {
+            @Override
+            public void configShowCaseView(final ShowcaseView showcaseView) {
+                showcaseView.setShowcase(deleteSequence, true);
+                showcaseView.setContentTitle(getString(R.string.sc_delete_sequence));
+                showcaseView.setContentText(getString(R.string.sc_delete_sequence_text_add_edit));
+                showcaseView.setStyle(R.style.GirafCustomShowcaseTheme);
+                showcaseView.setButtonPosition(lps);
+                showcaseView.setTextPostion(textX, textY);
+            }
+        });
+
+        showcaseManager.addShowCase(new ShowcaseManager.Showcase() {
+            @Override
+            public void configShowCaseView(final ShowcaseView showcaseView) {
+                showcaseView.setShowcase(editSequenceThumbnail, true);
+                showcaseView.setContentTitle(getString(R.string.sc_edit_thumbnail));
+                showcaseView.setContentText(getString(R.string.sc_edit_thumbnail_text));
+                showcaseView.setStyle(R.style.GirafCustomShowcaseTheme);
+                showcaseView.setButtonPosition(lps);
+                showcaseView.setTextPostion(textX, textY);
+            }
+        });
+
+        showcaseManager.addShowCase(new ShowcaseManager.Showcase() {
+            @Override
+            public void configShowCaseView(final ShowcaseView showcaseView) {
+                showcaseView.setShowcase(editSequenceName, true);
+                showcaseView.setContentTitle(getString(R.string.sc_edit_sequence_name));
+                showcaseView.setContentText(getString(R.string.sc_edit_sequence_name_text));
+                showcaseView.setStyle(R.style.GirafCustomShowcaseTheme);
+                showcaseView.setButtonPosition(lps);
+                showcaseView.setTextPostion(textX, textY);
+            }
+        });
+
+        showcaseManager.addShowCase(new ShowcaseManager.Showcase() {
+            @Override
+            public void configShowCaseView(final ShowcaseView showcaseView) {
+                showcaseView.setShowcase(addPictograms, true);
+                showcaseView.setContentTitle(getString(R.string.sc_add_pictograms));
+                showcaseView.setContentText(getString(R.string.sc_add_pictograms_text));
+                showcaseView.setStyle(R.style.GirafCustomShowcaseTheme);
+                showcaseView.setButtonPosition(lps);
+                showcaseView.setTextPostion(textX, textYHigh);
+            }
+        });
+
+        showcaseManager.setOnDoneListener(new ShowcaseManager.OnDoneListener() {
+            @Override
+            public void onDone(ShowcaseView showcaseView) {
+                showcaseManager = null;
+            }
+        });
+
+        showcaseManager.start(this);
+    }
+
+    /**
+     * Hide the showcasing by stopping it
+     */
+    @Override
+    public synchronized void hideShowcase() {
+
+        if (showcaseManager != null) {
+            showcaseManager.stop();
+            showcaseManager = null;
+        }
+    }
+
+    /**
+     * Toggles the showcase to either show or hide it
+     */
+    @Override
+    public synchronized void toggleShowcase() {
+
+        if (showcaseManager != null) {
+            hideShowcase();
+        } else {
+            showShowcase();
+        }
+    }
+
+    /**
      * Override the onBackPressed, as the back dialog should pop up, if changes were made
      */
     @Override
     public void onBackPressed() {
         createAndShowBackDialog();
+    }
+
+    /**
+     * Occurs when moving to a new activity from this activity
+     */
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        if (showcaseManager != null) {
+            showcaseManager.stop();
+        }
     }
 
     /**
@@ -863,7 +1014,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
      * Will be called whenever a custom dialog box requests content (ie when the choice dialog is opened)
      *
      * @param viewGroup Is the current view
-     * @param id The method id (Response code)
+     * @param id        The method id (Response code)
      */
     @Override
     public void editCustomView(ViewGroup viewGroup, int id) {

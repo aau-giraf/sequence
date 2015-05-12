@@ -12,5 +12,18 @@
 
     <string name="sc_delete_sequence">Slet sekvens</string>
     <string name="sc_delete_sequence_text">Hold inde på en sekvens for at markere den \nDerefter kan markerede sekvenser slettes</string>
+    <string name="sc_delete_sequence_text_add_edit">Sletter denne sekvens og går efterfølge til Sekvens starts skærm</string>
+
+    <string name="sc_save_sequence">Gem sekvens</string>
+    <string name="sc_save_sequence_text">Gemmer sekvensen i dens nuværende stadie</string>
+
+    <string name="sc_edit_thumbnail">Skift ikon</string>
+    <string name="sc_edit_thumbnail_text">Bruges til at skifte ikonet der repræsentere sekvensen</string>
+
+    <string name="sc_edit_sequence_name">Skift navn</string>
+    <string name="sc_edit_sequence_name_text">Skriv navnet på sekvensen her</string>
+
+    <string name="sc_add_pictograms">Tilføj pictogram eller valgtavle</string>
+    <string name="sc_add_pictograms_text">Tilføjer et eller flere pictogrammer eller\nen valgetavle med selvvalgte pictogrammer</string>
 
 </resources>

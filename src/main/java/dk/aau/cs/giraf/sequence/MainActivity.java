@@ -80,9 +80,9 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
 
         // Adding buttons to the action bar
         addGirafButtonToActionBar(changeUserButton, LEFT);
+        addGirafButtonToActionBar(helpButton, LEFT);
         addGirafButtonToActionBar(addButton, RIGHT);
         addGirafButtonToActionBar(deleteButton, RIGHT);
-        addGirafButtonToActionBar(helpButton, RIGHT);
 
         helper = new Helper(this);
 
@@ -237,6 +237,9 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
                     enterAddEditSequence(sequence, false);
                 } else {
                     if (markedSequences.contains(sequence)) {
+                        if (markedSequences.size() == 1) {
+                            exitMarkingMode();
+                        }
                         unMarkSequence(sequence, view);
                     } else {
                         markSequence(sequence, view);
@@ -248,13 +251,9 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         sequenceGrid.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
-                markingMode = true;
+                enterMarkingMode();
                 Sequence sequence = sequenceAdapter.getItem(position);
                 markSequence(sequence, view);
-                deleteButton.setVisibility(View.VISIBLE);
-                addButton.setVisibility(View.GONE);
-                changeUserButton.setVisibility(View.GONE);
-                setActionBarTitle(getResources().getString(R.string.delete_sequences) + " - " + selectedChild.getName());
                 return true;
             }
         });
@@ -280,6 +279,30 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     private void unMarkSequence(Sequence sequence, View view) {
         markedSequences.remove(sequence);
         view.setBackgroundDrawable(null);
+    }
+
+    /**
+     * Enter the marking mode
+     */
+    private void enterMarkingMode() {
+        markingMode = true;
+        deleteButton.setVisibility(View.VISIBLE);
+        addButton.setVisibility(View.GONE);
+        changeUserButton.setVisibility(View.GONE);
+        setActionBarTitle(getResources().getString(R.string.delete_sequences) + " - " + selectedChild.getName());
+    }
+
+    /**
+     * Exit the marking mode
+     */
+    private void exitMarkingMode() {
+        markedSequences.clear();
+        sequenceAdapter.notifyDataSetChanged();
+        deleteButton.setVisibility(View.GONE);
+        addButton.setVisibility(View.VISIBLE);
+        changeUserButton.setVisibility(View.VISIBLE);
+        setActionBarTitle(getResources().getString(R.string.app_name) + " - " + selectedChild.getName());
+        markingMode = false;
     }
 
     /**
@@ -624,14 +647,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     @Override
     public void onBackPressed() {
         if (markingMode) {
-            markedSequences.clear();
-            sequenceAdapter.notifyDataSetChanged();
-
-            deleteButton.setVisibility(View.GONE);
-            addButton.setVisibility(View.VISIBLE);
-            changeUserButton.setVisibility(View.VISIBLE);
-            setActionBarTitle(getResources().getString(R.string.app_name) + " - " + selectedChild.getName());
-            markingMode = false;
+            exitMarkingMode();
         } else {
             super.onBackPressed();
         }

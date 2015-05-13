@@ -33,6 +33,7 @@
             android:id="@+id/sequenceThumbnail"
             android:layout_width="60dp"
             android:layout_height="60dp"
+            android:layout_marginRight="20dp"
             app:icon="@drawable/add_sequence_picture"/>
 
         <EditText

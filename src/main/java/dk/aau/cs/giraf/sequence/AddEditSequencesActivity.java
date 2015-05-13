@@ -189,7 +189,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
 
         // Adding buttons to action-bar
         addGirafButtonToActionBar(deleteButton, LEFT);
-        addGirafButtonToActionBar(helpButton, RIGHT);
+        addGirafButtonToActionBar(helpButton, LEFT);
         addGirafButtonToActionBar(saveButton, RIGHT);
 
         saveButton.setOnClickListener(new ImageButton.OnClickListener() {

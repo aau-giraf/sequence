@@ -80,9 +80,9 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
 
         // Adding buttons to the action bar
         addGirafButtonToActionBar(changeUserButton, LEFT);
+        addGirafButtonToActionBar(helpButton, LEFT);
         addGirafButtonToActionBar(addButton, RIGHT);
         addGirafButtonToActionBar(deleteButton, RIGHT);
-        addGirafButtonToActionBar(helpButton, RIGHT);
 
         helper = new Helper(this);
 

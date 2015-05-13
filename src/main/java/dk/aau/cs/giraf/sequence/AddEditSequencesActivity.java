@@ -182,15 +182,15 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
      * Creates the buttons, and set onClickListeners
      */
     private void setupButtons() {
-        saveButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_save));
-        helpButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_help));
         deleteButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_delete));
+        helpButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_help));
+        saveButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_save));
         sequenceThumbnailButton = (GirafButton) findViewById(R.id.sequenceThumbnail);
 
         // Adding buttons to action-bar
-        addGirafButtonToActionBar(saveButton, LEFT);
-        addGirafButtonToActionBar(helpButton, LEFT);
-        addGirafButtonToActionBar(deleteButton, RIGHT);
+        addGirafButtonToActionBar(deleteButton, LEFT);
+        addGirafButtonToActionBar(helpButton, RIGHT);
+        addGirafButtonToActionBar(saveButton, RIGHT);
 
         saveButton.setOnClickListener(new ImageButton.OnClickListener() {
             //Show Dialog to save Sequence when clicking the Save Button

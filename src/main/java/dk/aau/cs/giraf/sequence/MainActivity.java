@@ -377,9 +377,10 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
             }
         });
 
-        addButton.setVisibility(View.INVISIBLE);
-        deleteButton.setVisibility(View.INVISIBLE);
-        changeUserButton.setVisibility(View.INVISIBLE);
+        addButton.setVisibility(View.GONE);
+        deleteButton.setVisibility(View.GONE);
+        changeUserButton.setVisibility(View.GONE);
+        helpButton.setVisibility((View.GONE));
     }
 
     /**

@@ -29,7 +29,7 @@ import dk.aau.cs.giraf.showcaseview.ShowcaseManager;
 import dk.aau.cs.giraf.showcaseview.ShowcaseView;
 import dk.aau.cs.giraf.showcaseview.targets.ViewTarget;
 
-/*
+/**
  * This is the main activity of the sequence application
  * The activity shows the overview page, of available sequences, for the chosen user
  */

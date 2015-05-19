@@ -202,6 +202,6 @@ public class PictogramView extends LinearLayout {
     }
 
     public interface OnDeleteClickListener {
-        public void onDeleteClick();
+        void onDeleteClick();
     }
 }

@@ -9,9 +9,9 @@
         android:minSdkVersion="15"
         android:targetSdkVersion="19" />
 
-    <android:uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <android:uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -19,7 +19,7 @@
         android:label="@string/app_name"
         android:logo="@drawable/sequence_icon"
         android:theme="@style/GirafTheme"
-        tools:replace="android:icon">
+        tools:replace="label, icon">
         <activity
             android:name=".MainActivity"
             android:screenOrientation="landscape">

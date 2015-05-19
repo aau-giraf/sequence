@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
-<!-- getResources().getString(R.string.save_sequence) -->
 
     <string name="add_pictogram">Tilføj pictogram</string>
     <string name="add_pictogram_choice">Tilføj </string>
@@ -29,6 +28,7 @@
     <string name="save">Gem </string>
     <string name="sequence">Sekvens</string>
     <string name="sequence_saved">Sekvensen er blevet gemt</string>
+    <string name="sequence_title">Sekvens titel</string>
     <string name="unnamed_sequence">Unavngivet sekvens</string>
     <string name="choice_dialog_subtitle">Rediger piktogrammer der kan vælges imellem.</string>
     <string name="change_user_dialog_description">Vælg en borger du ønsker at administrere sekvenser for</string>

@@ -19,13 +19,10 @@
     <dk.aau.cs.giraf.gui.GirafButton
         android:layout_width="wrap_content"
         android:layout_height="@dimen/giraf_button_height"
+        android:layout_marginRight="15dp"
         android:onClick="onBackNoSaveButton"
         app:icon="@drawable/icon_delete"
         app:text="@string/dont_save" />
-
-    <Space
-        android:layout_width="13dp"
-        android:layout_height="30dp"/>
 
     <dk.aau.cs.giraf.gui.GirafButton
         android:layout_width="wrap_content"

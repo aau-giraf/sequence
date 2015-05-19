@@ -20,7 +20,7 @@ import android.widget.AdapterView;
 
 /**
  * Layouts its children with fixed sizes and fixed spacing between each child in
- * the horizontal dimension.
+ * the horizontal dimension. !!
  * Also contains the animation and effects (drag, rearrange, snap ...)
  */
 public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
@@ -569,7 +569,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
     }
 
     public interface OnRearrangeListener {
-        public void onRearrange(int indexFrom, int indexTo);
+        void onRearrange(int indexFrom, int indexTo);
     }
 
     private int getCurrentSequenceViewCount() {
@@ -656,8 +656,6 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
         public AutoScroller() {
             this.scroller = getScroller(SequenceViewGroup.this);
 
-            //if (!(this.scroller instanceof HorizontalScrollView))
-            //    throw new IllegalStateException("Parent of SequenceViewGroup must be HorizontalScrollView");
             timeBefore = AnimationUtils.currentAnimationTimeMillis();
             reset();
         }
@@ -748,52 +746,11 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
     }
 
     public interface OnNewButtonClickedListener {
-        public void onNewButtonClicked();
+        void onNewButtonClicked();
     }
 
     @Override
     public void setSelection(int position) {
 
-    }
-
-    public int getHorizontalSpacing() {
-        return horizontalSpacing;
-    }
-
-    public OnRearrangeListener getOnRearrangeListener(OnRearrangeListener rearrangeListener) {
-        return this.rearrangeListener;
-    }
-
-    public void setHorizontalSpacing(int spacing) {
-        if (spacing >= 0 && spacing != horizontalSpacing) {
-            horizontalSpacing = spacing;
-            requestLayout();
-        }
-    }
-
-    public void setItemHeight(int height) {
-        if (height > 0 && height != itemHeight) {
-            itemHeight = height;
-            requestLayout();
-        }
-    }
-
-    public void setItemWidth(int width) {
-        if (width > 0 && width != itemWidth) {
-            itemWidth = width;
-            requestLayout();
-        }
-    }
-
-    public int getItemHeight() {
-        return itemHeight;
-    }
-
-    public int getItemWidth() {
-        return itemWidth;
-    }
-
-    public OnNewButtonClickedListener getOnNewButtonClickedListener() {
-        return newButtonClickedListener;
     }
 }

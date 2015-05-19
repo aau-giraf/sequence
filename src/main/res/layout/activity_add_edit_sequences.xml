@@ -29,10 +29,10 @@
         android:layout_gravity="center"
         android:layout_marginTop="10dp">
 
-        <dk.aau.cs.giraf.gui.GirafButton
+        <dk.aau.cs.giraf.gui.GirafPictogramItemView
             android:id="@+id/sequenceThumbnail"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_marginRight="20dp"
             app:icon="@drawable/add_sequence_picture"/>
 
@@ -40,9 +40,9 @@
             android:id="@+id/sequenceName"
             android:layout_width="400dp"
             android:layout_height="60dp"
-            android:layout_gravity="center_horizontal"
+            android:layout_gravity="center_vertical"
             android:gravity="center"
-            android:hint="@string/unnamed_sequence"
+            android:hint="@string/sequence_title"
             android:imeOptions="actionDone"
             android:inputType="textImeMultiLine"
             android:text=""
@@ -71,7 +71,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"
-                android:background="@layout/main_picto_container_bg"
+
                 svg:horizontalSpacing="20dp"
                 svg:itemHeight="@dimen/activity_main_picto_size"
                 svg:itemWidth="@dimen/activity_main_picto_size"/>

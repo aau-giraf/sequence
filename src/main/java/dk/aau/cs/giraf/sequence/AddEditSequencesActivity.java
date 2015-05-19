@@ -3,8 +3,6 @@ package dk.aau.cs.giraf.sequence;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -13,6 +11,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -32,6 +31,8 @@ import dk.aau.cs.giraf.gui.GirafNotifyDialog;
 import dk.aau.cs.giraf.dblib.Helper;
 import dk.aau.cs.giraf.dblib.models.Frame;
 import dk.aau.cs.giraf.dblib.models.Profile;
+import dk.aau.cs.giraf.gui.GirafPictogramItemView;
+import dk.aau.cs.giraf.pictosearch.PictoAdminMain;
 import dk.aau.cs.giraf.sequence.PictogramView.OnDeleteClickListener;
 import dk.aau.cs.giraf.sequence.SequenceAdapter.OnAdapterGetViewListener;
 import dk.aau.cs.giraf.sequence.SequenceViewGroup.OnNewButtonClickedListener;
@@ -98,7 +99,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
     private GirafButton saveButton;
     private GirafButton deleteButton;
     private GirafButton helpButton;
-    private GirafButton sequenceThumbnailButton;
+    private GirafPictogramItemView sequenceThumbnailButton;
 
     // Initialize dialogs
     private GirafInflatableDialog choosePictogramOrChoiceDialog;
@@ -117,7 +118,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         parent_container = (LinearLayout) findViewById(R.id.parent_container);
         sequenceViewGroup = (dk.aau.cs.giraf.sequence.SequenceViewGroup) findViewById(R.id.sequenceViewGroup);
 
-                //Create helper to load data from Database
+        //Create helper to load data from Database
         helper = new Helper(this);
 
         loadIntents();
@@ -185,7 +186,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         deleteButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_delete));
         helpButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_help));
         saveButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_save));
-        sequenceThumbnailButton = (GirafButton) findViewById(R.id.sequenceThumbnail);
+        sequenceThumbnailButton = (GirafPictogramItemView) findViewById(R.id.sequenceThumbnail);
 
         // Adding buttons to action-bar
         addGirafButtonToActionBar(deleteButton, LEFT);
@@ -232,10 +233,15 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         });
 
         //If no Image has been selected or the Sequence, display the Add Sequence Picture. Otherwise load the image for the Button
+        Pictogram pictogram;
         if (sequence.getPictogramId() != 0) {
-            Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getById(sequence.getPictogramId()).getImage());
-            sequenceThumbnailButton.setIcon(d);
+            pictogram = (helper.pictogramHelper.getById(sequence.getPictogramId()));
+        } else {
+            pictogram = new Pictogram();
         }
+
+        sequenceThumbnailButton.setImageModel(pictogram, this.getResources().getDrawable(R.drawable.icon_add));
+        sequenceThumbnailButton.setEditable(true);
     }
 
     /**
@@ -787,8 +793,11 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         }
 
         sequence.setPictogramId(checkoutIds[0]);
-        Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getById(sequence.getPictogramId()).getImage());
-        sequenceThumbnailButton.setIcon(d);
+        Pictogram pictogram = helper.pictogramHelper.getById(sequence.getPictogramId());
+
+        sequenceThumbnailButton.setImageModel(pictogram);
+        sequenceThumbnailButton.setEditable(true);
+
         changesSaved = false;
     }
 
@@ -798,8 +807,9 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
      * @param modeId The tag associated to the different calls, e.g. PICTO_NEW_PICTOGRAM_CALL
      */
     private void callPictoSearch(int modeId) {
-        Intent intent = new Intent();
-        intent.setComponent(new ComponentName("dk.aau.cs.giraf.pictosearch", "dk.aau.cs.giraf.pictosearch.PictoAdminMain"));
+        Intent intent = new Intent(getApplication(), PictoAdminMain.class);
+        //Intent intent = new Intent();
+        //intent.setComponent(new ComponentName("dk.aau.cs.giraf.pictosearch", "dk.aau.cs.giraf.pictosearch.PictoAdminMain"));
         intent.putExtra("currentChildID", selectedChild.getId());
         intent.putExtra("currentGuardianID", guardian.getId());
 
@@ -927,6 +937,10 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
         showcaseManager.addShowCase(new ShowcaseManager.Showcase() {
             @Override
             public void configShowCaseView(final ShowcaseView showcaseView) {
+                // Scrolls to the add icon
+                HorizontalScrollView horizscroll = (HorizontalScrollView) findViewById(R.id.horizontalScrollView);
+                horizscroll.scrollTo(9999, 0);
+
                 showcaseView.setShowcase(addPictograms, true);
                 showcaseView.setContentTitle(getString(R.string.sc_add_pictograms));
                 showcaseView.setContentText(getString(R.string.sc_add_pictograms_text));

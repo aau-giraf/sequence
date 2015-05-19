@@ -29,7 +29,7 @@
                 android:layout_marginLeft="@dimen/padding_standard"
                 android:layout_marginRight="@dimen/padding_standard"
                 android:layout_marginBottom="@dimen/padding_standard"
-                android:background="@layout/main_picto_container_bg"
+
                 svg:horizontalSpacing="@dimen/padding_standard"
                 svg:itemHeight="@dimen/activity_main_picto_size"
                 svg:itemWidth="@dimen/activity_main_picto_size"

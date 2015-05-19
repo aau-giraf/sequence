@@ -19,32 +19,32 @@ public class SequenceAdapter extends BaseAdapter {
     private OnAdapterGetViewListener onAdapterGetViewListener;
 
     public SequenceAdapter(Context context, Sequence sequence) {
+        if (sequence == null) {
+            this.sequence = new Sequence();
+        } else {
+            this.sequence = sequence;
+        }
+
         this.context = context;
-        this.sequence = sequence;
     }
 
     @Override
     public int getCount() {
-        if (sequence == null)
-            return 0;
-        else
-            return sequence.getFramesList().size();
+        return sequence.getFramesList().size();
     }
 
     @Override
     public Frame getItem(int position) {
-        if (sequence == null)
-            throw new IllegalStateException("No Sequence has been set for this Adapter");
-
-        if (position >= 0 && position < sequence.getFramesList().size())
+        if (position >= 0 && position < sequence.getFramesList().size()) {
             return sequence.getFramesList().get(position);
-        else
+        } else {
             return null;
+        }
     }
 
     @Override
     public boolean hasStableIds() {
-        return false;
+        return true;
     }
 
     @Override
@@ -64,12 +64,7 @@ public class SequenceAdapter extends BaseAdapter {
             view = (PictogramView) convertView;
         }
 
-        // If the element is a choice, then use the "choose" icon
-        //if (sequence.getFramesList().get(position).getPictogramList().size() > 0) {
-        //    view.setImageFromId(0);
-        //} else {
-            view.setImageFromId(frame.getPictogramId());
-        //}
+        view.setImageFromId(frame.getPictogramId());
 
         if (onAdapterGetViewListener != null)
             onAdapterGetViewListener.onAdapterGetView(position, view);
@@ -82,7 +77,7 @@ public class SequenceAdapter extends BaseAdapter {
     }
 
     public interface OnAdapterGetViewListener {
-        public void onAdapterGetView(int position, View view);
+        void onAdapterGetView(int position, View view);
     }
 }
 

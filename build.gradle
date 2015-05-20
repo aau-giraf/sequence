@@ -29,13 +29,13 @@ dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
 	compile('com.android.support:support-v4:+')
     compile(group: 'dk.aau.cs.giraf', name: 'girafComponent', version: '10.4.0', ext: 'aar')
-    compile(group: 'dk.aau.cs.giraf', name: 'oasisLib', version: '7.2.0', ext: 'aar')
+    compile(group: 'dk.aau.cs.giraf', name: 'oasisLib', version: '7.3.0', ext: 'aar')
     compile(group: 'dk.aau.cs.giraf', name: 'localDb', version: '5.1.2', ext: 'aar')
     compile(group: 'dk.aau.cs.giraf', name: 'meta-database', version: '3.2.0')
     compile(group: 'dk.aau.cs.giraf', name: 'pictogramLib', version: '4.0.0', ext: 'aar')
 	compile(group: 'dk.aau.cs.giraf', name: 'sequenceViewerLib', version: '3.2.0', ext: 'aar')
     compile(group: 'dk.aau.cs.giraf', name: 'ShowcaseView', version: '1.0.0', ext: 'aar')
-    compile(group: 'dk.aau.cs.giraf', name: 'pictosearch', version: '2.0.1', ext: 'aar')
+    compile(group: 'dk.aau.cs.giraf', name: 'pictosearch', version: '2.0.6', ext: 'aar')
 }
 
 android {

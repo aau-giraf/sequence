@@ -189,7 +189,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         Bundle extras = getIntent().getExtras();
 
         if (extras == null || (!extras.containsKey(getString(R.string.current_child_id)) && !extras.containsKey(getString(R.string.current_guardian_id)))) {
-            Toast.makeText(this, String.format(getString(R.string.error_must_be_started_from_giraf), getString(R.string.app_name)), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, String.format(getString(R.string.error_must_be_started_from_giraf), getString(R.string.application_name)), Toast.LENGTH_SHORT).show();
             // The activity was not started correctly, now finish it!
             finish();
             return;
@@ -301,7 +301,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         deleteButton.setVisibility(View.GONE);
         addButton.setVisibility(View.VISIBLE);
         changeUserButton.setVisibility(View.VISIBLE);
-        setActionBarTitle(getResources().getString(R.string.app_name) + " - " + selectedChild.getName());
+        setActionBarTitle(getResources().getString(R.string.application_name) + " - " + selectedChild.getName());
         markingMode = false;
     }
 
@@ -389,7 +389,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
     private synchronized void setChild() {
         //Save Child locally and update relevant information for application
         selectedChild = helper.profilesHelper.getById(childId);
-        this.setActionBarTitle(getResources().getString(R.string.app_name) + " - " + selectedChild.getName()); // selectedChild.getName() "Child's name code"
+        this.setActionBarTitle(getResources().getString(R.string.application_name) + " - " + selectedChild.getName()); // selectedChild.getName() "Child's name code"
 
         // AsyncTask thread
         AsyncFetchDatabase fetchDatabaseSetChild = new AsyncFetchDatabase();

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="TypographyDashes">
+    <!--Replace placeholder ID with your tracking ID-->
+    <string name="ga_trackingId">UA-48608499-9</string>
+
+    <!--Enable automatic activity tracking-->
+    <bool name="ga_autoActivityTracking">true</bool>
+
+    <!--Enable automatic exception tracking-->
+    <bool name="ga_reportUncaughtExceptions">true</bool>
+
+    <!--Enable debug mode - Useful when doing debugging and testing new implementation.
+     When this is set to true it is no data is sent to Google Analytics -->
+    <bool name="ga_dryRun">false</bool>
+</resources>

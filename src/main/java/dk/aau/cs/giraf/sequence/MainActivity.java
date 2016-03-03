@@ -15,7 +15,7 @@ import android.widget.GridView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import com.google.analytics.tracking.android.EasyTracker;
 import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.gui.GirafInflatableDialog;
@@ -95,7 +95,18 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         // Setup mode, this is either citizen mode or guardian mode
         setupModeFromIntents();
     }
-
+    //Google analytics - start logging
+    @Override
+    public void onStart() {
+        super.onStart();
+        EasyTracker.getInstance(this).activityStart(this);  // Start logging
+    }
+    //Google analytics - Stop logging
+    @Override
+    public void onStop() {
+        super.onStop();
+        EasyTracker.getInstance(this).activityStop(this);  // stop logging
+    }
     /**
      * Setup the requires XML components and initializes the sequenceGrid.
      * <p>

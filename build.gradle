@@ -3,35 +3,36 @@ buildscript {
     repositories {
         mavenCentral()
         maven {
-          url 'http://cs-cust06-int.cs.aau.dk/artifactory/libraries'
+            url 'http://cs-cust06-int.cs.aau.dk/artifactory/libraries'
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.0+'
-        classpath 'dk.aau.cs.giraf:auto-deploy-gradle-plugin:1.1'
-        classpath 'com.github.triplet.gradle:play-publisher:1.0.2'
+        classpath 'com.android.tools.build:gradle:1.5.0'
+        classpath 'dk.aau.cs.giraf:auto-deploy-gradle-plugin:1.5.0'
+        classpath 'com.github.triplet.gradle:play-publisher:1.1.4'
     }
 }
 
 apply plugin: 'com.android.application'
 apply plugin: 'dk.giraf.deploy'
-apply plugin: 'play'
+apply plugin: 'com.github.triplet.play'
 
 repositories {
+    mavenLocal()
+    mavenCentral()
     maven {
         url 'http://cs-cust06-int.cs.aau.dk/artifactory/libraries'
-        mavenCentral()
+
     }
-    mavenLocal()
 }
 
 dependencies {
     compile fileTree(include: '*.jar', dir: 'libs')
-    compile 'com.android.support:support-v4:+'
+    compile 'com.android.support:support-v4:23.1.1'
     compile 'dk.aau.cs.giraf:girafComponent:10.4.0@aar'
-    compile 'dk.aau.cs.giraf:oasisLib:7.3.0@aar'
-    compile 'dk.aau.cs.giraf:localDb:5.1.2@aar'
-    compile 'dk.aau.cs.giraf:meta-database:3.2.0'
+    compile 'dk.aau.cs.giraf:oasisLib:9.0.2@aar'
+    compile 'dk.aau.cs.giraf:localDb:5.1.5@aar'
+    compile 'dk.aau.cs.giraf:meta-database:3.2.3'
     compile 'dk.aau.cs.giraf:pictogramLib:4.0.0@aar'
     compile 'dk.aau.cs.giraf:sequenceViewerLib:3.2.0@aar'
     compile 'dk.aau.cs.giraf:ShowcaseView:1.0.0@aar'
@@ -39,9 +40,10 @@ dependencies {
     compile files('Librairies/libGoogleAnalyticsServices.jar')
 }
 
+
 android {
-    compileSdkVersion 15
-    buildToolsVersion "21.1.2"
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
 
     lintOptions {
         abortOnError false
@@ -55,6 +57,11 @@ android {
         exclude 'LICENSE.txt'
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE.txt'
+    }
+
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 23
     }
 }
 play {

@@ -12,6 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import dk.aau.cs.giraf.dblib.Helper;
+import dk.aau.cs.giraf.dblib.controllers.PictogramController;
 
 
 /**
@@ -170,16 +171,18 @@ public class PictogramView extends LinearLayout {
     }
 
     public void setImageFromId(long id) {
-        Helper helper;
-        helper = new Helper(getContext());
+        Helper helper = new Helper(getContext());
 
-        // If the first element in a sequence is a choice - pick the choose icon -
-        // this leads to NullPointerException otherwise, as errors occur when it tries to first the first element, if this is split in many. (as the choose element is)
+        /* If the first element in a sequence is a choice - pick the choose icon -
+         * this leads to NullPointerException otherwise, as errors occur when it tries
+         * to first the first element, if this is split in many. (as the choose element is)
+         */
         if (id == 0) {
             Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.icon_choose);
             pictogram.setImageBitmap(bm);
         } else {
-            pictogram.setImageBitmap(helper.pictogramHelper.getById(id).getImage());
+            // Get the bitmap of the pictogram using the helper
+            pictogram.setImageBitmap(helper.pictogramHelper.getImage(helper.pictogramHelper.getById(id)));
         }
     }
 

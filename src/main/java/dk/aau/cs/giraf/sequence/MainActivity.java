@@ -80,7 +80,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
 
         // Adding buttons to the action bar
         addGirafButtonToActionBar(changeUserButton, LEFT);
-        addGirafButtonToActionBar(helpButton, LEFT);
+        addGirafButtonToActionBar(helpButton, RIGHT);
         addGirafButtonToActionBar(addButton, RIGHT);
         addGirafButtonToActionBar(deleteButton, RIGHT);
 
@@ -300,6 +300,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         deleteButton.setVisibility(View.VISIBLE);
         addButton.setVisibility(View.GONE);
         changeUserButton.setVisibility(View.GONE);
+        helpButton.setVisibility(View.GONE);
         setActionBarTitle(getResources().getString(R.string.delete_sequences) + " - " + selectedChild.getName());
     }
 
@@ -312,6 +313,7 @@ public class MainActivity extends GirafActivity implements SequenceListAdapter.S
         deleteButton.setVisibility(View.GONE);
         addButton.setVisibility(View.VISIBLE);
         changeUserButton.setVisibility(View.VISIBLE);
+        helpButton.setVisibility(View.VISIBLE);
         setActionBarTitle(getResources().getString(R.string.application_name) + " - " + selectedChild.getName());
         markingMode = false;
     }

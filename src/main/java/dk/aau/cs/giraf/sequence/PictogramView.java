@@ -32,6 +32,7 @@ public class PictogramView extends LinearLayout {
     private ImageButton deleteButton;
     private ImageButton editButton;
     private OnDeleteClickListener onDeleteClickListener;
+    private OnEditClickListener onEditClickListener;
 
     private boolean isInEditMode = false;
 
@@ -58,6 +59,7 @@ public class PictogramView extends LinearLayout {
         squareRelLayout.addView(createEditButton());
 
         setupOnDeleteClickHandler();
+        setupOnEditClickHandler();
 
         this.addView(squareRelLayout);
         this.addView(createTextView());
@@ -190,7 +192,7 @@ public class PictogramView extends LinearLayout {
         title.setText(newTitle);
     }
 
-    void setupOnDeleteClickHandler() {
+    public void setupOnDeleteClickHandler() {
         deleteButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -206,5 +208,24 @@ public class PictogramView extends LinearLayout {
 
     public interface OnDeleteClickListener {
         void onDeleteClick();
+    }
+
+    //Listener and handler setup for edit button
+    public void setupOnEditClickHandler() {
+        editButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isInEditMode && onEditClickListener != null)
+                    onEditClickListener.onEditClick();
+            }
+        });
+    }
+
+    public void setOnEditClickListener(OnEditClickListener listener){
+        onEditClickListener = listener;
+    }
+
+    public interface OnEditClickListener {
+        void onEditClick();
     }
 }

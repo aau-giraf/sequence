@@ -864,6 +864,30 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
 
                         }
                     });
+
+                    v.setOnEditClickListener(new PictogramView.OnEditClickListener() {
+                        @Override
+                        //Sets functionality for edit button on pictogram
+                        public void onEditClick() {
+                            pictogramEditPos = position;
+                            Frame frame = seq.getFramesList().get(position);
+                            if (frame.getPictogramList().size() > 0) {
+                                createAndShowChoiceDialog();
+                            } else {
+                                if (choiceMode) {
+                                    //Sets functionality when in choiceMode
+                                    tempPictogramId = choice.getFramesList().get(pictogramEditPos).getPictogramId();
+                                    callPictoSearch(CHOICE_EDIT_PICTOGRAM_CALL);
+                                }
+                                    else {
+                                    //Calls callPictoSearch if seq is a sequence and not a choice
+                                        callPictoSearch(PICTO_EDIT_PICTOGRAM_CALL);
+                                    }
+                                }
+                            changesSaved = false;
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
                 }
             }
         });

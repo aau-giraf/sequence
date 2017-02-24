@@ -360,6 +360,8 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
 
     /**
      * Shows a dialog used to add either a pictogram og choice to a pictogram
+     * TODO: TASK DETECT USABLE CODE - This is where the dialog for choosing between pictogram and choice is made. It should be from here and down usable code is located.
+     * TODO: Be aware there is a method onChoiceClick() that is also used.
      */
     private void createAndShowAddDialog() {
         //Create instance of the add dialog and display it with the two choices: Add Pictogram or Add Choice
@@ -382,6 +384,7 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
 
     /**
      * Shows the choice dialog, when a choice element is clicked on
+     * TODO: TASK DETECT USABLE CODE - This is the code that creates the window for choice.
      */
     private void createAndShowChoiceDialog() {
         choiceMode = true;
@@ -413,6 +416,8 @@ public class AddEditSequencesActivity extends GirafActivity implements GirafNoti
 
     /**
      * Creates an empty choice dialog
+     * TODO: TASK DETECT USABLE CODE - This is the method called when choosing to make a choice, this is the code we are interested in.
+     * TODO: This is only called from dialog_add_pictogram_or_choice.xml.
      *
      * @param v The view that was clicked
      */
